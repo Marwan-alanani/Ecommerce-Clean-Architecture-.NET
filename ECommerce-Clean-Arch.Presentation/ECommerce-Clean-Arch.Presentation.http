@@ -1,0 +1,6 @@
+@ECommerce_Clean_Arch.Presentation_HostAddress = http://localhost:5219
+
+GET {{ECommerce_Clean_Arch.Presentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
