@@ -1,3 +1,4 @@
+using FluentResults;
 using MediatR;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
@@ -8,4 +9,4 @@ public record RegisterUserCommand(
     string Password,
     string FirstName,
     string LastName
-) : IRequest<UserResult>;
+) : IRequest<Result<UserResult>>;

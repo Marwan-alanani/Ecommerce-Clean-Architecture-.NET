@@ -1,5 +1,6 @@
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Presentation;
 
@@ -14,11 +15,11 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
-
+        builder.Configuration.AddEnvironmentVariables();
         {
             builder.Services
                 .AddApplication()
-                .AddInfrastructure();
+                .AddInfrastructure(builder.Configuration);
         }
 
         var app = builder.Build();
@@ -26,6 +27,16 @@ class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
+            using (var scope = app.Services.CreateScope())
+            {
+                var identityDbContext =
+                    scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+                // var applicationDbContext = scope.ServiceProvider
+                //     .GetRequiredService<ApplicationDbContext>();
+                identityDbContext.Database.Migrate();
+                // applicationDbContext.Database.Migrate();
+            }
+
             app.UseSwagger();
             app.UseSwaggerUI();
         }

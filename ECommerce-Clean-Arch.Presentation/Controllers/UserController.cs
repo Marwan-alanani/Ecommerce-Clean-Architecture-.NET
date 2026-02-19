@@ -27,6 +27,11 @@ public class UserController : ControllerBase
             request.LastName);
 
         var result = await _mediator.Send(command);
-        return Ok(result);
+        if (result.IsSuccess)
+            return Ok(result.Value);
+        return Problem(
+            title: result.Errors[0].Message,
+            statusCode: 400
+        );
     }
 }

@@ -1,58 +1,34 @@
+using ECommerce_Clean_Arch.Domain.Common;
+using Microsoft.AspNetCore.Identity;
+
 namespace ECommerce_Clean_Arch.Domain.Users;
 
-public class User
+public sealed class User : IdentityUser<Guid>, IAuditable
 {
+    public string FirstName { get; private set; } = null!;
+    public string LastName { get; private set; } = null!;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
     private User()
     {
     }
 
-    private User(
-        Guid id,
-        string username,
-        string firstName,
-        string lastName,
-        string email,
-        string password,
-        DateTime createdAt,
-        DateTime updatedAt
-    )
-    {
-        Id = id;
-        Username = username;
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        Password = password;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-    }
-
-    public Guid Id { get; private set; }
-    public string Username { get; private set; } = null!;
-    public string FirstName { get; private set; } = null!;
-    public string LastName { get; private set; } = null!;
-    public string Email { get; private set; } = null!;
-    public string Password { get; private set; } = null!;
-    public DateTime CreatedAt { get; private set; }
-    public DateTime UpdatedAt { get; private set; }
 
     public static User Create(
-        string username,
+        string userName,
         string firstName,
         string lastName,
-        string email,
-        string password
+        string email
     )
     {
-        return new User(
-            Guid.NewGuid(),
-            username,
-            firstName,
-            lastName,
-            email,
-            password,
-            DateTime.UtcNow,
-            DateTime.UtcNow
-        );
+        return new User()
+        {
+            Id = Guid.NewGuid(),
+            UserName = userName,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+        };
     }
+
 }
