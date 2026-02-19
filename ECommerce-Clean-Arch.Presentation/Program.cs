@@ -8,6 +8,7 @@ class Program
 {
     public static void Main(string[] args)
     {
+        DotNetEnv.Env.Load();
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -15,7 +16,6 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
-        builder.Configuration.AddEnvironmentVariables();
         {
             builder.Services
                 .AddApplication()
