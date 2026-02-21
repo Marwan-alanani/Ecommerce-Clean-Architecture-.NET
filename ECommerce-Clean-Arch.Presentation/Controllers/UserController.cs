@@ -29,6 +29,6 @@ public class UserController : ApiController
         var result = await _mediator.Send(command);
         if (result.IsSuccess)
             return Ok(result.Value);
-        return BadRequest(result.Error);
+        return Problem(result.Error);
     }
 }

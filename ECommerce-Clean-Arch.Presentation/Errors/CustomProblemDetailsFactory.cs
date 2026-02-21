@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using ECommerce_Clean_Arch.Domain.Errors.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace ECommerce_Clean_Arch.Presentation.Errors;
 
@@ -11,12 +13,12 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
     private readonly Action<ProblemDetailsContext>? _configure;
 
     public CustomProblemDetailsFactory(
-        Action<ProblemDetailsContext>? configure,
-        ApiBehaviorOptions options
+        IOptions<ApiBehaviorOptions> options,
+        IOptions<ProblemDetailsOptions>? problemDetailsOptions = null
     )
     {
-        _configure = configure;
-        _options = options;
+        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _configure = problemDetailsOptions?.Value?.CustomizeProblemDetails;
     }
 
     public override ProblemDetails CreateProblemDetails(
@@ -101,6 +103,11 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
         if (traceId != null)
         {
             problemDetails.Extensions["traceId"] = traceId;
+        }
+
+        if (httpContext?.Items["error"] is Error error)
+        {
+            problemDetails.Extensions.Add("reasons", error.Reasons);
         }
 
         _configure?.Invoke(new() { HttpContext = httpContext!, ProblemDetails = problemDetails });

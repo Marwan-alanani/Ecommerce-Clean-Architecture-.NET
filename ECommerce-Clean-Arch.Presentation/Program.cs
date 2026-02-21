@@ -18,7 +18,7 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
-        // builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
+        builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
         {
             builder.Services
                 .AddApplication()
