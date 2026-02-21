@@ -9,6 +9,7 @@ public class ApiController : ControllerBase
     protected IActionResult Problem(Error error)
     {
         HttpContext.Items["error"] = error;
+        HttpContext.Items["code"] = error.Code;
 
         var statusCode = error.Type switch
         {

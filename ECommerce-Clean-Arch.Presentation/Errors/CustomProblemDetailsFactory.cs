@@ -105,10 +105,16 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
             problemDetails.Extensions["traceId"] = traceId;
         }
 
+        if (httpContext?.Items["code"] is not null)
+        {
+            problemDetails.Extensions.Add("code", httpContext?.Items["code"]);
+        }
+
         if (httpContext?.Items["error"] is Error error)
         {
             problemDetails.Extensions.Add("reasons", error.Reasons);
         }
+
 
         _configure?.Invoke(new() { HttpContext = httpContext!, ProblemDetails = problemDetails });
     }

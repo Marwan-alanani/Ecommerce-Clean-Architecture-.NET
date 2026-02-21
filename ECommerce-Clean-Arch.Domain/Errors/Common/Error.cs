@@ -25,34 +25,34 @@ public sealed record Error // One error can have 1...N reasons
     public IReadOnlyList<IReason> Reasons => _reasons.AsReadOnly();
     public ErrorType Type { get; }
 
-    public static Error Validation(params IReason[] reasons)
+    public static Error Validation(string? description = null, params IReason[] reasons)
     {
         return new(
             "ValidationError",
-            "Validation Error",
-            "One or more validation errors occured",
+            "A validation error occured",
+            description ?? "One or more validation errors occured",
             ErrorType.Validation,
             reasons
         );
     }
 
-    public static Error Conflict(params IReason[] reasons)
+    public static Error Conflict(string? description = null, params IReason[] reasons)
     {
         return new(
             "Conflict",
-            "Conflict Occured",
-            "There has been a conflict ... cannot continue operation",
+            "A conflict occured",
+            description ?? "There has been a conflict ... cannot continue operation",
             ErrorType.Conflict,
             reasons
         );
     }
 
-    public static Error NotFound(params IReason[] reasons)
+    public static Error NotFound(string? description = null, params IReason[] reasons)
     {
         return new(
             "NotFound",
-            "Resource Not Found",
-            "Cannot allocate given resource",
+            "Resource not found",
+            description ?? "Cannot allocate given resource",
             ErrorType.NotFound,
             reasons
         );
@@ -85,13 +85,8 @@ public interface IReason
     public string? Field { get; }
 };
 
-public class Reason(
-    string code,
-    string description,
-    string? field = null
-) : IReason
-{
-    public string Code { get; } = code;
-    public string Description { get; } = description;
-    public string? Field { get; } = field;
-}
+public record Reason(
+    string Code,
+    string Description,
+    string? Field = null
+) : IReason;

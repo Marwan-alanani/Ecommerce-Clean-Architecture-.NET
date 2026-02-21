@@ -45,6 +45,7 @@ class Program
         }
 
         app.MapControllers();
+        app.UseExceptionHandler("/error");
         app.UseHttpsRedirection();
 
         app.Run();

@@ -27,12 +27,11 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         CancellationToken cancellationToken
     )
     {
-        await Task.CompletedTask;
-
         var emailExists = _userManager.Users.Any(u => u.Email == request.Email);
         if (emailExists)
         {
-            return Error.Validation(new UserEmailFound(request.Email));
+            var reason = new UserEmailFound(request.Email);
+            return Error.Validation(reason.Description, reason);
         }
 
         var user = User.Create(
@@ -49,6 +48,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
             {
                 error.AddReason(validationError.Code, validationError.Description);
             }
+
             return error;
         }
 

@@ -1,6 +1,5 @@
 using ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Contracts.Users;
-using ECommerce_Clean_Arch.Domain.Errors.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
