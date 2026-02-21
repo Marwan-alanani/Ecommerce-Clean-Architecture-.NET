@@ -1,5 +1,7 @@
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Infrastructure;
+using ECommerce_Clean_Arch.Presentation.Errors;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Presentation;
@@ -16,6 +18,7 @@ class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddControllers();
+        // builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
         {
             builder.Services
                 .AddApplication()

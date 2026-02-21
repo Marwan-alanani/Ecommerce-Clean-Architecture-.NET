@@ -1,4 +1,4 @@
-using FluentResults;
+using ECommerce_Clean_Arch.Domain.Common;
 using MediatR;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;

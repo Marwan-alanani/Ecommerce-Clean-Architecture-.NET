@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Domain.Common;
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
 using Microsoft.AspNetCore.Identity;

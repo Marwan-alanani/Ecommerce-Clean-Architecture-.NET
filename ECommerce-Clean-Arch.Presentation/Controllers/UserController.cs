@@ -1,13 +1,13 @@
 using ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Contracts.Users;
+using ECommerce_Clean_Arch.Domain.Errors.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
-[ApiController]
 [Route("/users")]
-public class UserController : ControllerBase
+public class UserController : ApiController
 {
     private readonly ISender _mediator;
 
@@ -17,7 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(RegisterUserRequest request)
+    public async Task<IActionResult> Create([FromBody] RegisterUserRequest request)
     {
         var command = new RegisterUserCommand(
             request.Username,
@@ -29,9 +29,6 @@ public class UserController : ControllerBase
         var result = await _mediator.Send(command);
         if (result.IsSuccess)
             return Ok(result.Value);
-        return Problem(
-            title: result.Errors[0].Message,
-            statusCode: 400
-        );
+        return BadRequest(result.Error);
     }
 }

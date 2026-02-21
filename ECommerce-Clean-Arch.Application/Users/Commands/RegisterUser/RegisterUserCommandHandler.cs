@@ -1,7 +1,8 @@
 using ECommerce_Clean_Arch.Application.Authentication;
-using ECommerce_Clean_Arch.Application.Users.Errors;
+using ECommerce_Clean_Arch.Domain.Common;
+using ECommerce_Clean_Arch.Domain.Errors.Common;
+using ECommerce_Clean_Arch.Domain.Errors.Users;
 using ECommerce_Clean_Arch.Domain.Users;
-using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,7 +32,7 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         var emailExists = _userManager.Users.Any(u => u.Email == request.Email);
         if (emailExists)
         {
-            return new UserEmailFoundError(request.Email);
+            return Error.Validation(new UserEmailFound(request.Email));
         }
 
         var user = User.Create(
@@ -40,13 +41,14 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
             request.LastName,
             request.Email);
 
-        var result = await _userManager.CreateAsync(user, request.Password);
-        if (!result.Succeeded)
+        var identityResult = await _userManager.CreateAsync(user, request.Password);
+        if (!identityResult.Succeeded)
         {
-            var errorCodes = result.Errors.Select(e => e.Code);
-            var reasons = errorCodes.Select(errorCode => new Error(errorCode));
-            var error = new Error("Cannot register user");
-            error.CausedBy(reasons);
+            var error = Error.Validation();
+            foreach (var validationError in identityResult.Errors)
+            {
+                error.AddReason(validationError.Code, validationError.Description);
+            }
             return error;
         }
 
