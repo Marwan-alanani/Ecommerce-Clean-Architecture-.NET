@@ -8,9 +8,7 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssembly(
-                typeof(Application.AssemblyReference).Assembly
-            );
+            cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly);
         });
         return services;
     }

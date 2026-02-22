@@ -8,6 +8,10 @@
     <PackageReference Include="MediatR" Version="14.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>ECommerce_Clean_Arch.Application</RootNamespace>

@@ -1,5 +1,4 @@
-using ECommerce_Clean_Arch.Domain.Common;
-using MediatR;
+using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 
@@ -9,4 +8,4 @@ public record RegisterUserCommand(
     string Password,
     string FirstName,
     string LastName
-) : IRequest<Result<UserResult>>;
+) : ICommand<UserResult>;

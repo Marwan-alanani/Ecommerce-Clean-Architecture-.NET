@@ -1,6 +1,8 @@
+using System.Reflection;
+
 namespace ECommerce_Clean_Arch.Application;
 
-public class AssemblyReference
+public static class AssemblyReference
 {
-    
+    public static Assembly Assembly => typeof(AssemblyReference).Assembly;
 }

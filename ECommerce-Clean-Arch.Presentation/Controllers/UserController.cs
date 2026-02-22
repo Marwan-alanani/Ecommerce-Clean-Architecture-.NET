@@ -16,7 +16,10 @@ public class UserController : ApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] RegisterUserRequest request)
+    public async Task<IActionResult> Create(
+        [FromBody] RegisterUserRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var command = new RegisterUserCommand(
             request.Username,
@@ -25,7 +28,7 @@ public class UserController : ApiController
             request.FirstName,
             request.LastName);
 
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         if (result.IsSuccess)
             return Ok(result.Value);
         return Problem(result.Error);

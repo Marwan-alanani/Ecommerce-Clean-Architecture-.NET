@@ -1,14 +1,13 @@
+using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication;
 using ECommerce_Clean_Arch.Domain.Common;
 using ECommerce_Clean_Arch.Domain.Errors.Common;
-using ECommerce_Clean_Arch.Domain.Errors.Users;
 using ECommerce_Clean_Arch.Domain.Users;
-using MediatR;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 
-public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<UserResult>>
+public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, UserResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -27,13 +26,6 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         CancellationToken cancellationToken
     )
     {
-        var emailExists = _userManager.Users.Any(u => u.Email == request.Email);
-        if (emailExists)
-        {
-            var reason = new UserEmailFound(request.Email);
-            return Error.Validation(reason.Description, reason);
-        }
-
         var user = User.Create(
             request.Username,
             request.FirstName,

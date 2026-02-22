@@ -25,34 +25,34 @@ public sealed record Error // One error can have 1...N reasons
     public IReadOnlyList<IReason> Reasons => _reasons.AsReadOnly();
     public ErrorType Type { get; }
 
-    public static Error Validation(string? description = null, params IReason[] reasons)
+    public static Error Validation(params IReason[] reasons)
     {
         return new(
             "ValidationError",
             "A validation error occured",
-            description ?? "One or more validation errors occured",
+            "One or more validation errors occured",
             ErrorType.Validation,
             reasons
         );
     }
 
-    public static Error Conflict(string? description = null, params IReason[] reasons)
+    public static Error Conflict(params IReason[] reasons)
     {
         return new(
             "Conflict",
             "A conflict occured",
-            description ?? "There has been a conflict ... cannot continue operation",
+            "There has been a conflict ... cannot continue operation",
             ErrorType.Conflict,
             reasons
         );
     }
 
-    public static Error NotFound(string? description = null, params IReason[] reasons)
+    public static Error NotFound(params IReason[] reasons)
     {
         return new(
             "NotFound",
             "Resource not found",
-            description ?? "Cannot allocate given resource",
+            "Cannot allocate given resource",
             ErrorType.NotFound,
             reasons
         );
