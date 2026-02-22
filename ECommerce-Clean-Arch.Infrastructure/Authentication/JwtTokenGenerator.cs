@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ECommerce_Clean_Arch.Application.Authentication;
+using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.Extensions.Options;

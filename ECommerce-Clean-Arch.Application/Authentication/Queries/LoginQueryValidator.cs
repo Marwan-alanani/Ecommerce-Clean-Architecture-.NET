@@ -1,0 +1,14 @@
+using FluentValidation;
+
+namespace ECommerce_Clean_Arch.Application.Authentication.Queries;
+
+public class LoginQueryValidator : AbstractValidator<LoginQuery>
+{
+    public LoginQueryValidator()
+    {
+        RuleFor(loginQuery => loginQuery.Email).EmailAddress().NotEmpty();
+
+        RuleFor(loginQuery => loginQuery.Password).NotEmpty().MinimumLength(6);
+
+    }
+}

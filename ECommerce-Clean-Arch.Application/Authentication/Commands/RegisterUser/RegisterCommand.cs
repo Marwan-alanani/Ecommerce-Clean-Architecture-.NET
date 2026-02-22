@@ -1,7 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Users.Common;
+using ECommerce_Clean_Arch.Application.Authentication.Common;
 
-namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
+namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
 public record RegisterCommand(
     string Username,
@@ -9,4 +9,4 @@ public record RegisterCommand(
     string Password,
     string FirstName,
     string LastName
-) : ICommand<UserResult>;
+) : ICommand<AuthenticationResult>;

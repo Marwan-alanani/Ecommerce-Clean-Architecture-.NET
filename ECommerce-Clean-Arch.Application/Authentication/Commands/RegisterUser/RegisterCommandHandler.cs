@@ -1,14 +1,14 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Authentication;
-using ECommerce_Clean_Arch.Application.Users.Common;
+using ECommerce_Clean_Arch.Application.Authentication.Common;
+using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
+namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
-public class RegisterCommandHandler : ICommandHandler<RegisterCommand, UserResult>
+public class RegisterCommandHandler : ICommandHandler<RegisterCommand, AuthenticationResult>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly UserManager<User> _userManager;
@@ -22,7 +22,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, UserResul
         _userManager = userManager;
     }
 
-    public async Task<Result<UserResult>> Handle(
+    public async Task<Result<AuthenticationResult>> Handle(
         RegisterCommand request,
         CancellationToken cancellationToken
     )
@@ -44,7 +44,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, UserResul
         }
 
         var token = _jwtTokenGenerator.Generate(user);
-        return new UserResult(
+        return new AuthenticationResult(
             user,
             token
         );

@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Application.Authentication;
+using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;

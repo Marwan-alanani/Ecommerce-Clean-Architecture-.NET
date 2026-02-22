@@ -1,4 +1,4 @@
-namespace ECommerce_Clean_Arch.Contracts.Users;
+namespace ECommerce_Clean_Arch.Contracts.Auth;
 
 public record RegisterUserRequest(
     string Email,

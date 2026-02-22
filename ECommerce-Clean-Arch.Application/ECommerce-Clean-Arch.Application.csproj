@@ -13,6 +13,7 @@
     <ItemGroup>
         <Folder Include="Abstractions\" />
         <Folder Include="Common\" />
+        <Folder Include="Users\" />
     </ItemGroup>
 
     <PropertyGroup>
