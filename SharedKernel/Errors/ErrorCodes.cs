@@ -1,4 +1,4 @@
-namespace ECommerce_Clean_Arch.Domain.Errors.Common;
+namespace SharedKernel.Errors;
 
 public static class ErrorCodes
 {

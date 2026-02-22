@@ -1,3 +1,4 @@
+using DotNetEnv;
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Infrastructure;
 using ECommerce_Clean_Arch.Presentation.Errors;
@@ -6,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Presentation;
 
-class Program
+internal class Program
 {
     public static void Main(string[] args)
     {
-        DotNetEnv.Env.Load();
+        Env.Load();
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.

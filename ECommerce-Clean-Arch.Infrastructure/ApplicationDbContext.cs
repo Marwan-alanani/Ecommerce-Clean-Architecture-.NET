@@ -1,5 +1,4 @@
 using ECommerce_Clean_Arch.Domain.Users;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Infrastructure;

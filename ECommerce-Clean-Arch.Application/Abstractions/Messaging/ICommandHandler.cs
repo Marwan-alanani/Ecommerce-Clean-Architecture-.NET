@@ -1,5 +1,5 @@
-using ECommerce_Clean_Arch.Domain.Common;
 using MediatR;
+using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 

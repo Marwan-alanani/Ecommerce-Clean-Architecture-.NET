@@ -1,16 +1,16 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication;
-using ECommerce_Clean_Arch.Domain.Common;
-using ECommerce_Clean_Arch.Domain.Errors.Common;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.AspNetCore.Identity;
+using SharedKernel.Errors;
+using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 
 public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, UserResult>
 {
-    private readonly UserManager<User> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly UserManager<User> _userManager;
 
     public RegisterUserCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
@@ -37,9 +37,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, U
         {
             var error = Error.Validation();
             foreach (var validationError in identityResult.Errors)
-            {
                 error.AddReason(validationError.Code, validationError.Description);
-            }
 
             return error;
         }

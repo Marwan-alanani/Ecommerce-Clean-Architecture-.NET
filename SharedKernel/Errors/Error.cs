@@ -1,15 +1,15 @@
-namespace ECommerce_Clean_Arch.Domain.Errors.Common;
+namespace SharedKernel.Errors;
 
 public sealed record Error // One error can have 1...N reasons
 {
-    private readonly List<IReason> _reasons = new();
+    private readonly List<ErrorReason> _reasons = new();
 
     private Error(
         string code,
         string message,
         string description,
         ErrorType type,
-        params IReason[] reasons
+        params ErrorReason[] reasons
     )
     {
         Message = message;
@@ -22,12 +22,12 @@ public sealed record Error // One error can have 1...N reasons
     public string Code { get; }
     public string Message { get; }
     public string Description { get; }
-    public IReadOnlyList<IReason> Reasons => _reasons.AsReadOnly();
+    public IReadOnlyList<ErrorReason> Reasons => _reasons.AsReadOnly();
     public ErrorType Type { get; }
 
-    public static Error Validation(params IReason[] reasons)
+    public static Error Validation(params ErrorReason[] reasons)
     {
-        return new(
+        return new Error(
             "ValidationError",
             "A validation error occured",
             "One or more validation errors occured",
@@ -36,9 +36,9 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 
-    public static Error Conflict(params IReason[] reasons)
+    public static Error Conflict(params ErrorReason[] reasons)
     {
-        return new(
+        return new Error(
             "Conflict",
             "A conflict occured",
             "There has been a conflict ... cannot continue operation",
@@ -47,9 +47,9 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 
-    public static Error NotFound(params IReason[] reasons)
+    public static Error NotFound(params ErrorReason[] reasons)
     {
-        return new(
+        return new Error(
             "NotFound",
             "Resource not found",
             "Cannot allocate given resource",
@@ -58,9 +58,9 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 
-    public void AddReason(IReason reason)
+    public void AddReason(ErrorReason errorReason)
     {
-        _reasons.Add(reason);
+        _reasons.Add(errorReason);
     }
 
     public void AddReason(
@@ -70,7 +70,7 @@ public sealed record Error // One error can have 1...N reasons
     )
     {
         _reasons.Add(
-            new Reason(
+            new ErrorReason(
                 code,
                 description,
                 field)
@@ -78,15 +78,8 @@ public sealed record Error // One error can have 1...N reasons
     }
 }
 
-public interface IReason
-{
-    public string Code { get; }
-    public string Description { get; }
-    public string? Field { get; }
-};
-
-public record Reason(
+public record ErrorReason(
     string Code,
     string Description,
     string? Field = null
-) : IReason;
+);

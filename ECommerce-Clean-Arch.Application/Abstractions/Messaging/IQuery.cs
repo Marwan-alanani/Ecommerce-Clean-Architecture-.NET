@@ -1,10 +1,9 @@
-using ECommerce_Clean_Arch.Domain.Common;
 using MediatR;
+using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Abstractions.Messaging
+namespace ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+
+public interface IQuery<T> : IRequest<Result<T>>
+    where T : class
 {
-    public interface IQuery<T> : IRequest<Result<T>>
-        where T : class
-    {
-    }
 }

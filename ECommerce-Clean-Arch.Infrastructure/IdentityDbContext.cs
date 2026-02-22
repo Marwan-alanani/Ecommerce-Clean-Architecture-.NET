@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Common;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
@@ -18,7 +17,7 @@ public class IdentityDbContext(DbContextOptions<IdentityDbContext> options) :
     }
 
     public override Task<int> SaveChangesAsync(
-        CancellationToken cancellationToken = new CancellationToken()
+        CancellationToken cancellationToken = new()
     )
     {
         var now = DateTime.UtcNow;

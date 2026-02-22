@@ -23,14 +23,14 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         // TODO : Add user role in the jwtToken
         List<Claim> claims =
         [
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString())
         ];
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SecretKey));
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken(
-            issuer: _jwtConfig.Issuer,
-            audience: _jwtConfig.Audience,
+            _jwtConfig.Issuer,
+            _jwtConfig.Audience,
             expires: DateTime.UtcNow.AddMinutes(_jwtConfig.ExpiryInMinutes),
             claims: claims,
             signingCredentials: credentials

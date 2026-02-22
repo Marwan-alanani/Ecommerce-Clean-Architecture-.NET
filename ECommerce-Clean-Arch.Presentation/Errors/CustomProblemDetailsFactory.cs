@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using ECommerce_Clean_Arch.Domain.Errors.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -9,8 +8,8 @@ namespace ECommerce_Clean_Arch.Presentation.Errors;
 
 public class CustomProblemDetailsFactory : ProblemDetailsFactory
 {
-    private readonly ApiBehaviorOptions _options;
     private readonly Action<ProblemDetailsContext>? _configure;
+    private readonly ApiBehaviorOptions _options;
 
     public CustomProblemDetailsFactory(
         IOptions<ApiBehaviorOptions> options,
@@ -38,7 +37,7 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
             Title = title,
             Type = type,
             Detail = detail,
-            Instance = instance,
+            Instance = instance
         };
 
         ApplyProblemDetailsDefaults(
@@ -68,14 +67,12 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
             Status = statusCode,
             Type = type,
             Detail = detail,
-            Instance = instance,
+            Instance = instance
         };
 
         if (title != null)
-        {
             // For validation problem details, don't overwrite the default title with null.
             problemDetails.Title = title;
-        }
 
         ApplyProblemDetailsDefaults(
             httpContext,
@@ -100,22 +97,17 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
         }
 
         var traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
-        if (traceId != null)
-        {
-            problemDetails.Extensions["traceId"] = traceId;
-        }
+        if (traceId != null) problemDetails.Extensions["traceId"] = traceId;
 
         if (httpContext?.Items["code"] is not null)
-        {
             problemDetails.Extensions.Add("code", httpContext?.Items["code"]);
-        }
 
         if (httpContext?.Items["error"] is Error error)
-        {
             problemDetails.Extensions.Add("reasons", error.Reasons);
-        }
 
 
-        _configure?.Invoke(new() { HttpContext = httpContext!, ProblemDetails = problemDetails });
+        _configure?.Invoke(
+            new ProblemDetailsContext
+                { HttpContext = httpContext!, ProblemDetails = problemDetails });
     }
 }

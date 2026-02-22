@@ -1,16 +1,13 @@
-using ECommerce_Clean_Arch.Domain.Errors.Common;
-using ECommerce_Clean_Arch.Domain.Users;
+using SharedKernel.Errors;
 
 namespace ECommerce_Clean_Arch.Domain.Errors.Users;
 
-public record UserEmailFound : IReason
+public record UserEmailFound : ErrorReason
 {
-    public string Code => ErrorCodes.UserEmailFound;
-    public string Description { get; }
-    public string? Field => nameof(User.Email);
-
-    public UserEmailFound(string email)
+    public UserEmailFound(string email) : base(
+        ErrorCodes.UserEmailFound,
+        $"User with the email: {email} was found!",
+        nameof(email))
     {
-        Description = $"User with the given email: {email} already exists";
     }
 }
