@@ -1,7 +1,10 @@
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
+using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
+using ECommerce_Clean_Arch.Infrastructure.Persistence;
+using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
 using ECommerce_Clean_Arch.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +41,13 @@ public static class DependencyInjection
     {
         services.AddDbContext<IdentityDbContext>(options =>
         {
-            var connectionString = config.GetConnectionString("IdentityDb");
+            var connectionString = config.GetConnectionString(IdentityDbContext.ConnectionStringName);
+            options.UseNpgsql(connectionString);
+        });
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+        {
+            var connectionString = config.GetConnectionString(ApplicationDbContext.ConnectionStringName);
             options.UseNpgsql(connectionString);
         });
 
@@ -54,6 +63,8 @@ public static class DependencyInjection
             })
             .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<IdentityDbContext>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;
     }
 

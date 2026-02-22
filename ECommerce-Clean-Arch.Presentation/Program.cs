@@ -35,10 +35,10 @@ internal class Program
             {
                 var identityDbContext =
                     scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
-                // var applicationDbContext = scope.ServiceProvider
-                //     .GetRequiredService<ApplicationDbContext>();
+                var applicationDbContext = scope.ServiceProvider
+                    .GetRequiredService<ApplicationDbContext>();
                 identityDbContext.Database.Migrate();
-                // applicationDbContext.Database.Migrate();
+                applicationDbContext.Database.Migrate();
             }
 
             app.UseSwagger();

@@ -10,6 +10,8 @@ namespace ECommerce_Clean_Arch.Infrastructure;
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options) :
     IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
+
+    public const string ConnectionStringName = "IdentityDb";
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new UserConfigurations());

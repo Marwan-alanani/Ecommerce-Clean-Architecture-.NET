@@ -12,7 +12,7 @@ public class ExceptionController : ApiController
         _logger = logger;
     }
 
-    [Route("/error")]
+    [HttpGet("/error")]
     public IActionResult Handle()
     {
         var exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
