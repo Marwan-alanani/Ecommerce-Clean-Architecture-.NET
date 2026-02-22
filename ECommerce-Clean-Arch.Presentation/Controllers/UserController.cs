@@ -30,7 +30,18 @@ public class UserController : ApiController
 
         var result = await _mediator.Send(command, cancellationToken);
         if (result.IsSuccess)
-            return Ok(result.Value);
+        {
+            var authResponse = new AuthenticationResponse(
+                result.Value.User.Id,
+                result.Value.User.UserName!,
+                result.Value.User.Email!,
+                result.Value.User.FirstName,
+                result.Value.User.LastName,
+                result.Value.Token);
+
+            return Ok(authResponse);
+        }
+
         return Problem(result.Error);
     }
 }

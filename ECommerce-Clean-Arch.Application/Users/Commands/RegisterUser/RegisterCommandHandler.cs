@@ -1,5 +1,6 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication;
+using ECommerce_Clean_Arch.Application.Users.Common;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using SharedKernel.Errors;
@@ -44,11 +45,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, UserResul
 
         var token = _jwtTokenGenerator.Generate(user);
         return new UserResult(
-            user.Id,
-            user.UserName!,
-            user.Email!,
-            user.FirstName,
-            user.LastName,
+            user,
             token
         );
     }

@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Users.Common;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 

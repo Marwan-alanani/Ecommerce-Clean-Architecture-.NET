@@ -1,6 +1,6 @@
-namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
+namespace ECommerce_Clean_Arch.Contracts.Users;
 
-public record UserResult(
+public record AuthenticationResponse(
     Guid Id,
     string Username,
     string Email,
