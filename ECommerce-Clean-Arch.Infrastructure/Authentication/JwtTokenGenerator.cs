@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ECommerce_Clean_Arch.Application.Authentication;
+using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -12,9 +13,11 @@ namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtConfig _jwtConfig;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public JwtTokenGenerator(IOptions<JwtConfig> jwtConfig)
+    public JwtTokenGenerator(IOptions<JwtConfig> jwtConfig, IDateTimeProvider dateTimeProvider)
     {
+        _dateTimeProvider = dateTimeProvider;
         _jwtConfig = jwtConfig.Value;
     }
 
@@ -31,7 +34,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var token = new JwtSecurityToken(
             _jwtConfig.Issuer,
             _jwtConfig.Audience,
-            expires: DateTime.UtcNow.AddMinutes(_jwtConfig.ExpiryInMinutes),
+            expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtConfig.ExpiryInMinutes),
             claims: claims,
             signingCredentials: credentials
         );

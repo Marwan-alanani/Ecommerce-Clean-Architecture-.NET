@@ -1,3 +1,6 @@
+using ECommerce_Clean_Arch.Application.Common.Behaviors;
+using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ECommerce_Clean_Arch.Application;
@@ -10,6 +13,8 @@ public static class DependencyInjection
         {
             cfg.RegisterServicesFromAssembly(AssemblyReference.Assembly);
         });
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         return services;
     }
 }

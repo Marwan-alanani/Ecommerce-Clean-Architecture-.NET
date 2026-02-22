@@ -21,7 +21,7 @@ public class UserController : ApiController
         CancellationToken cancellationToken
     )
     {
-        var command = new RegisterUserCommand(
+        var command = new RegisterCommand(
             request.Username,
             request.Email,
             request.Password,

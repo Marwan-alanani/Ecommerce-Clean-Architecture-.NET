@@ -1,6 +1,8 @@
 using ECommerce_Clean_Arch.Application.Authentication;
+using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
+using ECommerce_Clean_Arch.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +20,14 @@ public static class DependencyInjection
     {
         services
             .AddPersistence(config)
-            .AddAuthentication(config);
+            .AddAuthentication(config)
+            .AddServices();
+        return services;
+    }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         return services;
     }
 

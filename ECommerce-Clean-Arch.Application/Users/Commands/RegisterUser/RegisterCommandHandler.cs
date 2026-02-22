@@ -7,12 +7,12 @@ using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Users.Commands.RegisterUser;
 
-public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, UserResult>
+public class RegisterCommandHandler : ICommandHandler<RegisterCommand, UserResult>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly UserManager<User> _userManager;
 
-    public RegisterUserCommandHandler(
+    public RegisterCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
         UserManager<User> userManager
     )
@@ -22,7 +22,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, U
     }
 
     public async Task<Result<UserResult>> Handle(
-        RegisterUserCommand request,
+        RegisterCommand request,
         CancellationToken cancellationToken
     )
     {

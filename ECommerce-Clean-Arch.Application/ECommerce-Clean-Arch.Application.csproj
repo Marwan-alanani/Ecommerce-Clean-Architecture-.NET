@@ -1,15 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\ECommerce-Clean-Arch.Domain\ECommerce-Clean-Arch.Domain.csproj"/>
+        <ProjectReference Include="..\ECommerce-Clean-Arch.Domain\ECommerce-Clean-Arch.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="14.0.0"/>
+        <PackageReference Include="FluentValidation" Version="12.1.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+        <PackageReference Include="MediatR" Version="14.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Abstractions\"/>
+        <Folder Include="Abstractions\" />
+        <Folder Include="Common\" />
     </ItemGroup>
 
     <PropertyGroup>
