@@ -24,7 +24,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ECommerce-Clean-Arch.Application\ECommerce-Clean-Arch.Application.csproj"/>
-        <ProjectReference Include="..\ECommerce-Clean-Arch.Contracts\ECommerce-Clean-Arch.Contracts.csproj"/>
         <ProjectReference Include="..\ECommerce-Clean-Arch.Infrastructure\ECommerce-Clean-Arch.Infrastructure.csproj"/>
     </ItemGroup>
 

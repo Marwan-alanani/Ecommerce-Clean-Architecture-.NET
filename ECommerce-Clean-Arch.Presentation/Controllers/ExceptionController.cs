@@ -12,13 +12,15 @@ public class ExceptionController : ApiController
         _logger = logger;
     }
 
-    [HttpGet("/error")]
+    [HttpGet("/error"), HttpPost("/error"), HttpPut("/error"), HttpDelete("/error")]
     public IActionResult Handle()
     {
         var exceptionDetails = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         var exception = exceptionDetails?.Error;
-        _logger.LogError(exception, exception.Message);
+        _logger.LogError(exception, exception?.Message);
 
-        return Problem(title: exception?.Message, statusCode: 500);
+        return Problem(
+            detail: exception?.Message,
+            statusCode: 500);
     }
 }

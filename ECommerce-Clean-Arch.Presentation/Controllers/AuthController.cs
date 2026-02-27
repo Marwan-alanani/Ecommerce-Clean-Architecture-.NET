@@ -1,6 +1,5 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Queries;
-using ECommerce_Clean_Arch.Contracts.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,50 +17,26 @@ public class AuthController : ApiController
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(
-        [FromBody] RegisterUserRequest request,
+        [FromBody] RegisterCommand command,
         CancellationToken cancellationToken
     )
     {
-        var command = new RegisterCommand(
-            request.Username,
-            request.Email,
-            request.Password,
-            request.FirstName,
-            request.LastName);
-
         var result = await _mediator.Send(command, cancellationToken);
         if (result.IsSuccess)
         {
-            var authResponse = new AuthenticationResponse(
-                result.Value.User.Id,
-                result.Value.User.UserName!,
-                result.Value.User.Email!,
-                result.Value.User.FirstName,
-                result.Value.User.LastName,
-                result.Value.Token);
-
-            return Ok(authResponse);
+            return Ok(result.Value);
         }
 
         return Problem(result.Error);
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody]LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginQuery query)
     {
-        var query = new LoginQuery(request.Email, request.Password);
         var result = await _mediator.Send(query);
         if (result.IsSuccess)
         {
-            var authResponse = new AuthenticationResponse(
-                result.Value.User.Id,
-                result.Value.User.UserName!,
-                result.Value.User.Email!,
-                result.Value.User.FirstName,
-                result.Value.User.LastName,
-                result.Value.Token);
-
-            return Ok(authResponse);
+            return Ok(result.Value);
         }
 
         return Problem(result.Error);

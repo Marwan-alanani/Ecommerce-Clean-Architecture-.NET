@@ -1,43 +1,54 @@
 using ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
-using ECommerce_Clean_Arch.Contracts.Products;
-using ECommerce_Clean_Arch.Domain.Products;
+using ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
+using ECommerce_Clean_Arch.Application.Products.Queries.GetProductById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
-[Route("/products")]
+[Route("products")]
 public class ProductController : ApiController
 {
-    private readonly ISender _mediator;
+    private readonly ISender _sender;
 
-    public ProductController(ISender mediator)
+    public ProductController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
     {
-        var command = new CreateProductCommand(
-            request.Name,
-            request.Description,
-            new Money(Enum.Parse<Currency>(request.Currency), request.Amount),
-            request.PictureUrl);
-        var result = await _mediator.Send(command);
+        var result = await _sender.Send(command);
+
+        if (result.IsSuccess)
+            return Created($"/products/{result.Value}", result.Value);
+
+        return Problem(result.Error);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get([FromRoute] Guid id)
+    {
+        var query = new GetProductByIdQuery(id);
+        var result = await _sender.Send(query);
         if (result.IsSuccess)
         {
-            var product = result.Value;
-            var response = new ProductResponse(
-                product.Name,
-                product.Description,
-                product.Price.Amount,
-                product.Price.Currency.ToString(),
-                product.CreatedAt,
-                product.UpdatedAt);
-            return Ok(response);
+            return Ok(result.Value);
         }
-        return Problem();
+
+        return Problem(result.Error);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQuery query)
+    {
+        var result = await _sender.Send(query);
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return Problem(result.Error);
     }
 }

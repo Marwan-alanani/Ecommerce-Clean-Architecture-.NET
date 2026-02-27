@@ -1,3 +1,4 @@
+using AutoMapper;
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
@@ -13,11 +14,17 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IMapper _mapper;
 
-    public LoginQueryHandler(UserManager<User> userManager, IJwtTokenGenerator jwtTokenGenerator)
+    public LoginQueryHandler(
+        UserManager<User> userManager,
+        IJwtTokenGenerator jwtTokenGenerator,
+        IMapper mapper
+    )
     {
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _mapper = mapper;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
@@ -42,6 +49,6 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
         }
 
         var token = _jwtTokenGenerator.Generate(user);
-        return new AuthenticationResult(user, token);
+        return _mapper.Map<AuthenticationResult>((user, token));
     }
 }

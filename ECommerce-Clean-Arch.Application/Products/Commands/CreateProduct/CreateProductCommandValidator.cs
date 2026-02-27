@@ -1,0 +1,26 @@
+using FluentValidation;
+using SharedKernel.Models;
+
+namespace ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
+
+public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+{
+    public CreateProductCommandValidator()
+    {
+        RuleFor(x => x.Price)
+            .GreaterThan(0)
+            .WithMessage("Price must be greater than 0")
+            .NotEmpty();
+
+        RuleFor(x => x.Currency)
+            .IsEnumName(typeof(Currency))
+            .NotEmpty();
+
+        RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
+        RuleFor(x => x.Description);
+        RuleFor(x => x.PictureUrl)
+            .NotEmpty()
+            .WithMessage("PictureUrl is required");
+        // TODO: validator that the picture url is an actual picture url
+    }
+}

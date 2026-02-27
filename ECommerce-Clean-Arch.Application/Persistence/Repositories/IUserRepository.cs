@@ -1,7 +1,7 @@
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Domain.Users.ValueObjects;
 
-namespace ECommerce_Clean_Arch.Application.Persistence;
+namespace ECommerce_Clean_Arch.Application.Persistence.Repositories;
 
 public interface IUserRepository
 {

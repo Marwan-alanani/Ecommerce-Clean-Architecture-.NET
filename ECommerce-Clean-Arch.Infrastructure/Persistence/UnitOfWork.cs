@@ -22,9 +22,9 @@ public class UnitOfWork : IUnitOfWork
             .ChangeTracker
             .Entries<IAuditable>();
 
+        var now = _dateTimeProvider.UtcNow;
         foreach (var entry in entries)
         {
-            var now = _dateTimeProvider.UtcNow;
             if (entry.State == EntityState.Added)
             {
                 entry.Entity.CreatedAt = now;

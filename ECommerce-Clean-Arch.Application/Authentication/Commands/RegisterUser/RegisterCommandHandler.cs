@@ -1,3 +1,4 @@
+using AutoMapper;
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
@@ -11,15 +12,18 @@ namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 public class RegisterCommandHandler : ICommandHandler<RegisterCommand, AuthenticationResult>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
 
     public RegisterCommandHandler(
         IJwtTokenGenerator jwtTokenGenerator,
-        UserManager<User> userManager
+        UserManager<User> userManager,
+        IMapper mapper
     )
     {
         _jwtTokenGenerator = jwtTokenGenerator;
         _userManager = userManager;
+        _mapper = mapper;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
@@ -44,9 +48,6 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Authentic
         }
 
         var token = _jwtTokenGenerator.Generate(user);
-        return new AuthenticationResult(
-            user,
-            token
-        );
+        return _mapper.Map<AuthenticationResult>((user, token));
     }
 }

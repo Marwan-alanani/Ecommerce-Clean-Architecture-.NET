@@ -1,12 +1,11 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Domain.Products;
-using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
 
 public record CreateProductCommand(
     string Name,
     string Description,
-    Money Price,
+    decimal Price,
+    string Currency,
     string PictureUrl
-) : ICommand<Product>;
+) : ICommand<Guid>;

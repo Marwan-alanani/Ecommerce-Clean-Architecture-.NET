@@ -24,9 +24,12 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
     {
         // validate
         var validationResults = await Task.WhenAll(
-            _validators.Select(validator => validator.ValidateAsync(request, cancellationToken)));
+            _validators.Select(validator =>
+                validator.ValidateAsync(new ValidationContext<TRequest>(request), cancellationToken)
+            )
+        );
         var validationErrors = validationResults
-            .Where(validationResult => !validationResult.IsValid)
+            .Where(validationResult => validationResult.Errors.Any())
             .SelectMany(validationResult => validationResult.Errors)
             .ToList();
 
@@ -43,7 +46,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
                 );
             }
 
-            return (dynamic) error;
+            return (dynamic)error;
         }
 
 

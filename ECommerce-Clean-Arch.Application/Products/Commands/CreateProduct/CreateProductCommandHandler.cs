@@ -1,11 +1,15 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Persistence;
+using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products;
+using SharedKernel.Errors;
+using SharedKernel.Models;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
 
-public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Product>
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Guid>
 {
     private readonly IProductRepository _productRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -16,18 +20,27 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Product>> Handle(
+    public async Task<Result<Guid>> Handle(
         CreateProductCommand request,
         CancellationToken cancellationToken
     )
     {
+        if (await _productRepository.NameExists(request.Name, cancellationToken))
+        {
+            return Error.Conflict(new ProductNameExists(request.Name));
+        }
+
+        var price = new Money(Enum.Parse<Currency>(request.Currency), request.Price);
         var product = Product.Create(
             request.Name,
             request.Description,
-            request.Price,
+            price,
             request.PictureUrl);
-        await _productRepository.AddAsync(product,cancellationToken);
+
+
+        await _productRepository.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        return product;
+
+        return product.Id.Value;
     }
 }

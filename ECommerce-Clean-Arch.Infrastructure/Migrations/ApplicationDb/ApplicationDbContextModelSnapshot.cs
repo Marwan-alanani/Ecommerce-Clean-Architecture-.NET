@@ -32,7 +32,6 @@ namespace ECommerce_Clean_Arch.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -67,7 +66,10 @@ namespace ECommerce_Clean_Arch.Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Products");
                 });
 #pragma warning restore 612, 618
         }

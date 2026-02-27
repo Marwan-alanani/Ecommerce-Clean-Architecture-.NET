@@ -8,18 +8,18 @@ namespace ECommerce_Clean_Arch.Domain.Products;
 public class Product : AggregateRoot<ProductId>, IAuditable
 {
     public string Name { get; private set; } = null!;
-    public string Description { get; private set; } = null!;
+    public string? Description { get; private set; }
     public Money Price { get; private set; }
     public string PictureUrl { get; private set; } = null!;
-    public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public bool IsActive { get; private set; }
 
 
     private Product(
         ProductId id,
         string name,
-        string description,
+        string? description,
         Money price,
         string pictureUrl,
         bool isActive

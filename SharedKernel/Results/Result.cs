@@ -38,7 +38,6 @@ public class Result : IResult
 }
 
 public class Result<T> : Result
-    where T : class
 {
     private readonly T? _value;
 
@@ -61,7 +60,7 @@ public class Result<T> : Result
     {
         if (error == null) throw new ArgumentNullException(nameof(error));
         return new Result<T>(
-            null,
+            default,
             error,
             false
         );
