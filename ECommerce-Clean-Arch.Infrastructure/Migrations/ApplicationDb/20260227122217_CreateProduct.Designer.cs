@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using ECommerce_Clean_Arch.Infrastructure;
+using ECommerce_Clean_Arch.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;

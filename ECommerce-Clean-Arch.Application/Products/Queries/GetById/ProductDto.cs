@@ -2,7 +2,7 @@ using AutoMapper;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
-namespace ECommerce_Clean_Arch.Application.Products.Queries.GetProductById;
+namespace ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 
 public record ProductDto
 {

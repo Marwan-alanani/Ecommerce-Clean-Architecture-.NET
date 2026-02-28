@@ -1,8 +1,8 @@
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
-public enum ProductSoringOptions
+public enum ProductSortingOptions
 {
-    Name,
     CreatedAt,
+    Name,
     Price,
 }

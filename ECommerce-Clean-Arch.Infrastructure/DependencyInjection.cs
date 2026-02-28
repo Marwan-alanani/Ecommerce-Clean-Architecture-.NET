@@ -4,11 +4,14 @@ using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
+using ECommerce_Clean_Arch.Infrastructure.Data;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
+using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
 using ECommerce_Clean_Arch.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -40,15 +43,18 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
-        services.AddDbContext<IdentityDbContext>(options =>
+        services.AddDbContext<IdentityDbContext>((sp, options) =>
         {
             var connectionString = config.GetConnectionString(IdentityDbContext.ConnectionStringName);
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             options.UseNpgsql(connectionString);
         });
 
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddScoped<ISaveChangesInterceptor, AuditInterceptor>();
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             var connectionString = config.GetConnectionString(ApplicationDbContext.ConnectionStringName);
+            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             options.UseNpgsql(connectionString);
         });
 

@@ -6,11 +6,11 @@ using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Products.Queries.GetProductById;
+namespace ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 
-public record GetProductByIdQuery(Guid Id) : IQuery<ProductDto>;
+public record GetProductById(Guid Id) : IQuery<ProductDto>;
 
-public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, ProductDto>
+public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductDto>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -22,7 +22,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
     }
 
     public async Task<Result<ProductDto>> Handle(
-        GetProductByIdQuery request,
+        GetProductById request,
         CancellationToken cancellationToken
     )
     {

@@ -58,6 +58,24 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 
+    public static Error InternalServerError(Exception exception)
+    {
+        var error = new Error(
+            "InternalServerError",
+            "An error has occured",
+            "One or more errors occured",
+            ErrorType.InternalServerError
+        );
+        error.AddReason(new ErrorReason(exception));
+        var innerException = exception.InnerException;
+        while (innerException is not null)
+        {
+            error.AddReason(new ErrorReason(innerException));
+            innerException = innerException.InnerException;
+        }
+        return error;
+    }
+
     public void AddReason(ErrorReason errorReason)
     {
         _reasons.Add(errorReason);
@@ -77,9 +95,3 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 }
-
-public record ErrorReason(
-    string Code,
-    string Description,
-    string? Field = null
-);

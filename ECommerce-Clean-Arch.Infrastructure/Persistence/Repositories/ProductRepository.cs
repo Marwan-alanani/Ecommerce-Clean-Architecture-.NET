@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+using ECommerce_Clean_Arch.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;

@@ -7,14 +7,18 @@ namespace ECommerce_Clean_Arch.Domain.Products;
 
 public class Product : AggregateRoot<ProductId>, IAuditable
 {
-    public string Name { get; private set; } = null!;
-    public string? Description { get; private set; }
-    public Money Price { get; private set; }
-    public string PictureUrl { get; private set; } = null!;
+    public string Name { get; set; } = null!;
+    public string? Description { get; set; }
+    public Money Price { get; set; }
+    public string PictureUrl { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public bool IsActive { get; private set; }
+    public bool IsActive { get; set; }
 
+
+    private Product()
+    {
+    }
 
     private Product(
         ProductId id,
@@ -32,10 +36,6 @@ public class Product : AggregateRoot<ProductId>, IAuditable
         IsActive = isActive;
     }
 
-    protected Product(bool isActive)
-    {
-        IsActive = isActive;
-    }
 
     public static Product Create(
         string name,

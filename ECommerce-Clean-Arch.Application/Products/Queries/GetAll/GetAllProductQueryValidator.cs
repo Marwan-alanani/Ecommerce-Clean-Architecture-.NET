@@ -8,11 +8,9 @@ public class GetAllProductsQueryValidator : AbstractValidator<GetAllProductsQuer
     public GetAllProductsQueryValidator()
     {
         RuleFor(query => query.SortBy)
-            .IsEnumName(typeof(ProductSoringOptions), false)
-            .When(query => query.SortBy is not null);
+            .IsEnumName(typeof(ProductSortingOptions), false);
 
         RuleFor(query => query.Direction)
-            .IsEnumName(typeof(SortDirection), false)
-            .When(query => query.Direction is not null);
+            .IsEnumName(typeof(SortDirection), false);
     }
 }

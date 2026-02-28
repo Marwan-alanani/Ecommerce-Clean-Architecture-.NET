@@ -4,19 +4,28 @@ using AutoMapper.QueryableExtensions;
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Products.Queries.GetProductById;
 using ECommerce_Clean_Arch.Domain.Products;
 using SharedKernel.Results;
 using ECommerce_Clean_Arch.Application.Common.Models;
+using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
-public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
+public record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
+{
+    public int PageNo { get; init; } = 1;
+    public int PageSize { get; init; } = 5;
+    public string? Search { get; init; }
+    public string? SortBy { get; init; } = "createdAt";
+    public string? Direction { get; init; } = "desc";
+}
+
+public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
 
-    public GetAllProductsQueryHandler(
+    public GetAllProducts(
         IProductRepository productRepository,
         IMapper mapper,
         IApplicationDbContext context
@@ -31,23 +40,22 @@ public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, Pag
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Product> products = _context.Products;
+        IQueryable<Product> products = _context.Products.Where(p => p.IsActive);
         if (request.Search is not null)
         {
             products = products.Where(p => p.Name.ToLower().Contains(request.Search.ToLower()));
         }
 
         Expression<Func<Product, object>> sortBy =
-            Enum.Parse<ProductSoringOptions>(request.SortBy!, true) switch
+            Enum.Parse<ProductSortingOptions>(request.SortBy!, true) switch
             {
-                ProductSoringOptions.Price => product => product.Price,
-                ProductSoringOptions.CreatedAt => product => product.CreatedAt,
-                ProductSoringOptions.Name => product => product.Name,
+                ProductSortingOptions.Price => product => product.Price.Amount,
+                ProductSortingOptions.CreatedAt => product => product.CreatedAt,
+                ProductSortingOptions.Name => product => product.Name,
                 _ => product => product.CreatedAt,
             };
 
-        var dir = Enum.Parse<SortDirection>(request.Direction!, true);
-        products = dir == SortDirection.Asc
+        products = Enum.Parse<SortDirection>(request.Direction!, true) == SortDirection.Asc
             ? products.OrderBy(sortBy)
             : products.OrderByDescending(sortBy);
 

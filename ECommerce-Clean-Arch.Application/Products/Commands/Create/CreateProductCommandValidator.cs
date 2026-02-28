@@ -1,19 +1,19 @@
 using FluentValidation;
 using SharedKernel.Models;
 
-namespace ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
+namespace ECommerce_Clean_Arch.Application.Products.Commands.Create;
 
 public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
     public CreateProductCommandValidator()
     {
-        RuleFor(x => x.Price)
+        RuleFor(x => x.Price.Amount)
             .GreaterThan(0)
             .WithMessage("Price must be greater than 0")
             .NotEmpty();
 
-        RuleFor(x => x.Currency)
-            .IsEnumName(typeof(Currency))
+        RuleFor(x => x.Price.Currency)
+            .IsEnumName(typeof(Currency), false)
             .NotEmpty();
 
         RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");

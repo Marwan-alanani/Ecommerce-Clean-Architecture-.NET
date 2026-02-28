@@ -1,4 +1,6 @@
+using AutoMapper;
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
@@ -7,17 +9,30 @@ using SharedKernel.Errors;
 using SharedKernel.Models;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Products.Commands.CreateProduct;
+namespace ECommerce_Clean_Arch.Application.Products.Commands.Create;
 
-public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, Guid>
+public record CreateProductCommand(
+    string Name,
+    string Description,
+    MoneyDto Price,
+    string PictureUrl
+) : ICommand<Guid>;
+
+public class CreateProduct : ICommandHandler<CreateProductCommand, Guid>
 {
     private readonly IProductRepository _productRepository;
+    private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateProductCommandHandler(IProductRepository productRepository, IUnitOfWork unitOfWork)
+    public CreateProduct(
+        IProductRepository productRepository,
+        IUnitOfWork unitOfWork,
+        IMapper mapper
+    )
     {
         _productRepository = productRepository;
         _unitOfWork = unitOfWork;
+        _mapper = mapper;
     }
 
     public async Task<Result<Guid>> Handle(
@@ -30,12 +45,13 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
             return Error.Conflict(new ProductNameExists(request.Name));
         }
 
-        var price = new Money(Enum.Parse<Currency>(request.Currency), request.Price);
+        var price = _mapper.Map<Money>(request.Price);
         var product = Product.Create(
             request.Name,
             request.Description,
             price,
-            request.PictureUrl);
+            request.PictureUrl
+        );
 
 
         await _productRepository.AddAsync(product, cancellationToken);

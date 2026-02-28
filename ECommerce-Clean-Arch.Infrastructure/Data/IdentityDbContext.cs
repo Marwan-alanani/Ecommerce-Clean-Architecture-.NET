@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce_Clean_Arch.Infrastructure;
+namespace ECommerce_Clean_Arch.Infrastructure.Data;
 
 public class IdentityDbContext(DbContextOptions<IdentityDbContext> options) :
     IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)

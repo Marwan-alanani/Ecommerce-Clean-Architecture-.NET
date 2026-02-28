@@ -3,7 +3,7 @@ using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECommerce_Clean_Arch.Infrastructure;
+namespace ECommerce_Clean_Arch.Infrastructure.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
     DbContext(options), IApplicationDbContext
