@@ -1,13 +1,12 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Products;
 using SharedKernel.Results;
 using ECommerce_Clean_Arch.Application.Common.Models;
+using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
@@ -22,17 +21,16 @@ public record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
 
 public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
 
     public GetAllProducts(
-        IProductRepository productRepository,
         IMapper mapper,
-        IApplicationDbContext context
+        IProductRepository productRepository
     )
     {
         _mapper = mapper;
-        _context = context;
+        _productRepository = productRepository;
     }
 
     public async Task<Result<PaginatedList<ProductDto>>> Handle(
@@ -40,24 +38,35 @@ public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<P
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Product> products = _context.Products.Where(p => p.IsActive);
+        IQueryable<Product> products = _productRepository.Products.Where(p => p.IsActive);
         if (request.Search is not null)
         {
-            products = products.Where(p => p.Name.ToLower().Contains(request.Search.ToLower()));
+            var s = request.Search.Trim();
+            products = products.Where(p => EF.Functions.Like(p.Name, $"%{s}%"));
         }
 
-        Expression<Func<Product, object>> sortBy =
-            Enum.Parse<ProductSortingOptions>(request.SortBy!, true) switch
-            {
-                ProductSortingOptions.Price => product => product.Price.Amount,
-                ProductSortingOptions.CreatedAt => product => product.CreatedAt,
-                ProductSortingOptions.Name => product => product.Name,
-                _ => product => product.CreatedAt,
-            };
+        ProductSortingOptions? sortBy = null;
+        SortDirection? direction = null;
 
-        products = Enum.Parse<SortDirection>(request.Direction!, true) == SortDirection.Asc
-            ? products.OrderBy(sortBy)
-            : products.OrderByDescending(sortBy);
+        if (request.SortBy is not null)
+            sortBy = Enum.Parse<ProductSortingOptions>(request.SortBy.Trim(), true);
+
+        if (request.Direction is not null)
+            direction = Enum.Parse<SortDirection>(request.Direction.Trim(), true);
+
+        products = (sortBy, direction) switch
+        {
+            (ProductSortingOptions.Price, SortDirection.Asc) => products.OrderBy(p => p.Price.Amount),
+
+            (ProductSortingOptions.Price, SortDirection.Desc) => products
+                .OrderByDescending(p => p.Price.Amount),
+
+            (ProductSortingOptions.Name, SortDirection.Asc) => products.OrderBy(p => p.Name),
+
+            (ProductSortingOptions.Name, SortDirection.Desc) => products.OrderByDescending(p => p.Name),
+            (_, SortDirection.Asc) => products.OrderBy(p => p.CreatedAt),
+            _ => products.OrderByDescending(p => p.CreatedAt)
+        };
 
         var productDtoPage = await products
             .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)

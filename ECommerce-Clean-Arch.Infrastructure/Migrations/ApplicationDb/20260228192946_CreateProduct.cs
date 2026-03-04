@@ -12,7 +12,7 @@ namespace ECommerce_Clean_Arch.Infrastructure.Migrations.ApplicationDb
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Product",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -27,12 +27,12 @@ namespace ECommerce_Clean_Arch.Infrastructure.Migrations.ApplicationDb
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Product", x => x.Id);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_Name",
-                table: "Products",
+                name: "IX_Product_Name",
+                table: "Product",
                 column: "Name",
                 unique: true);
         }
@@ -41,7 +41,7 @@ namespace ECommerce_Clean_Arch.Infrastructure.Migrations.ApplicationDb
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Product");
         }
     }
 }

@@ -7,10 +7,17 @@ public class GetAllProductsQueryValidator : AbstractValidator<GetAllProductsQuer
 {
     public GetAllProductsQueryValidator()
     {
-        RuleFor(query => query.SortBy)
-            .IsEnumName(typeof(ProductSortingOptions), false);
+        RuleFor(query => query.PageSize).InclusiveBetween(1, 100);
 
-        RuleFor(query => query.Direction)
-            .IsEnumName(typeof(SortDirection), false);
+        RuleFor(query => query.PageNo).GreaterThan(0);
+
+
+        RuleFor(query => query.SortBy!.Trim())
+            .IsEnumName(typeof(ProductSortingOptions), false)
+            .When(query => query.SortBy is not null);
+
+        RuleFor(query => query.Direction!.Trim())
+            .IsEnumName(typeof(SortDirection), false)
+            .When(query => query.Direction is not null);
     }
 }

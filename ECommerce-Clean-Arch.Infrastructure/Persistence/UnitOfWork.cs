@@ -1,5 +1,4 @@
 using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Infrastructure.Data;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence;
 

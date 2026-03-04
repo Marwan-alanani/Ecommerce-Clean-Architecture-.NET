@@ -4,7 +4,6 @@ using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
-using ECommerce_Clean_Arch.Infrastructure.Data;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
@@ -51,6 +50,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ISaveChangesInterceptor, AuditInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
             var connectionString = config.GetConnectionString(ApplicationDbContext.ConnectionStringName);
@@ -72,7 +72,6 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<IdentityDbContext>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
         return services;
     }
 

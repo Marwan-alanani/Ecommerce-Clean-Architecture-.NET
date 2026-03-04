@@ -1,7 +1,7 @@
 using DotNetEnv;
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Infrastructure;
-using ECommerce_Clean_Arch.Infrastructure.Data;
+using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Presentation.Errors;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;

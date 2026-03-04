@@ -22,7 +22,7 @@ public class PaginatedList<T>
     public IReadOnlyCollection<T> Items { get; }
     public int TotalCount { get; }
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-    public bool HasNext => PageNumber + 1 < TotalPages;
+    public bool HasNext => PageNumber < TotalPages;
     public bool HasPrevious => PageNumber > 1;
 
     public static async Task<PaginatedList<T>> CreateAsync(

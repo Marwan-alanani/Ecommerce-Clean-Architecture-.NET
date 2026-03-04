@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace ECommerce_Clean_Arch.Application.Common.Models;
 
 public static class MappingExtensions
@@ -13,7 +11,7 @@ public static class MappingExtensions
         where TDestination : class =>
         PaginatedList<TDestination>
             .CreateAsync(
-                queryable.AsNoTracking(),
+                queryable,
                 pageNo,
                 pageSize,
                 cancellationToken);

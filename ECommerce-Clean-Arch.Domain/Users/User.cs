@@ -1,10 +1,14 @@
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+using ECommerce_Clean_Arch.Domain.Common.Models;
+using ECommerce_Clean_Arch.Domain.Users.Events;
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce_Clean_Arch.Domain.Users;
 
-public sealed class User : IdentityUser<Guid>, IAuditable
+public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
 {
+    private List<IDomainEvent> _domainEvents = new();
+
     private User()
     {
     }
@@ -22,7 +26,7 @@ public sealed class User : IdentityUser<Guid>, IAuditable
         string email
     )
     {
-        return new User
+        var user = new User
         {
             Id = Guid.NewGuid(),
             UserName = userName,
@@ -30,5 +34,19 @@ public sealed class User : IdentityUser<Guid>, IAuditable
             LastName = lastName,
             Email = email
         };
+        user.AddDomainEvent(new UserRegisteredDomainEvent(email, userName));
+        return user;
+    }
+
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList();
+
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+    }
+
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
     }
 }
