@@ -4,6 +4,7 @@ using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
+using ECommerce_Clean_Arch.Infrastructure.BackgroundServices;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
@@ -34,6 +35,7 @@ public static class DependencyInjection
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddHostedService<PublishOutboxMessages>();
         return services;
     }
 

@@ -34,7 +34,7 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
             LastName = lastName,
             Email = email
         };
-        user.AddDomainEvent(new UserRegisteredDomainEvent(email, userName));
+        user.AddDomainEvent(new UserRegistered(email, userName));
         return user;
     }
 
