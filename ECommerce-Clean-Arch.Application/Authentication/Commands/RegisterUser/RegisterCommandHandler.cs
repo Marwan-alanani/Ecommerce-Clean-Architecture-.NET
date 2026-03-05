@@ -1,9 +1,12 @@
 using AutoMapper;
+
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 using ECommerce_Clean_Arch.Domain.Users;
+
 using Microsoft.AspNetCore.Identity;
+
 using SharedKernel.Errors;
 using SharedKernel.Results;
 

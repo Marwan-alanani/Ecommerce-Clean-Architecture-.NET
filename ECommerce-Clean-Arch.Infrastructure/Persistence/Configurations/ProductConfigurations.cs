@@ -1,7 +1,9 @@
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;

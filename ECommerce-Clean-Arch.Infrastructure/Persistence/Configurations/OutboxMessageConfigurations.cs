@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,5 +16,6 @@ public class OutboxMessageConfigurations : IEntityTypeConfiguration<OutboxMessag
         builder.Property(m => m.Content);
         builder.Property(m => m.OccuredOn);
         builder.Property(m => m.ProcessedOn);
+        builder.Property(m => m.AggregateVersion);
     }
 }

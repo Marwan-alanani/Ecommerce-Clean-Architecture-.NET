@@ -1,8 +1,10 @@
 using DotNetEnv;
+
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Infrastructure;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Presentation.Errors;
+
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,10 +21,7 @@ internal class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddControllers()
-            .AddJsonOptions(o =>
-                o.JsonSerializerOptions
-                    .Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
+        builder.Services.AddControllers();
 
         builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
         {
@@ -38,11 +37,8 @@ internal class Program
         {
             using (var scope = app.Services.CreateScope())
             {
-                var identityDbContext =
-                    scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
                 var applicationDbContext = scope.ServiceProvider
                     .GetRequiredService<ApplicationDbContext>();
-                identityDbContext.Database.Migrate();
                 applicationDbContext.Database.Migrate();
             }
 

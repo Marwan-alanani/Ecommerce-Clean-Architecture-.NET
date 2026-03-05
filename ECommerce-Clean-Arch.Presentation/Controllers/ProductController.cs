@@ -3,7 +3,9 @@ using ECommerce_Clean_Arch.Application.Products.Commands.Deactivate;
 using ECommerce_Clean_Arch.Application.Products.Commands.Update;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;

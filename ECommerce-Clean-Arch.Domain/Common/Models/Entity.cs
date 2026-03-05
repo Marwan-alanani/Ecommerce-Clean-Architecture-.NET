@@ -1,9 +1,8 @@
 namespace ECommerce_Clean_Arch.Domain.Common.Models;
 
-public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
+public abstract class Entity<TId> : IEquatable<Entity<TId>>
     where TId : IEquatable<TId>
 {
-    private List<IDomainEvent> _domainEvents;
     public TId Id { get; protected set; } = default!;
 
     protected Entity()
@@ -13,7 +12,6 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
     protected Entity(TId id)
     {
         Id = id;
-        _domainEvents = new();
     }
 
     public bool Equals(Entity<TId>? other)
@@ -36,15 +34,4 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
     public static bool operator ==(Entity<TId>? left, Entity<TId>? right) => Equals(left, right);
 
     public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !Equals(left, right);
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList(); // return a copy
-
-    public void ClearDomainEvents()
-    {
-        _domainEvents.Clear();
-    }
-
-    public void AddDomainEvent(IDomainEvent domainEvent)
-    {
-        _domainEvents.Add(domainEvent);
-    }
 }

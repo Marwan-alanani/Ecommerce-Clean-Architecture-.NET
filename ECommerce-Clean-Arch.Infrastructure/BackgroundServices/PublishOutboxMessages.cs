@@ -1,10 +1,15 @@
 using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Common.Models;
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+using ECommerce_Clean_Arch.Infrastructure.EventBus;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
+
 using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using Newtonsoft.Json;
 
 namespace ECommerce_Clean_Arch.Infrastructure.BackgroundServices;
@@ -27,38 +32,51 @@ public class PublishOutboxMessages : BackgroundService
         {
             using var scope = _scopeFactory.CreateScope();
             var applicationDbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
             var dateTimeProvider = scope.ServiceProvider.GetRequiredService<IDateTimeProvider>();
+            var rabbitMqEventBus = scope.ServiceProvider.GetRequiredService<RabbitMqEventBus>();
 
-            // take messages
-            var messages = identityDbContext.Set<OutboxMessage>()
+            // collect messages
+            var messages = await applicationDbContext.Set<OutboxMessage>()
                 .Where(m => m.ProcessedOn == null)
+                .OrderBy(m => m.OccuredOn)
                 .Take(BatchSize)
-                .ToList();
-
-            messages.AddRange(
-                applicationDbContext.Set<OutboxMessage>()
-                    .Where(m => m.ProcessedOn == null)
-                    .Take(BatchSize)
-                    .ToList());
+                .ToListAsync(cancellationToken: stoppingToken);
 
             // publish
             foreach (var message in messages)
             {
-                var domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                var type = Type.GetType(message.Type);
+                if (type == null)
+                {
+                    // mark processed with failure status or Error
+                    message.ProcessedOn = dateTimeProvider.UtcNow;
+                    message.Error = $"Type {message.Type} not found";
+                    continue;
+                }
+
+                var domainEvent = (IDomainEvent?)JsonConvert.DeserializeObject(
                     message.Content,
-                    new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All
-                    });
+                    type
+                );
                 if (domainEvent != null)
-                    await publisher.Publish(domainEvent);
+                {
+                    // TODO: make event handler Idempotent
+                    try
+                    {
+                        await publisher.Publish(domainEvent);
+                        await rabbitMqEventBus.PublishAsync(domainEvent);
+                    }
+                    catch (Exception ex)
+                    {
+                        message.Error = ex.Message;
+                    }
+
+                    message.ProcessedOn = dateTimeProvider.UtcNow;
+                }
             }
 
-            // mark processed
-            messages.ForEach(m => m.ProcessedOn = dateTimeProvider.UtcNow);
-            await identityDbContext.SaveChangesAsync();
+            await applicationDbContext.SaveChangesAsync();
             await Task.Delay(10000, stoppingToken);
         }
     }

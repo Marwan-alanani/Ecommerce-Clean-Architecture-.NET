@@ -5,16 +5,22 @@ using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.BackgroundServices;
+using ECommerce_Clean_Arch.Infrastructure.EventBus;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
 using ECommerce_Clean_Arch.Infrastructure.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
+using RabbitMQ.Client;
+
+using IConnectionFactory = Microsoft.AspNetCore.Connections.IConnectionFactory;
 
 namespace ECommerce_Clean_Arch.Infrastructure;
 
@@ -34,6 +40,15 @@ public static class DependencyInjection
 
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
+        var connectionFactory = new ConnectionFactory()
+        {
+            HostName = "localhost",
+            UserName = "admin",
+            Password = "admin"
+        };
+        var rabbitMqEventBus = new RabbitMqEventBus(connectionFactory);
+        services.AddSingleton(connectionFactory);
+        services.AddScoped(sp => rabbitMqEventBus);
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddHostedService<PublishOutboxMessages>();
         return services;
@@ -44,13 +59,6 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
-        services.AddDbContext<IdentityDbContext>((sp, options) =>
-        {
-            var connectionString = config.GetConnectionString(IdentityDbContext.ConnectionStringName);
-            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-            options.UseNpgsql(connectionString);
-        });
-
         services.AddScoped<ISaveChangesInterceptor, AuditInterceptor>();
         services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
@@ -71,7 +79,7 @@ public static class DependencyInjection
                 builder.Password.RequireNonAlphanumeric = true;
             })
             .AddRoles<IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<IdentityDbContext>();
+            .AddEntityFrameworkStores<ApplicationDbContext>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;

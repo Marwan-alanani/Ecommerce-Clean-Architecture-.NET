@@ -1,8 +1,10 @@
 using AutoMapper;
+
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
 using SharedKernel.Errors;
 using SharedKernel.Results;
 

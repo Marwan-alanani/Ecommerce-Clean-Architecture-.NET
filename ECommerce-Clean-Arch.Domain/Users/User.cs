@@ -1,23 +1,23 @@
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
-using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Domain.Users.Events;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce_Clean_Arch.Domain.Users;
 
-public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
+public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
 {
-    private List<IDomainEvent> _domainEvents = new();
+    private readonly List<IDomainEvent> _domainEvents = new();
 
     private User()
     {
     }
 
-    public string FirstName { get; private set; } = null!;
-    public string LastName { get; private set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-
+    public long Version { get; set; }
 
     public static User Create(
         string userName,
@@ -34,7 +34,13 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
             LastName = lastName,
             Email = email
         };
-        user.AddDomainEvent(new UserRegistered(email, userName));
+        user.AddDomainEvent(
+            new UserRegistered(
+                user.Id,
+                email,
+                userName,
+                user.Version)
+        );
         return user;
     }
 
@@ -48,5 +54,6 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents
     public void AddDomainEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
+        Version++;
     }
 }

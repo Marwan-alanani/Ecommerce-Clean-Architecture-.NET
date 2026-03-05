@@ -1,8 +1,11 @@
 using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Common.Models;
+using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
+
 using Newtonsoft.Json;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
@@ -38,7 +41,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
     public async Task GenerateOutbox(DbContext dbContext, CancellationToken cancellationToken = default)
     {
         var entities = dbContext.ChangeTracker
-            .Entries<IHasDomainEvents>()
+            .Entries<IAggregateRoot>()
             .Select(entry => entry.Entity)
             .Where(entity => entity.DomainEvents.Any())
             .ToList();
@@ -48,7 +51,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
             .Select(ev =>
             {
                 var outbox = new OutboxMessage(
-                    ev.GetType().ToString(),
+                    ev.GetType().AssemblyQualifiedName!,
                     JsonConvert.SerializeObject(
                         ev,
                         new JsonSerializerSettings
@@ -56,7 +59,8 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
                             TypeNameHandling = TypeNameHandling.All
                         }
                     ),
-                    _dateTimeProvider.UtcNow
+                    _dateTimeProvider.UtcNow,
+                    ev.AggregateId
                 );
                 return outbox;
             })

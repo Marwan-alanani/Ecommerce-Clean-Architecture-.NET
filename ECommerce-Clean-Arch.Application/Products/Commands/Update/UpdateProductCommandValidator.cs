@@ -1,4 +1,5 @@
 using FluentValidation;
+
 using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Update;
@@ -13,7 +14,7 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
             .WithMessage($"Price must be greater than zero");
 
         RuleFor(command => command.Price!.Currency)
-            .IsEnumName(typeof(Currency),false)
+            .IsEnumName(typeof(Currency), false)
             .When(command => command.Price is not null);
     }
 }

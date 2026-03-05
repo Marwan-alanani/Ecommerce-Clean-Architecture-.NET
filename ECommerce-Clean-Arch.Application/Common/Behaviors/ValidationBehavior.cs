@@ -1,5 +1,7 @@
 using FluentValidation;
+
 using MediatR;
+
 using SharedKernel.Errors;
 using SharedKernel.Results;
 

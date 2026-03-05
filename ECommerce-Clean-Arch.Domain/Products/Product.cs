@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
 using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Domain.Products;

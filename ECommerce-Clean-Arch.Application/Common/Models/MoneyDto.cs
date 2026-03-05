@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Application.Common.Models;

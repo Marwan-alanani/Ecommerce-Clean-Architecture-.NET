@@ -1,6 +1,9 @@
 using ECommerce_Clean_Arch.Application.Common.Behaviors;
+
 using FluentValidation;
+
 using MediatR;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ECommerce_Clean_Arch.Application;

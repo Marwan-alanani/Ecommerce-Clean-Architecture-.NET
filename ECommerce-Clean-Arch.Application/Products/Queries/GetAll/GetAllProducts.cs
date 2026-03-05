@@ -1,12 +1,15 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Domain.Products;
-using SharedKernel.Results;
 using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using ECommerce_Clean_Arch.Domain.Products;
+
 using Microsoft.EntityFrameworkCore;
+
+using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
@@ -48,10 +51,10 @@ public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<P
         ProductSortingOptions? sortBy = null;
         SortDirection? direction = null;
 
-        if (request.SortBy is not null)
+        if (request.SortBy != null)
             sortBy = Enum.Parse<ProductSortingOptions>(request.SortBy.Trim(), true);
 
-        if (request.Direction is not null)
+        if (request.Direction != null)
             direction = Enum.Parse<SortDirection>(request.Direction.Trim(), true);
 
         products = (sortBy, direction) switch

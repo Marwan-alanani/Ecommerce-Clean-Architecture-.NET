@@ -1,8 +1,10 @@
 using System.Diagnostics;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+
 using SharedKernel.Errors;
 
 namespace ECommerce_Clean_Arch.Presentation.Errors;
@@ -109,6 +111,6 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
 
         _configure?.Invoke(
             new ProblemDetailsContext
-                { HttpContext = httpContext!, ProblemDetails = problemDetails });
+            { HttpContext = httpContext!, ProblemDetails = problemDetails });
     }
 }

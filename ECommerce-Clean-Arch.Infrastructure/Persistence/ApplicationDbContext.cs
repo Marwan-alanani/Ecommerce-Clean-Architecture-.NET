@@ -1,20 +1,22 @@
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Domain.Users;
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
-    DbContext(options)
+    IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
 {
     public const string ConnectionStringName = "AppDb";
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // applicationDbContext should not have the user entity
         modelBuilder
             .ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly)
-            .Ignore<User>()
             .Ignore<IDomainEvent>();
         base.OnModelCreating(modelBuilder);
     }

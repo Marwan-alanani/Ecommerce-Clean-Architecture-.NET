@@ -1,6 +1,8 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Queries;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
