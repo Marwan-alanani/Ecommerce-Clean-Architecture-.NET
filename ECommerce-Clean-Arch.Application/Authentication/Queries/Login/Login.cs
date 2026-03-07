@@ -56,7 +56,7 @@ public class LoginQueryHandler : IQueryHandler<Login, AuthenticationResult>
             return error;
         }
 
-        var token = _jwtTokenGenerator.Generate(user);
+        var token = await _jwtTokenGenerator.Generate(user);
         return _mapper.Map<AuthenticationResult>((user, token));
     }
 }

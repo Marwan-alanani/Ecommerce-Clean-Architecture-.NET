@@ -91,7 +91,7 @@ public class ApplicationDbContextInitialiser
         if (adminRole != null)
         {
             await Task.WhenAll(
-                RoleClaims.Permissions.Select(permission =>
+                RolePermissions.Permissions.Select(permission =>
                     _roleManager.AddClaimAsync(adminRole, new Claim(nameof(permission), permission))
                 )
             );

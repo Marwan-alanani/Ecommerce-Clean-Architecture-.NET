@@ -4,5 +4,5 @@ namespace ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 
 public interface IJwtTokenGenerator
 {
-    string Generate(User user);
+    Task<string> Generate(User user);
 }
