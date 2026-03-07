@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
-public class LoginQueryValidator : AbstractValidator<Login>
+public class LoginQueryValidator : AbstractValidator<LoginQuery>
 {
     public LoginQueryValidator()
     {

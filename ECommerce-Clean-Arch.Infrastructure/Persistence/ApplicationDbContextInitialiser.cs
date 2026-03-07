@@ -92,9 +92,9 @@ public class ApplicationDbContextInitialiser
         // inject Permissions
         if (adminRole != null)
         {
-            foreach (var permission in RolePermissions.Permissions)
+            foreach (var permission in Policies.Permissions)
             {
-                var claim = new Claim(RolePermissions.ClaimType, permission);
+                var claim = new Claim(Policies.ClaimType, permission);
                 await _roleManager.AddClaimAsync(adminRole, claim);
             }
         }

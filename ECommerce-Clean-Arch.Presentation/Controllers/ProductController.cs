@@ -3,9 +3,11 @@ using ECommerce_Clean_Arch.Application.Products.Commands.Deactivate;
 using ECommerce_Clean_Arch.Application.Products.Commands.Update;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using ECommerce_Clean_Arch.Domain.Users.Constants;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
@@ -21,6 +23,7 @@ public class ProductController : ApiController
     }
 
     [HttpPost]
+    [Authorize(Policy =  )]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
     {
         var result = await _sender.Send(command);

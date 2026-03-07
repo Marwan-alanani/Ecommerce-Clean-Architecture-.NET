@@ -34,7 +34,7 @@ public class AuthController : ApiController
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] Login query)
+    public async Task<IActionResult> Login([FromBody] LoginQuery query)
     {
         var result = await _mediator.Send(query);
         if (result.IsSuccess)

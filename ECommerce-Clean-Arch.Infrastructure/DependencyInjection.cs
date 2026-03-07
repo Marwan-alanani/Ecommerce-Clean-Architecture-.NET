@@ -1,3 +1,5 @@
+using System.Text;
+
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
@@ -11,16 +13,16 @@ using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
 using ECommerce_Clean_Arch.Infrastructure.Services;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 using RabbitMQ.Client;
 
-using IConnectionFactory = Microsoft.AspNetCore.Connections.IConnectionFactory;
 
 namespace ECommerce_Clean_Arch.Infrastructure;
 
@@ -33,7 +35,7 @@ public static class DependencyInjection
     {
         services
             .AddPersistence(config)
-            .AddAuthentication(config)
+            .AddAuth(config)
             .AddServices();
         return services;
     }
@@ -86,15 +88,32 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAuthentication(
+    private static IServiceCollection AddAuth(
         this IServiceCollection services,
         IConfigurationManager config
     )
     {
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        // get jwt Config
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
-        services.AddSingleton(Options.Create(jwtConfig));
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtConfig.Issuer,
+                    ValidAudience = jwtConfig.Audience,
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey)),
+                };
+            });
+        services.Configure<JwtConfig>(config.GetSection(JwtConfig.SectionName));
+
         return services;
     }
 }

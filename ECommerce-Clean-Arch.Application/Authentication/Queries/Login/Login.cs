@@ -1,5 +1,3 @@
-using AutoMapper;
-
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
 using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
@@ -13,30 +11,27 @@ using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
-public record Login(
+public record LoginQuery(
     string Email,
     string Password
 ) : IQuery<AuthenticationResult>;
 
-public class LoginQueryHandler : IQueryHandler<Login, AuthenticationResult>
+public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
-    private readonly IMapper _mapper;
 
     public LoginQueryHandler(
         UserManager<User> userManager,
-        IJwtTokenGenerator jwtTokenGenerator,
-        IMapper mapper
+        IJwtTokenGenerator jwtTokenGenerator
     )
     {
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
-        _mapper = mapper;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
-        Login request,
+        LoginQuery request,
         CancellationToken cancellationToken
     )
     {
@@ -57,6 +52,6 @@ public class LoginQueryHandler : IQueryHandler<Login, AuthenticationResult>
         }
 
         var token = await _jwtTokenGenerator.Generate(user);
-        return _mapper.Map<AuthenticationResult>((user, token));
+        return new AuthenticationResult(token);
     }
 }

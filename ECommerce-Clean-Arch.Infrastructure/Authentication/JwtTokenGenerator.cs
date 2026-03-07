@@ -15,7 +15,7 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
 
-public class JwtTokenGenerator : IJwtTokenGenerator
+public sealed class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly JwtConfig _jwtConfig;
     private readonly UserManager<User> _userManager;
@@ -38,6 +38,13 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
     public async Task<string> Generate(User user)
     {
+        List<Claim> claims =
+        [
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email!),
+        ];
+
         var roleNames = await _userManager.GetRolesAsync(user);
         var rolePermissions = new HashSet<string>();
         foreach (var roleName in roleNames)
@@ -45,24 +52,26 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             var role = await _roleManager.FindByNameAsync(roleName);
             if (role == null) continue;
             var roleClaims = await _roleManager.GetClaimsAsync(role);
+            var userClaims = await _userManager.GetClaimsAsync(user);
 
             rolePermissions.UnionWith(
                 roleClaims
-                    .Where(claim => claim.Type == RolePermissions.ClaimType)
+                    .Where(claim => claim.Type == Policies.ClaimType)
+                    .Select(claim => claim.Value)
+            );
+
+            rolePermissions.UnionWith(
+                userClaims
+                    .Where(claim => claim.Type == Policies.ClaimType)
                     .Select(claim => claim.Value)
             );
         }
 
 
-        List<Claim> claims =
-        [
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        ];
         claims.AddRange(
             rolePermissions
                 .Select(permission =>
-                    new Claim(RolePermissions.ClaimType, permission)
+                    new Claim(Policies.ClaimType, permission)
                 )
         );
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SecretKey));
