@@ -81,22 +81,23 @@ public class ApplicationDbContextInitialiser
     public async Task TrySeedIdentity()
     {
         // Default roles
-        await Task.WhenAll(
-            UserRoles.Roles.Select(role => _roleManager.CreateAsync(new IdentityRole<Guid>(role)))
-        );
+        foreach (var role in UserRoles.Roles)
+        {
+            await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+        }
+
         var adminRole = await _roleManager.Roles
             .Where(role => role.Name == UserRoles.Admin)
             .FirstOrDefaultAsync();
         // inject Permissions
         if (adminRole != null)
         {
-            await Task.WhenAll(
-                RolePermissions.Permissions.Select(permission =>
-                    _roleManager.AddClaimAsync(adminRole, new Claim(nameof(permission), permission))
-                )
-            );
+            foreach (var permission in RolePermissions.Permissions)
+            {
+                var claim = new Claim(RolePermissions.ClaimType, permission);
+                await _roleManager.AddClaimAsync(adminRole, claim);
+            }
         }
-
 
 
         // Default users

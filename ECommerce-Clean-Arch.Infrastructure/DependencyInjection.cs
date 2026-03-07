@@ -94,7 +94,7 @@ public static class DependencyInjection
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
         services.AddSingleton(Options.Create(jwtConfig));
-        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         return services;
     }
 }
