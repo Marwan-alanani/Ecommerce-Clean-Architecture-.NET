@@ -12,7 +12,7 @@ namespace ECommerce_Clean_Arch.Presentation;
 
 internal class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Env.Load();
         var builder = WebApplication.CreateBuilder(args);
@@ -35,13 +35,7 @@ internal class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            using (var scope = app.Services.CreateScope())
-            {
-                var applicationDbContext = scope.ServiceProvider
-                    .GetRequiredService<ApplicationDbContext>();
-                applicationDbContext.Database.Migrate();
-            }
-
+            await app.InitialiseDatabaseAsync();
             app.UseSwagger();
             app.UseSwaggerUI();
         }

@@ -54,10 +54,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
                     ev.GetType().AssemblyQualifiedName!,
                     JsonConvert.SerializeObject(
                         ev,
-                        new JsonSerializerSettings
-                        {
-                            TypeNameHandling = TypeNameHandling.All
-                        }
+                        new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All }
                     ),
                     _dateTimeProvider.UtcNow,
                     ev.AggregateId

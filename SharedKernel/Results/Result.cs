@@ -37,7 +37,7 @@ public class Result : IResult
     }
 }
 
-public class Result<T> : Result
+public class Result<T> : Result, IResult<T>
 {
     private readonly T? _value;
 

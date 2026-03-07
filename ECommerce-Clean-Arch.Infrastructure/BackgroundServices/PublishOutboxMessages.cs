@@ -76,7 +76,7 @@ public class PublishOutboxMessages : BackgroundService
                 }
             }
 
-            await applicationDbContext.SaveChangesAsync();
+            await applicationDbContext.SaveChangesAsync(stoppingToken);
             await Task.Delay(10000, stoppingToken);
         }
     }

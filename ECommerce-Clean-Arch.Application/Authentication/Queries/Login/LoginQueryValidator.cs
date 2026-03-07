@@ -1,8 +1,8 @@
 using FluentValidation;
 
-namespace ECommerce_Clean_Arch.Application.Authentication.Queries;
+namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
-public class LoginQueryValidator : AbstractValidator<LoginQuery>
+public class LoginQueryValidator : AbstractValidator<Login>
 {
     public LoginQueryValidator()
     {

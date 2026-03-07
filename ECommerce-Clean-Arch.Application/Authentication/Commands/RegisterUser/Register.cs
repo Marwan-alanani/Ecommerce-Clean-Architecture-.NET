@@ -12,7 +12,15 @@ using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
-public class RegisterCommandHandler : ICommandHandler<RegisterCommand, AuthenticationResult>
+public record Register(
+    string Username,
+    string Email,
+    string Password,
+    string FirstName,
+    string LastName
+) : ICommand<AuthenticationResult>;
+
+public class RegisterCommandHandler : ICommandHandler<Register, AuthenticationResult>
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IMapper _mapper;
@@ -30,7 +38,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Authentic
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
-        RegisterCommand request,
+        Register request,
         CancellationToken cancellationToken
     )
     {

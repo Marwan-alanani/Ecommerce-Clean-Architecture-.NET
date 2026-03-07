@@ -82,6 +82,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ApplicationDbContextInitialiser>();
         return services;
     }
 

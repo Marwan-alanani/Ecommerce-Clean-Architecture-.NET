@@ -1,7 +1,5 @@
 using System.Text;
 
-using ECommerce_Clean_Arch.Domain.Common.Interfaces;
-
 using Newtonsoft.Json;
 
 using RabbitMQ.Client;
@@ -17,21 +15,21 @@ public class RabbitMqEventBus
         _connectionFactory = connectionFactory;
     }
 
-    public async Task PublishAsync(IDomainEvent @event)
+    public async Task PublishAsync(object obj)
     {
         await using var connection = await _connectionFactory.CreateConnectionAsync();
         await using var channel = await connection.CreateChannelAsync();
         await channel.QueueDeclareAsync(
-            queue: @event.GetType().Name,
+            queue: obj.GetType().Name,
             durable: true,
             exclusive: false,
             autoDelete: false,
             arguments: null
         );
-        string message = JsonConvert.SerializeObject(@event);
+        string message = JsonConvert.SerializeObject(obj);
         await channel.BasicPublishAsync(
             exchange: "",
-            routingKey: @event.GetType().Name,
+            routingKey: obj.GetType().Name,
             mandatory: true,
             basicProperties: new BasicProperties
             {

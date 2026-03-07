@@ -1,5 +1,6 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Queries;
+using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
 using MediatR;
 
@@ -19,7 +20,7 @@ public class AuthController : ApiController
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(
-        [FromBody] RegisterCommand command,
+        [FromBody] Register command,
         CancellationToken cancellationToken
     )
     {
@@ -33,7 +34,7 @@ public class AuthController : ApiController
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginQuery query)
+    public async Task<IActionResult> Login([FromBody] Login query)
     {
         var result = await _mediator.Send(query);
         if (result.IsSuccess)

@@ -11,9 +11,14 @@ using Microsoft.AspNetCore.Identity;
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Authentication.Queries;
+namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
-public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
+public record Login(
+    string Email,
+    string Password
+) : IQuery<AuthenticationResult>;
+
+public class LoginQueryHandler : IQueryHandler<Login, AuthenticationResult>
 {
     private readonly UserManager<User> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -31,7 +36,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
-        LoginQuery request,
+        Login request,
         CancellationToken cancellationToken
     )
     {
