@@ -1,6 +1,6 @@
 namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
 
-public class JwtConfig
+public sealed class JwtConfig
 {
     public const string SectionName = "JwtConfig";
     public string Issuer { get; init; } = null!;

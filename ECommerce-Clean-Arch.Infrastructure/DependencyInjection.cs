@@ -14,6 +14,7 @@ using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
 using ECommerce_Clean_Arch.Infrastructure.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -50,7 +51,7 @@ public static class DependencyInjection
         };
         var rabbitMqEventBus = new RabbitMqEventBus(connectionFactory);
         services.AddSingleton(connectionFactory);
-        services.AddScoped(sp => rabbitMqEventBus);
+        services.AddScoped(_ => rabbitMqEventBus);
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddHostedService<PublishOutboxMessages>();
         return services;
@@ -94,7 +95,6 @@ public static class DependencyInjection
     )
     {
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-        // get jwt Config
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -112,7 +112,12 @@ public static class DependencyInjection
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey)),
                 };
             });
-        services.Configure<JwtConfig>(config.GetSection(JwtConfig.SectionName));
+        services.AddAuthorization();
+        services.ConfigureOptions<JwtBearerOptionsSetup>();
+        services.ConfigureOptions<JwtConfigOptionsSetup>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+
 
         return services;
     }

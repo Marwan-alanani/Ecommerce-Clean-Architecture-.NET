@@ -89,14 +89,11 @@ public class ApplicationDbContextInitialiser
         var adminRole = await _roleManager.Roles
             .Where(role => role.Name == UserRoles.Admin)
             .FirstOrDefaultAsync();
-        // inject Permissions
-        if (adminRole != null)
+        // inject Permissions for admin Role
+        foreach (var policy in Permissions.AllPermissions)
         {
-            foreach (var permission in Policies.Permissions)
-            {
-                var claim = new Claim(Policies.ClaimType, permission);
-                await _roleManager.AddClaimAsync(adminRole, claim);
-            }
+            var claim = new Claim(Permissions.ClaimType, policy);
+            await _roleManager.AddClaimAsync(adminRole!, claim);
         }
 
 
@@ -108,7 +105,7 @@ public class ApplicationDbContextInitialiser
             "admin@mail.com");
 
         await _userManager.CreateAsync(administrator, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(administrator, new[] { UserRoles.Admin });
+        await _userManager.AddToRolesAsync(administrator, [UserRoles.Admin]);
         var user = User.Create(
             "user",
             "user",
@@ -116,6 +113,6 @@ public class ApplicationDbContextInitialiser
             "user@mail.com");
 
         await _userManager.CreateAsync(user, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(user, new[] { UserRoles.User });
+        await _userManager.AddToRolesAsync(user, [UserRoles.User]);
     }
 }

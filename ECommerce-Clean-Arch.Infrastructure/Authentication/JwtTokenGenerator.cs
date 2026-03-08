@@ -46,7 +46,7 @@ public sealed class JwtTokenGenerator : IJwtTokenGenerator
         ];
 
         var roleNames = await _userManager.GetRolesAsync(user);
-        var rolePermissions = new HashSet<string>();
+        var userPolicies = new HashSet<string>();
         foreach (var roleName in roleNames)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
@@ -54,24 +54,24 @@ public sealed class JwtTokenGenerator : IJwtTokenGenerator
             var roleClaims = await _roleManager.GetClaimsAsync(role);
             var userClaims = await _userManager.GetClaimsAsync(user);
 
-            rolePermissions.UnionWith(
+            userPolicies.UnionWith(
                 roleClaims
-                    .Where(claim => claim.Type == Policies.ClaimType)
+                    .Where(claim => claim.Type == Permissions.ClaimType)
                     .Select(claim => claim.Value)
             );
 
-            rolePermissions.UnionWith(
+            userPolicies.UnionWith(
                 userClaims
-                    .Where(claim => claim.Type == Policies.ClaimType)
+                    .Where(claim => claim.Type == Permissions.ClaimType)
                     .Select(claim => claim.Value)
             );
         }
 
 
         claims.AddRange(
-            rolePermissions
-                .Select(permission =>
-                    new Claim(Policies.ClaimType, permission)
+            userPolicies
+                .Select(policy =>
+                    new Claim(Permissions.ClaimType, policy)
                 )
         );
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SecretKey));

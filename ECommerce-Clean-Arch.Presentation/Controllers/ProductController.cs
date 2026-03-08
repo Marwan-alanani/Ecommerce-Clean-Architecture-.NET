@@ -23,7 +23,7 @@ public class ProductController : ApiController
     }
 
     [HttpPost]
-    [Authorize(Policy =  )]
+    [Authorize(Policy = Permissions.ProductWrite)]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
     {
         var result = await _sender.Send(command);
@@ -60,6 +60,7 @@ public class ProductController : ApiController
     }
 
     [HttpPatch]
+    [Authorize]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
     {
         var result = await _sender.Send(command);
@@ -73,6 +74,7 @@ public class ProductController : ApiController
     }
 
     [HttpDelete("deactivate/{id}")]
+    [Authorize]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
         var command = new DeactivateProductCommand(id);
