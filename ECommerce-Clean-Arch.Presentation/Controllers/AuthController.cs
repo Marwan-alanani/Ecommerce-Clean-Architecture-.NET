@@ -1,5 +1,4 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
-using ECommerce_Clean_Arch.Application.Authentication.Queries;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
 using MediatR;
@@ -20,7 +19,7 @@ public class AuthController : ApiController
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(
-        [FromBody] Register command,
+        [FromBody] RegisterCommand command,
         CancellationToken cancellationToken
     )
     {

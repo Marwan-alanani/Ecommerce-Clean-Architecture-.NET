@@ -1,44 +1,33 @@
-using AutoMapper;
-
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Authentication.Common;
-using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
+using ECommerce_Clean_Arch.Application.Authentication.Services;
+using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Domain.Users;
 
-using Microsoft.AspNetCore.Identity;
-
-using SharedKernel.Errors;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
-public record Register(
+public record RegisterCommand(
     string Username,
     string Email,
     string Password,
     string FirstName,
     string LastName
-) : ICommand<AuthenticationResult>;
+) : ICommand<EntityCreatedDto>;
 
-public class RegisterCommandHandler : ICommandHandler<Register, AuthenticationResult>
+public class RegisterCommandHandler : ICommandHandler<RegisterCommand, EntityCreatedDto>
 {
-    private readonly IJwtTokenService _jwtTokenService;
-    private readonly IMapper _mapper;
-    private readonly UserManager<User> _userManager;
+    private readonly IIdentityService _identityService;
 
     public RegisterCommandHandler(
-        IJwtTokenService jwtTokenService,
-        UserManager<User> userManager,
-        IMapper mapper
+        IIdentityService identityService
     )
     {
-        _jwtTokenService = jwtTokenService;
-        _userManager = userManager;
-        _mapper = mapper;
+        _identityService = identityService;
     }
 
-    public async Task<Result<AuthenticationResult>> Handle(
-        Register request,
+    public async Task<Result<EntityCreatedDto>> Handle(
+        RegisterCommand request,
         CancellationToken cancellationToken
     )
     {
@@ -47,18 +36,13 @@ public class RegisterCommandHandler : ICommandHandler<Register, AuthenticationRe
             request.FirstName,
             request.LastName,
             request.Email);
-
-        var identityResult = await _userManager.CreateAsync(user, request.Password);
-        if (!identityResult.Succeeded)
+        var identityResult = await _identityService.CreateAsync(user, request.Password);
+        if (identityResult.IsFailure)
         {
-            var error = Error.Validation();
-            foreach (var validationError in identityResult.Errors)
-                error.AddReason(validationError.Code, validationError.Description);
-
-            return error;
+            return identityResult.Error;
         }
 
-        var token = await _jwtTokenService.Generate(user);
-        return _mapper.Map<AuthenticationResult>((user, token));
+
+        return new EntityCreatedDto(user.Id);
     }
 }

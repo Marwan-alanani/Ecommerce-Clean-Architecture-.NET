@@ -1,6 +1,6 @@
 using ECommerce_Clean_Arch.Domain.Users;
 
-namespace ECommerce_Clean_Arch.Application.Authentication.Interfaces;
+namespace ECommerce_Clean_Arch.Application.Authentication.Services;
 
 public interface IJwtTokenService
 {

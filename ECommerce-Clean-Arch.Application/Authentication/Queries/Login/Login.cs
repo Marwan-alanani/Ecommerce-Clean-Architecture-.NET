@@ -1,12 +1,8 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
-using ECommerce_Clean_Arch.Application.Authentication.Interfaces;
-using ECommerce_Clean_Arch.Domain.Errors.Users;
-using ECommerce_Clean_Arch.Domain.Users;
+using ECommerce_Clean_Arch.Application.Authentication.Services;
 
-using Microsoft.AspNetCore.Identity;
 
-using SharedKernel.Errors;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
@@ -18,16 +14,16 @@ public record LoginQuery(
 
 public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
 {
-    private readonly UserManager<User> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IIdentityService _identityService;
 
     public LoginQueryHandler(
-        UserManager<User> userManager,
-        IJwtTokenService jwtTokenService
+        IJwtTokenService jwtTokenService,
+        IIdentityService identityService
     )
     {
-        _userManager = userManager;
         _jwtTokenService = jwtTokenService;
+        _identityService = identityService;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
@@ -35,23 +31,14 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
         CancellationToken cancellationToken
     )
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        if (user == null)
+        var authenticationResult = await _identityService
+            .AuthenticateAsync(request.Email, request.Password);
+        if (authenticationResult.IsFailure)
         {
-            var error = Error.Validation();
-            error.AddReason(new InvalidCredentials());
-            return error;
+            return authenticationResult.Error;
         }
 
-        var validPassword = await _userManager.CheckPasswordAsync(user, request.Password);
-        if (!validPassword)
-        {
-            var error = Error.Validation();
-            error.AddReason(new InvalidCredentials());
-            return error;
-        }
-
-        var token = await _jwtTokenService.Generate(user);
+        var token = await _jwtTokenService.Generate(authenticationResult.Value);
         return new AuthenticationResult(token);
     }
 }

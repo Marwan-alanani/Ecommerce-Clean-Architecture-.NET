@@ -18,9 +18,9 @@ public record CreateProductCommand(
     string Description,
     MoneyDto Price,
     string PictureUrl
-) : ICommand<Guid>;
+) : ICommand<EntityCreatedDto>;
 
-public class CreateProduct : ICommandHandler<CreateProductCommand, Guid>
+public class CreateProduct : ICommandHandler<CreateProductCommand, EntityCreatedDto>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -37,7 +37,7 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, Guid>
         _mapper = mapper;
     }
 
-    public async Task<Result<Guid>> Handle(
+    public async Task<Result<EntityCreatedDto>> Handle(
         CreateProductCommand request,
         CancellationToken cancellationToken
     )
@@ -59,6 +59,6 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, Guid>
         await _productRepository.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return product.Id.Value;
+        return new EntityCreatedDto(product.Id.Value);
     }
 }

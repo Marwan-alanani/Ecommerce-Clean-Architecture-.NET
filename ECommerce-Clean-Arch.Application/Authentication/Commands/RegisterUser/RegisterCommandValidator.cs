@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
-public class RegisterCommandValidator : AbstractValidator<Register>
+public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 {
     public RegisterCommandValidator()
     {
