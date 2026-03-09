@@ -15,8 +15,10 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
 
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
+    public Guid? CreatedBy { get; set; }
+    public Guid? LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime LastModifiedAt { get; set; }
     public long Version { get; set; }
 
     public static User Create(

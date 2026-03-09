@@ -12,8 +12,10 @@ public class Product : AggregateRoot<ProductId>, IAuditable
     public string? Description { get; set; }
     public Money Price { get; set; }
     public string PictureUrl { get; set; } = null!;
+    public Guid? CreatedBy { get; set; }
+    public Guid? LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public DateTime LastModifiedAt { get; set; }
     public bool IsActive { get; set; }
 
 

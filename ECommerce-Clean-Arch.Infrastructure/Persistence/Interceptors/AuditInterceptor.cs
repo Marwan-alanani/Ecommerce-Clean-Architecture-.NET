@@ -1,3 +1,4 @@
+using ECommerce_Clean_Arch.Application.Common.Interfaces;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
@@ -10,10 +11,12 @@ namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 public class AuditInterceptor : SaveChangesInterceptor
 {
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IUser _user;
 
-    public AuditInterceptor(IDateTimeProvider dateTimeProvider)
+    public AuditInterceptor(IDateTimeProvider dateTimeProvider, IUser user)
     {
         _dateTimeProvider = dateTimeProvider;
+        _user = user;
     }
 
     public override InterceptionResult<int> SavingChanges(
@@ -51,9 +54,11 @@ public class AuditInterceptor : SaveChangesInterceptor
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedAt = utcNow;
+                    entry.Entity.CreatedBy = _user.Id;
                 }
 
-                entry.Entity.UpdatedAt = utcNow;
+                entry.Entity.LastModifiedBy = _user.Id;
+                entry.Entity.LastModifiedAt = utcNow;
             }
         }
     }

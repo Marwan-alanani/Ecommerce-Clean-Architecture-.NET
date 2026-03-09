@@ -51,6 +51,6 @@ public class ProductConfigurations : IEntityTypeConfiguration<Product>
             .HasMaxLength(500);
         builder.Property(p => p.IsActive);
         builder.Property(p => p.CreatedAt);
-        builder.Property(p => p.UpdatedAt);
+        builder.Property(p => p.LastModifiedAt);
     }
 }

@@ -1,12 +1,13 @@
 using DotNetEnv;
 
 using ECommerce_Clean_Arch.Application;
+using ECommerce_Clean_Arch.Application.Common.Interfaces;
 using ECommerce_Clean_Arch.Infrastructure;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Presentation.Errors;
+using ECommerce_Clean_Arch.Presentation.Services;
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Clean_Arch.Presentation;
 
@@ -24,6 +25,8 @@ internal class Program
         builder.Services.AddControllers();
 
         builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<IUser, CurrentUser>();
         {
             builder.Services
                 .AddApplication()
