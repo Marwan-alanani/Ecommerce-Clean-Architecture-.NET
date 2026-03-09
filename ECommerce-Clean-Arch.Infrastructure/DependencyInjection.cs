@@ -94,7 +94,7 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

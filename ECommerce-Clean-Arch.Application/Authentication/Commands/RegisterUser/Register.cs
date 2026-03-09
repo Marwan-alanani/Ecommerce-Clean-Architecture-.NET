@@ -22,17 +22,17 @@ public record Register(
 
 public class RegisterCommandHandler : ICommandHandler<Register, AuthenticationResult>
 {
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
 
     public RegisterCommandHandler(
-        IJwtTokenGenerator jwtTokenGenerator,
+        IJwtTokenService jwtTokenService,
         UserManager<User> userManager,
         IMapper mapper
     )
     {
-        _jwtTokenGenerator = jwtTokenGenerator;
+        _jwtTokenService = jwtTokenService;
         _userManager = userManager;
         _mapper = mapper;
     }
@@ -58,7 +58,7 @@ public class RegisterCommandHandler : ICommandHandler<Register, AuthenticationRe
             return error;
         }
 
-        var token = await _jwtTokenGenerator.Generate(user);
+        var token = await _jwtTokenService.Generate(user);
         return _mapper.Map<AuthenticationResult>((user, token));
     }
 }

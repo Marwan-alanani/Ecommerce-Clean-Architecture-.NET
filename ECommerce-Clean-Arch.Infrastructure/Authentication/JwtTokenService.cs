@@ -15,7 +15,7 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
 
-public sealed class JwtTokenGenerator : IJwtTokenGenerator
+public sealed class JwtTokenService : IJwtTokenService
 {
     private readonly JwtConfig _jwtConfig;
     private readonly UserManager<User> _userManager;
@@ -23,7 +23,7 @@ public sealed class JwtTokenGenerator : IJwtTokenGenerator
 
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public JwtTokenGenerator(
+    public JwtTokenService(
         IOptions<JwtConfig> jwtConfig,
         IDateTimeProvider dateTimeProvider,
         UserManager<User> userManager,

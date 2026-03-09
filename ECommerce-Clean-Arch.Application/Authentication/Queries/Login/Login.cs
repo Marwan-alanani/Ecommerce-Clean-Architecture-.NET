@@ -19,15 +19,15 @@ public record LoginQuery(
 public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
 {
     private readonly UserManager<User> _userManager;
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IJwtTokenService _jwtTokenService;
 
     public LoginQueryHandler(
         UserManager<User> userManager,
-        IJwtTokenGenerator jwtTokenGenerator
+        IJwtTokenService jwtTokenService
     )
     {
         _userManager = userManager;
-        _jwtTokenGenerator = jwtTokenGenerator;
+        _jwtTokenService = jwtTokenService;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
@@ -51,7 +51,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
             return error;
         }
 
-        var token = await _jwtTokenGenerator.Generate(user);
+        var token = await _jwtTokenService.Generate(user);
         return new AuthenticationResult(token);
     }
 }

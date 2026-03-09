@@ -4,10 +4,10 @@ using ECommerce_Clean_Arch.Application.Products.Commands.Update;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 using ECommerce_Clean_Arch.Domain.Users.Constants;
+using ECommerce_Clean_Arch.Presentation.Attributes;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
@@ -23,7 +23,7 @@ public class ProductController : ApiController
     }
 
     [HttpPost]
-    [Authorize(Policy = Permissions.ProductWrite)]
+    [HasPermission(Permissions.ProductWrite)]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
     {
         var result = await _sender.Send(command);
@@ -60,7 +60,7 @@ public class ProductController : ApiController
     }
 
     [HttpPatch]
-    [Authorize]
+    [HasPermission(Permissions.ProductEdit)]
     public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
     {
         var result = await _sender.Send(command);
@@ -74,7 +74,7 @@ public class ProductController : ApiController
     }
 
     [HttpDelete("deactivate/{id}")]
-    [Authorize]
+    [HasPermission(Permissions.ProductDelete)]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
         var command = new DeactivateProductCommand(id);
