@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+using ECommerce_Clean_Arch.Domain.Users.Entities;
 using ECommerce_Clean_Arch.Domain.Users.Events;
 
 using Microsoft.AspNetCore.Identity;
@@ -9,10 +10,14 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
+#pragma warning disable CS8618
     private User()
     {
     }
+#pragma warning restore CS8618
 
+    // ReSharper disable once CollectionNeverUpdated.Local
+    private readonly List<RefreshToken> _refreshTokens = new();
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
     public Guid? CreatedBy { get; set; }
@@ -20,6 +25,7 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
     public long Version { get; set; }
+    public IReadOnlyList<RefreshToken> RefreshTokens => _refreshTokens.ToList();
 
     public static User Create(
         string userName,
@@ -57,5 +63,10 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
     {
         _domainEvents.Add(domainEvent);
         Version++;
+    }
+
+    public void AddRefreshToken(RefreshToken token)
+    {
+        _refreshTokens.Add(token);
     }
 }

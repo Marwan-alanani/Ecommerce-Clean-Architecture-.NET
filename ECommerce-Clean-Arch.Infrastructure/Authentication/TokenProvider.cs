@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 using ECommerce_Clean_Arch.Application.Authentication.Services;
@@ -15,15 +16,14 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
 
-public sealed class JwtTokenService : IJwtTokenService
+public sealed class TokenProvider : ITokenProvider
 {
     private readonly JwtConfig _jwtConfig;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<Guid>> _roleManager;
-
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public JwtTokenService(
+    public TokenProvider(
         IOptions<JwtConfig> jwtConfig,
         IDateTimeProvider dateTimeProvider,
         UserManager<User> userManager,
@@ -36,7 +36,7 @@ public sealed class JwtTokenService : IJwtTokenService
         _jwtConfig = jwtConfig.Value;
     }
 
-    public async Task<string> Generate(User user)
+    public async Task<string> GenerateAccessToken(User user)
     {
         List<Claim> claims =
         [
@@ -84,5 +84,10 @@ public sealed class JwtTokenService : IJwtTokenService
             signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
     }
 }

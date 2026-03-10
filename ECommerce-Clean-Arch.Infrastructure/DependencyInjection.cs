@@ -87,6 +87,7 @@ public static class DependencyInjection
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ApplicationDbContextInitialiser>();
+        services.AddScoped<IUserRepository, UserRepository>();
         return services;
     }
 
@@ -95,7 +96,7 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<ITokenProvider, TokenProvider>();
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

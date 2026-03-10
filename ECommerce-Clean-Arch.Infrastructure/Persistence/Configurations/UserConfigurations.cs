@@ -17,5 +17,19 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.Property(u => u.LastName)
             .IsRequired()
             .HasMaxLength(50);
+        builder.OwnsMany(
+            u => u.RefreshTokens,
+            rb =>
+            {
+                rb.ToTable("RefreshTokens");
+                rb.HasKey(r => r.Id);
+                rb.Property(r => r.HashedValue).HasMaxLength(200);
+                rb.Property(r => r.Id).ValueGeneratedNever();
+                rb.WithOwner().HasForeignKey("UserId");
+            });
+
+        builder.Metadata
+            .FindNavigation(nameof(User.RefreshTokens))!
+            .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

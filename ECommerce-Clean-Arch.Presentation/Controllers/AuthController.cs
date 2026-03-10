@@ -36,11 +36,23 @@ public class AuthController : ApiController
     public async Task<IActionResult> Login([FromBody] LoginQuery query)
     {
         var result = await _mediator.Send(query);
-        if (result.IsSuccess)
+        if (result.IsFailure)
         {
-            return Ok(result.Value);
+            return Problem(result.Error);
         }
 
-        return Problem(result.Error);
+        var tokens = result.Value;
+        // Send token in HttpOnly cookie
+        Response.Cookies.Append(
+            "refreshToken",
+            tokens.RefreshToken.Token,
+            new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = tokens.RefreshToken.Expiration
+            });
+        return Ok(new { token = tokens.AccessToken });
     }
 }

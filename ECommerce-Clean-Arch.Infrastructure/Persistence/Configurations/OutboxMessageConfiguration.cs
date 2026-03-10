@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
 
-public class OutboxMessageConfigurations : IEntityTypeConfiguration<OutboxMessage>
+public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
 {
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {

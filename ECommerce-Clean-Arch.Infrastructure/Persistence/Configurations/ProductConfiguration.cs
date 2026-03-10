@@ -8,7 +8,7 @@ using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
 
-public class ProductConfigurations : IEntityTypeConfiguration<Product>
+public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {

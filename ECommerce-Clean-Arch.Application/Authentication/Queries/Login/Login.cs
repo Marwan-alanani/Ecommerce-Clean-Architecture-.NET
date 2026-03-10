@@ -1,7 +1,12 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Authentication.Common;
-using ECommerce_Clean_Arch.Application.Authentication.Services;
+using System.Security.Cryptography;
+using System.Text;
 
+using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Authentication.Services;
+using ECommerce_Clean_Arch.Application.Persistence;
+using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Domain.Users.Entities;
 
 using SharedKernel.Results;
 
@@ -14,16 +19,25 @@ public record LoginQuery(
 
 public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
 {
-    private readonly IJwtTokenService _jwtTokenService;
+    private readonly ITokenProvider _tokenProvider;
     private readonly IIdentityService _identityService;
+    private readonly IUserRepository _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IDateTimeProvider _dateTime;
 
     public LoginQueryHandler(
-        IJwtTokenService jwtTokenService,
-        IIdentityService identityService
+        ITokenProvider tokenProvider,
+        IIdentityService identityService,
+        IUserRepository userRepository,
+        IDateTimeProvider dateTime,
+        IUnitOfWork unitOfWork
     )
     {
-        _jwtTokenService = jwtTokenService;
+        _tokenProvider = tokenProvider;
         _identityService = identityService;
+        _userRepository = userRepository;
+        _dateTime = dateTime;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<AuthenticationResult>> Handle(
@@ -33,12 +47,36 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
     {
         var authenticationResult = await _identityService
             .AuthenticateAsync(request.Email, request.Password);
+
         if (authenticationResult.IsFailure)
         {
             return authenticationResult.Error;
         }
 
-        var token = await _jwtTokenService.Generate(authenticationResult.Value);
-        return new AuthenticationResult(token);
+        var user = authenticationResult.Value;
+
+        var accessToken = await _tokenProvider.GenerateAccessToken(user);
+
+        var refreshTokenValue = _tokenProvider.GenerateRefreshToken();
+        var hash = GenerateRefreshTokenHash(refreshTokenValue);
+        // make it from configuration
+        var refreshToken = RefreshToken.Create(hash, _dateTime.UtcNow.AddDays(7));
+
+        user.AddRefreshToken(refreshToken);
+        _userRepository.Update(user);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return new AuthenticationResult(
+            accessToken,
+            new RefreshTokenDto(refreshTokenValue, refreshToken.ExpiresOnUtc)
+        );
+    }
+
+    private string GenerateRefreshTokenHash(string value)
+    {
+        var bytes = Encoding.UTF8.GetBytes(value);
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(bytes);
+        return Convert.ToBase64String(hash);
     }
 }
