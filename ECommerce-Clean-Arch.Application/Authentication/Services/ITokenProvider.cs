@@ -5,5 +5,6 @@ namespace ECommerce_Clean_Arch.Application.Authentication.Services;
 public interface ITokenProvider
 {
     Task<string> GenerateAccessToken(User user);
-    string GenerateRefreshToken();
+    string GenerateOpaqueToken();
+    string HashOpaqueToken(string token);
 }

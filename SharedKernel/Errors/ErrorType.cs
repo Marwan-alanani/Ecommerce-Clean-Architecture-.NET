@@ -6,4 +6,5 @@ public enum ErrorType
     Conflict,
     NotFound,
     InternalServerError,
+    Security
 }

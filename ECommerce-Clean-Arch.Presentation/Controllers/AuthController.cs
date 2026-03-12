@@ -1,20 +1,26 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
+using ECommerce_Clean_Arch.Application.Authentication.Commands.RotateTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
+using ECommerce_Clean_Arch.Domain.Errors.Token;
+using ECommerce_Clean_Arch.Domain.RefreshTokens;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+
+using SharedKernel.Errors;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
 [Route("/auth")]
 public class AuthController : ApiController
 {
-    private readonly ISender _mediator;
+    private readonly ISender _sender;
 
-    public AuthController(ISender mediator)
+
+    public AuthController(ISender sender)
     {
-        _mediator = mediator;
+        _sender = sender;
     }
 
     [HttpPost("register")]
@@ -23,19 +29,27 @@ public class AuthController : ApiController
         CancellationToken cancellationToken
     )
     {
-        var result = await _mediator.Send(command, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
         if (result.IsSuccess)
         {
-            return Ok(result.Value);
+            return Ok(new { value = result.Value });
         }
 
         return Problem(result.Error);
     }
 
+    public record LoginRequest(string Email, string Password);
+
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginQuery query)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _mediator.Send(query);
+        var query = new LoginQuery(
+            request.Email,
+            request.Password,
+            HttpContext.Request.Headers.UserAgent.ToString(),
+            Request.HttpContext.Connection.RemoteIpAddress?.ToString()
+        );
+        var result = await _sender.Send(query);
         if (result.IsFailure)
         {
             return Problem(result.Error);
@@ -43,16 +57,50 @@ public class AuthController : ApiController
 
         var tokens = result.Value;
         // Send token in HttpOnly cookie
+        SendRefreshTokenInCookies(tokens.RefreshToken.Token, tokens.RefreshToken.Expiration);
+        return Ok(new { token = tokens.AccessToken });
+    }
+
+    public sealed record RotateTokensRequest(string Token);
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var token = Request.Cookies["refreshToken"];
+        if (token is null)
+        {
+            var error = Error.Validation(new MissingTokenCookie());
+            return Problem(error);
+        }
+
+        var command = new RotateTokensCommand(
+            token,
+            HttpContext.Request.Headers.UserAgent.ToString(),
+            Request.HttpContext.Connection.RemoteIpAddress?.ToString()
+        );
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        var tokens = result.Value;
+        // Send token in HttpOnly cookie
+        SendRefreshTokenInCookies(tokens.RefreshToken.Token, tokens.RefreshToken.Expiration);
+        return Ok(new { token = tokens.AccessToken });
+    }
+
+    private void SendRefreshTokenInCookies(string token, DateTime expiration)
+    {
         Response.Cookies.Append(
-            "refreshToken",
-            tokens.RefreshToken.Token,
+            RefreshToken.CookieName,
+            token,
             new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.Strict,
-                Expires = tokens.RefreshToken.Expiration
+                Expires = expiration
             });
-        return Ok(new { token = tokens.AccessToken });
     }
 }

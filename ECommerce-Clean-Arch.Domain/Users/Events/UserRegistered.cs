@@ -7,5 +7,5 @@ public record UserRegistered(
     Guid AggregateId,
     string Email,
     string UserName,
-    long Version
+    long AggregateVersion
 ) : IDomainEvent; // could've used INotification directly wouldn't really matter

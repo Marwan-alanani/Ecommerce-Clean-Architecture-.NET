@@ -46,7 +46,7 @@ public sealed class TokenProvider : ITokenProvider
         ];
 
         var roleNames = await _userManager.GetRolesAsync(user);
-        var userPolicies = new HashSet<string>();
+        var userPermissions = new HashSet<string>();
         foreach (var roleName in roleNames)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
@@ -54,13 +54,13 @@ public sealed class TokenProvider : ITokenProvider
             var roleClaims = await _roleManager.GetClaimsAsync(role);
             var userClaims = await _userManager.GetClaimsAsync(user);
 
-            userPolicies.UnionWith(
+            userPermissions.UnionWith(
                 roleClaims
                     .Where(claim => claim.Type == Permissions.ClaimType)
                     .Select(claim => claim.Value)
             );
 
-            userPolicies.UnionWith(
+            userPermissions.UnionWith(
                 userClaims
                     .Where(claim => claim.Type == Permissions.ClaimType)
                     .Select(claim => claim.Value)
@@ -69,9 +69,9 @@ public sealed class TokenProvider : ITokenProvider
 
 
         claims.AddRange(
-            userPolicies
-                .Select(policy =>
-                    new Claim(Permissions.ClaimType, policy)
+            userPermissions
+                .Select(permission =>
+                    new Claim(Permissions.ClaimType, permission)
                 )
         );
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.SecretKey));
@@ -79,15 +79,22 @@ public sealed class TokenProvider : ITokenProvider
         var token = new JwtSecurityToken(
             _jwtConfig.Issuer,
             _jwtConfig.Audience,
-            expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtConfig.ExpiryInMinutes),
+            expires: _dateTimeProvider.UtcNow.AddMinutes(_jwtConfig.AccessTokenExpiryInMinutes),
             claims: claims,
             signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken()
+    public string GenerateOpaqueToken()
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+    }
+
+    public string HashOpaqueToken(string token)
+    {
+        using var sha256 = SHA256.Create();
+        var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+        return Convert.ToBase64String(hash);
     }
 }

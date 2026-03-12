@@ -5,10 +5,6 @@ namespace ECommerce_Clean_Arch.Domain.Common.Models;
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : IEquatable<TId>
 {
-    private readonly List<IDomainEvent> _domainEvents = new();
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList(); // return a copy
-    public long Version { get; set; }
-
     protected AggregateRoot()
     {
     }
@@ -17,6 +13,9 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     {
     }
 
+    private readonly List<IDomainEvent> _domainEvents = new();
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList(); // return a copy
+    public long Version { get; private set; }
 
     public void ClearDomainEvents()
     {
@@ -26,5 +25,6 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     public void AddDomainEvent(IDomainEvent domainEvent)
     {
         _domainEvents.Add(domainEvent);
+        Version++;
     }
 }

@@ -36,6 +36,17 @@ public sealed record Error // One error can have 1...N reasons
         );
     }
 
+    public static Error Security(params ErrorReason[] reasons)
+    {
+        return new Error(
+            "SecurityError",
+            "A security error occured",
+            "One or more security errors occured",
+            ErrorType.Security,
+            reasons
+        );
+    }
+
     public static Error Conflict(params ErrorReason[] reasons)
     {
         return new Error(
@@ -73,6 +84,7 @@ public sealed record Error // One error can have 1...N reasons
             error.AddReason(new ErrorReason(innerException));
             innerException = innerException.InnerException;
         }
+
         return error;
     }
 

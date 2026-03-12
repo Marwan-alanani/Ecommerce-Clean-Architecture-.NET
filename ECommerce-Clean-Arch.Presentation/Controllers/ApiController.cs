@@ -17,6 +17,7 @@ public class ApiController : ControllerBase
             ErrorType.Conflict => StatusCodes.Status409Conflict,
             ErrorType.NotFound => StatusCodes.Status404NotFound,
             ErrorType.Validation => StatusCodes.Status400BadRequest,
+            ErrorType.Security => StatusCodes.Status401Unauthorized,
             _ => StatusCodes.Status500InternalServerError
         };
 

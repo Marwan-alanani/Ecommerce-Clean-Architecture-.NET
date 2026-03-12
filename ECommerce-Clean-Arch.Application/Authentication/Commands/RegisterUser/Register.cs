@@ -1,6 +1,5 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Domain.Users;
 
 using SharedKernel.Results;
@@ -13,9 +12,9 @@ public record RegisterCommand(
     string Password,
     string FirstName,
     string LastName
-) : ICommand<EntityCreatedDto>;
+) : ICommand<Guid>;
 
-public class RegisterCommandHandler : ICommandHandler<RegisterCommand, EntityCreatedDto>
+public class RegisterCommandHandler : ICommandHandler<RegisterCommand, Guid>
 {
     private readonly IIdentityService _identityService;
 
@@ -26,7 +25,7 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, EntityCre
         _identityService = identityService;
     }
 
-    public async Task<Result<EntityCreatedDto>> Handle(
+    public async Task<Result<Guid>> Handle(
         RegisterCommand request,
         CancellationToken cancellationToken
     )
@@ -43,6 +42,6 @@ public class RegisterCommandHandler : ICommandHandler<RegisterCommand, EntityCre
         }
 
 
-        return new EntityCreatedDto(user.Id);
+        return user.Id;
     }
 }

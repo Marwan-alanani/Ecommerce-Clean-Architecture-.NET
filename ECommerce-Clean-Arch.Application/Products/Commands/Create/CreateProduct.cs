@@ -6,6 +6,7 @@ using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products;
+using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
 using SharedKernel.Errors;
 using SharedKernel.Models;
@@ -18,9 +19,9 @@ public record CreateProductCommand(
     string Description,
     MoneyDto Price,
     string PictureUrl
-) : ICommand<EntityCreatedDto>;
+) : ICommand<ProductId>;
 
-public class CreateProduct : ICommandHandler<CreateProductCommand, EntityCreatedDto>
+public class CreateProduct : ICommandHandler<CreateProductCommand, ProductId>
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
@@ -37,7 +38,7 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, EntityCreated
         _mapper = mapper;
     }
 
-    public async Task<Result<EntityCreatedDto>> Handle(
+    public async Task<Result<ProductId>> Handle(
         CreateProductCommand request,
         CancellationToken cancellationToken
     )
@@ -59,6 +60,6 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, EntityCreated
         await _productRepository.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new EntityCreatedDto(product.Id.Value);
+        return product.Id;
     }
 }
