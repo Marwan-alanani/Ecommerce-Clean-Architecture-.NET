@@ -5,7 +5,8 @@ public enum RevokedReason
     SessionLimitExceeded,
     TokenRotated,
     UserDeleted,
-    SecurityBreach
+    SecurityBreach,
+    UserLoggedOut,
 }
 
 public static class RevokedReasonExtensions
@@ -17,6 +18,8 @@ public static class RevokedReasonExtensions
             RevokedReason.SessionLimitExceeded => "Session limit Exceeded",
             RevokedReason.TokenRotated => "Token rotated",
             RevokedReason.UserDeleted => "User deleted",
+            RevokedReason.SecurityBreach => "Security breach",
+            RevokedReason.UserLoggedOut => "User logged out",
             _ => throw new ArgumentOutOfRangeException(
                 nameof(reason),
                 reason,

@@ -1,3 +1,6 @@
+using System.Security.Claims;
+
+using ECommerce_Clean_Arch.Application.Authentication.Commands.Logout;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RotateTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
@@ -6,6 +9,7 @@ using ECommerce_Clean_Arch.Domain.RefreshTokens;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using SharedKernel.Errors;
@@ -66,7 +70,7 @@ public class AuthController : ApiController
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
-        var token = Request.Cookies["refreshToken"];
+        var token = Request.Cookies[RefreshToken.CookieName];
         if (token is null)
         {
             var error = Error.Validation(new MissingTokenCookie());
@@ -89,6 +93,29 @@ public class AuthController : ApiController
         SendRefreshTokenInCookies(tokens.RefreshToken.Token, tokens.RefreshToken.Expiration);
         return Ok(new { token = tokens.AccessToken });
     }
+
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        var token = Request.Cookies[RefreshToken.CookieName];
+        if (token is null) // token doesn't exists in browser
+        {
+            return Ok(new { message = "Logged out successfully" });
+        }
+
+        var command = new LogoutCommand(token);
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        Response.Cookies.Delete(RefreshToken.CookieName);
+
+        return Ok(new { message = "Logged out successfully" });
+    }
+
 
     private void SendRefreshTokenInCookies(string token, DateTime expiration)
     {
