@@ -22,7 +22,7 @@ public class CurrentUser : IUser
         {
             var idString = _httpContextAccessor.HttpContext?.User.FindFirstValue
                 (ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(idString)) return null;
+            if (!Guid.TryParse(idString, out _)) return null;
             return Guid.Parse(idString);
         }
     }

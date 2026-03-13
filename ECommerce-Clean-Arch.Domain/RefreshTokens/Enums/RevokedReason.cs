@@ -7,6 +7,7 @@ public enum RevokedReason
     UserDeleted,
     SecurityBreach,
     UserLoggedOut,
+    UserLoggedOutAll,
 }
 
 public static class RevokedReasonExtensions
@@ -20,6 +21,7 @@ public static class RevokedReasonExtensions
             RevokedReason.UserDeleted => "User deleted",
             RevokedReason.SecurityBreach => "Security breach",
             RevokedReason.UserLoggedOut => "User logged out",
+            RevokedReason.UserLoggedOutAll => "User logged out all",
             _ => throw new ArgumentOutOfRangeException(
                 nameof(reason),
                 reason,

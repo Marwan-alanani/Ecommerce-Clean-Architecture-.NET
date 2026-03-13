@@ -1,6 +1,7 @@
 using System.Security.Claims;
 
 using ECommerce_Clean_Arch.Application.Authentication.Commands.Logout;
+using ECommerce_Clean_Arch.Application.Authentication.Commands.LogoutAllSessions;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RotateTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
@@ -73,7 +74,7 @@ public class AuthController : ApiController
         var token = Request.Cookies[RefreshToken.CookieName];
         if (token is null)
         {
-            var error = Error.Validation(new MissingTokenCookie());
+            var error = Error.NotFound(new MissingTokenCookie());
             return Problem(error);
         }
 
@@ -116,6 +117,26 @@ public class AuthController : ApiController
         return Ok(new { message = "Logged out successfully" });
     }
 
+    [Authorize]
+    [HttpPost("logout-all")]
+    public async Task<IActionResult> LogoutAllSessions()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (userId is null)
+        {
+            return Unauthorized(new { message = "User Id not found in token" });
+        }
+
+        var command = new LogoutAllSessionsCommand(userId);
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        Response.Cookies.Delete(RefreshToken.CookieName);
+        return Ok(new { message = "Logged out of all sessions successfully" });
+    }
 
     private void SendRefreshTokenInCookies(string token, DateTime expiration)
     {
