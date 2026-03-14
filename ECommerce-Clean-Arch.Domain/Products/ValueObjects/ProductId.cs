@@ -1,6 +1,8 @@
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+
 namespace ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
-public record struct ProductId
+public readonly record struct ProductId : IAggregateRootId<ProductId>
 {
     public Guid Value { get; }
 
@@ -15,5 +17,5 @@ public record struct ProductId
 
 
     public static ProductId CreateUnique() => new ProductId(Guid.NewGuid());
-    public static ProductId Create(Guid value) => new ProductId(value);
+    public static ProductId FromValue(Guid value) => new ProductId(value);
 }

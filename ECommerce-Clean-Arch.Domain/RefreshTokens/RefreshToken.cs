@@ -1,9 +1,10 @@
 using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
+using ECommerce_Clean_Arch.Domain.RefreshTokens.ValueObjects;
 
 namespace ECommerce_Clean_Arch.Domain.RefreshTokens;
 
-public sealed class RefreshToken : AggregateRoot<Guid>
+public sealed class RefreshToken : AggregateRoot<RefreshTokenId>
 {
 #pragma warning disable CS8618
     private RefreshToken(
@@ -15,7 +16,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
 
 
     private RefreshToken(
-        Guid id,
+        RefreshTokenId id,
         Guid userId,
         string tokenHash,
         string userAgent,
@@ -36,7 +37,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
     public DateTime ExpiresOnUtc { get; private set; }
 
     public DateTime? RevokedAt { get; private set; }
-    public string? RevokedReason { get; private set; }
+    public RevokedReason? RevokedReason { get; private set; }
 
     public string UserAgent { get; set; }
     public string? IpAddress { get; set; }
@@ -51,7 +52,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
     )
     {
         return new(
-            Guid.NewGuid(),
+            RefreshTokenId.CreateUnique(),
             userId,
             tokenHash,
             userAgent,
@@ -63,7 +64,7 @@ public sealed class RefreshToken : AggregateRoot<Guid>
 
     public void Revoke(RevokedReason reason, DateTime utcNow)
     {
-        RevokedReason = reason.ToStorageString();
+        RevokedReason = reason;
         RevokedAt = utcNow;
     }
 

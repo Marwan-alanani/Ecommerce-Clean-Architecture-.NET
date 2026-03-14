@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce_Clean_Arch.Domain.Users;
 
-public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
+public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEquatable<User>
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
@@ -41,10 +41,8 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
         };
         user.AddDomainEvent(
             new UserRegistered(
-                user.Id,
                 email,
-                userName,
-                user.Version)
+                userName)
         );
         return user;
     }
@@ -56,9 +54,18 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IAggregateRoot
         _domainEvents.Clear();
     }
 
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(IDomainEvent @event)
     {
-        _domainEvents.Add(domainEvent);
+        @event.AggregateId = Id;
+        @event.AggregateVersion = Version;
+
+        _domainEvents.Add(@event);
         Version++;
+    }
+
+    public bool Equals(User? other)
+    {
+        if (GetType() != other?.GetType()) return false;
+        return Id.Equals(other?.Id);
     }
 }

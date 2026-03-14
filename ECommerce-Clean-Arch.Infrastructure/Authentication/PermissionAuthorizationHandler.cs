@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Domain.Users.Constants;
+using ECommerce_Clean_Arch.Domain.Common.Security;
 
 using Microsoft.AspNetCore.Authorization;
 

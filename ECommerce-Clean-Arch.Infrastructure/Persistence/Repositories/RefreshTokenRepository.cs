@@ -80,7 +80,6 @@ public sealed class RefreshTokenRepository : IRefreshTokenRepository
         var activeRefreshTokens = await _context.Set<RefreshToken>()
             .Where(r => r.UserId == userId)
             .Where(r => r.RevokedReason == null)
-            .Where(r => r.ExpiresOnUtc > _dateTime.UtcNow)
             .ToListAsync(cancellationToken);
         foreach (var refreshToken in activeRefreshTokens)
         {

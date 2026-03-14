@@ -1,6 +1,5 @@
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
-using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
 
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +40,7 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
     public async Task GenerateOutbox(DbContext dbContext, CancellationToken cancellationToken = default)
     {
         var entities = dbContext.ChangeTracker
-            .Entries<IAggregateRoot>()
+            .Entries<IHasDomainEvents>()
             .Select(entry => entry.Entity)
             .Where(entity => entity.DomainEvents.Any())
             .ToList();

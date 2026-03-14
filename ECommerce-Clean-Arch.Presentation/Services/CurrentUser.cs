@@ -2,7 +2,7 @@ using System.Security.Claims;
 
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
 
-using Perms = ECommerce_Clean_Arch.Domain.Users.Constants.Permissions;
+using Perms = ECommerce_Clean_Arch.Domain.Common.Security.Permissions;
 
 namespace ECommerce_Clean_Arch.Presentation.Services;
 
@@ -24,6 +24,16 @@ public class CurrentUser : IUser
                 (ClaimTypes.NameIdentifier);
             if (!Guid.TryParse(idString, out _)) return null;
             return Guid.Parse(idString);
+        }
+    }
+
+    public string? Email
+    {
+        get
+        {
+            var email = _httpContextAccessor.HttpContext?.User.FindFirstValue
+                (ClaimTypes.Email);
+            return email;
         }
     }
 

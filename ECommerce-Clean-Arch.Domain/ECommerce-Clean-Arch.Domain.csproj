@@ -16,4 +16,10 @@
         <ProjectReference Include="..\SharedKernel\SharedKernel.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="ECommerce-Clean-Arch.Domain">
+        <HintPath>..\ECommerce-Clean-Arch.Presentation\bin\Debug\net8.0\ECommerce-Clean-Arch.Domain.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

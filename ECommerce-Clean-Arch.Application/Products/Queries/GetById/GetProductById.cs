@@ -29,7 +29,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductD
     )
     {
         var product = await _productRepository.GetByIdAsync(
-            ProductId.Create(request.Id),
+            ProductId.FromValue(request.Id),
             cancellationToken);
         if (product is null)
         {

@@ -1,9 +1,12 @@
+using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+
 namespace ECommerce_Clean_Arch.Domain.Common.Models;
 
-public abstract class Entity<TId> : IEquatable<Entity<TId>>
-    where TId : IEquatable<TId>
+public abstract class Entity<TId, TValue> : IEquatable<Entity<TId, TValue>>
+    where TId : struct, IStronglyTypedId<TId, TValue>
+    where TValue : IEquatable<TValue>
 {
-    public TId Id { get; protected set; } = default!;
+    public TId Id { get; protected set; }
 
     protected Entity()
     {
@@ -14,7 +17,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
         Id = id;
     }
 
-    public bool Equals(Entity<TId>? other)
+    public bool Equals(Entity<TId, TValue>? other)
     {
         if (other is null) return false;
         if (GetType() != other.GetType()) return false;
@@ -25,13 +28,15 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
         if (obj is null) return false;
         if (obj.GetType() != GetType()) return false;
-        var other = (Entity<TId>)obj;
+        var other = (Entity<TId, TValue>)obj;
         return other.Id.Equals(Id);
     }
 
     public override int GetHashCode() => Id.GetHashCode();
 
-    public static bool operator ==(Entity<TId>? left, Entity<TId>? right) => Equals(left, right);
+    public static bool operator ==(Entity<TId, TValue>? left, Entity<TId, TValue>? right) =>
+        Equals(left, right);
 
-    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) => !Equals(left, right);
+    public static bool operator !=(Entity<TId, TValue>? left, Entity<TId, TValue>? right) =>
+        !Equals(left, right);
 }

@@ -54,7 +54,7 @@ public class UpdateProduct : ICommandHandler<UpdateProductCommand>
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdAsync(
-            ProductId.Create(request.Id),
+            ProductId.FromValue(request.Id),
             cancellationToken);
         if (product is null)
             return Error.NotFound(new ProductNotFound(request.Id));

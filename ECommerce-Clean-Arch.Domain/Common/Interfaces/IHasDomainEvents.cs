@@ -1,6 +1,6 @@
 namespace ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
-public interface IAggregateRoot
+public interface IHasDomainEvents
 {
     public long Version { get; }
     public IReadOnlyList<IDomainEvent> DomainEvents { get; }

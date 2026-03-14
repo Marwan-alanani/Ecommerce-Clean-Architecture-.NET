@@ -1,6 +1,5 @@
 using ECommerce_Clean_Arch.Domain.RefreshTokens;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
-
 namespace ECommerce_Clean_Arch.Application.Persistence.Repositories;
 
 public interface IRefreshTokenRepository

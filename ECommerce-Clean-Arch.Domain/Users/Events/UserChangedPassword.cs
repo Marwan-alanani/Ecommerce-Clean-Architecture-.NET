@@ -2,4 +2,4 @@ using ECommerce_Clean_Arch.Domain.Common.Models;
 
 namespace ECommerce_Clean_Arch.Domain.Users.Events;
 
-public record UserRegistered(string Email, string UserName) : DomainEvent;
+public sealed record UserChangedPassword(string Email) : DomainEvent;

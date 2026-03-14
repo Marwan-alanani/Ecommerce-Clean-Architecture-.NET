@@ -11,4 +11,10 @@ public interface IIdentityService
 
     /// returns user if credentials are correct
     Task<Result<User>> AuthenticateAsync(string email, string password);
+
+    Task<Result> ChangePasswordAsync(
+        User user,
+        string currentPassword,
+        string newPassword
+    );
 }

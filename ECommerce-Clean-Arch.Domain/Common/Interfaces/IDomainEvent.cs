@@ -4,6 +4,6 @@ namespace ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
 public interface IDomainEvent : INotification
 {
-    public long AggregateVersion { get; }
-    public Guid AggregateId { get; }
+    public long AggregateVersion { get; set; }
+    public Guid AggregateId { get; set; }
 }

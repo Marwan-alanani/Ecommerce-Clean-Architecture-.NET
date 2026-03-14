@@ -44,7 +44,7 @@ public sealed class LogoutCommandHandler : ICommandHandler<LogoutCommand>
 
         if (!token.RevokedAt.HasValue)
         {
-            token.Revoke(RevokedReason.UserLoggedOut, _dateTime.UtcNow);
+            token.Revoke(RevokedReason.LoggedOut, _dateTime.UtcNow);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

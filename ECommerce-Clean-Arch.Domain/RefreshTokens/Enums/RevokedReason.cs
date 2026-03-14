@@ -6,26 +6,7 @@ public enum RevokedReason
     TokenRotated,
     UserDeleted,
     SecurityBreach,
-    UserLoggedOut,
-    UserLoggedOutAll,
-}
-
-public static class RevokedReasonExtensions
-{
-    public static string ToStorageString(this RevokedReason reason)
-    {
-        return reason switch
-        {
-            RevokedReason.SessionLimitExceeded => "Session limit Exceeded",
-            RevokedReason.TokenRotated => "Token rotated",
-            RevokedReason.UserDeleted => "User deleted",
-            RevokedReason.SecurityBreach => "Security breach",
-            RevokedReason.UserLoggedOut => "User logged out",
-            RevokedReason.UserLoggedOutAll => "User logged out all",
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(reason),
-                reason,
-                null)
-        };
-    }
+    LoggedOut,
+    LoggedOutAll,
+    ChangedPassword,
 }

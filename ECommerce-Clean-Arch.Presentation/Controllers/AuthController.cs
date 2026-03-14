@@ -1,5 +1,4 @@
-using System.Security.Claims;
-
+using ECommerce_Clean_Arch.Application.Authentication.Commands.ChangePassword;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.Logout;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.LogoutAllSessions;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
@@ -66,8 +65,6 @@ public class AuthController : ApiController
         return Ok(new { token = tokens.AccessToken });
     }
 
-    public sealed record RotateTokensRequest(string Token);
-
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
@@ -121,13 +118,7 @@ public class AuthController : ApiController
     [HttpPost("logout-all")]
     public async Task<IActionResult> LogoutAllSessions()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userId is null)
-        {
-            return Unauthorized(new { message = "User Id not found in token" });
-        }
-
-        var command = new LogoutAllSessionsCommand(userId);
+        var command = new LogoutAllSessionsCommand();
         var result = await _sender.Send(command);
         if (result.IsFailure)
         {
@@ -136,6 +127,20 @@ public class AuthController : ApiController
 
         Response.Cookies.Delete(RefreshToken.CookieName);
         return Ok(new { message = "Logged out of all sessions successfully" });
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
+    {
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        Response.Cookies.Delete(RefreshToken.CookieName);
+        return Ok(new { message = "Password changed successfully" });
     }
 
     private void SendRefreshTokenInCookies(string token, DateTime expiration)

@@ -4,6 +4,7 @@ using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
@@ -16,7 +17,6 @@ using ECommerce_Clean_Arch.Infrastructure.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -82,7 +82,7 @@ public static class DependencyInjection
                 builder.Password.RequireUppercase = true;
                 builder.Password.RequireNonAlphanumeric = true;
             })
-            .AddRoles<IdentityRole<Guid>>()
+            .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

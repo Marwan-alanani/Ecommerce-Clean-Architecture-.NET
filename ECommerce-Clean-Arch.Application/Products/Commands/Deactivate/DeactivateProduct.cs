@@ -30,7 +30,7 @@ public class DeactivateProductHandler : ICommandHandler<DeactivateProductCommand
     )
     {
         var product = await _productRepository.GetByIdAsync(
-            ProductId.Create(request.Id),
+            ProductId.FromValue(request.Id),
             cancellationToken);
         if (product is null)
         {

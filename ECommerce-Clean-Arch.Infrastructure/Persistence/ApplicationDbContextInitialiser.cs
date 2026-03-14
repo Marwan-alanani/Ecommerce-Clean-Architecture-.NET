@@ -1,7 +1,8 @@
 using System.Security.Claims;
 
+using ECommerce_Clean_Arch.Domain.Common.Security;
+using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
-using ECommerce_Clean_Arch.Domain.Users.Constants;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -29,13 +30,13 @@ public class ApplicationDbContextInitialiser
     private readonly ILogger<ApplicationDbContextInitialiser> _logger;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly RoleManager<Role> _roleManager;
 
     public ApplicationDbContextInitialiser(
         ILogger<ApplicationDbContextInitialiser> logger,
         ApplicationDbContext context,
         UserManager<User> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager
+        RoleManager<Role> roleManager
     )
     {
         _logger = logger;
@@ -81,16 +82,16 @@ public class ApplicationDbContextInitialiser
     public async Task TrySeedIdentity()
     {
         // Default roles
-        foreach (var role in UserRoles.Roles)
+        foreach (var role in Roles.GetAll())
         {
-            await _roleManager.CreateAsync(new IdentityRole<Guid>(role));
+            await _roleManager.CreateAsync(new Role { Name = role });
         }
 
         var adminRole = await _roleManager.Roles
-            .Where(role => role.Name == UserRoles.Admin)
+            .Where(role => role.Name == Roles.Admin)
             .FirstOrDefaultAsync();
         // inject Permissions for admin Role
-        foreach (var policy in Permissions.AllPermissions)
+        foreach (var policy in Permissions.GetAll())
         {
             var claim = new Claim(Permissions.ClaimType, policy);
             await _roleManager.AddClaimAsync(adminRole!, claim);
@@ -105,7 +106,7 @@ public class ApplicationDbContextInitialiser
             "admin@mail.com");
 
         await _userManager.CreateAsync(administrator, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(administrator, [UserRoles.Admin]);
+        await _userManager.AddToRolesAsync(administrator, [Roles.Admin]);
         var user = User.Create(
             "user",
             "user",
@@ -113,6 +114,6 @@ public class ApplicationDbContextInitialiser
             "user@mail.com");
 
         await _userManager.CreateAsync(user, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(user, [UserRoles.User]);
+        await _userManager.AddToRolesAsync(user, [Roles.User]);
     }
 }

@@ -2,16 +2,18 @@ using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
 namespace ECommerce_Clean_Arch.Domain.Common.Models;
 
-public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
-    where TId : IEquatable<TId>
+public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IHasDomainEvents
+    where TId : struct, IEquatable<TId>, IAggregateRootId<TId>
 {
     protected AggregateRoot()
     {
     }
 
-    protected AggregateRoot(TId id) : base(id)
+    protected AggregateRoot(TId id)
     {
+        Id = id;
     }
+
 
     private readonly List<IDomainEvent> _domainEvents = new();
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList(); // return a copy
@@ -22,9 +24,11 @@ public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
         _domainEvents.Clear();
     }
 
-    public void AddDomainEvent(IDomainEvent domainEvent)
+    public void AddDomainEvent(IDomainEvent @event)
     {
-        _domainEvents.Add(domainEvent);
+        @event.AggregateId = Id.Value;
+        @event.AggregateVersion = Version;
+        _domainEvents.Add(@event);
         Version++;
     }
 }

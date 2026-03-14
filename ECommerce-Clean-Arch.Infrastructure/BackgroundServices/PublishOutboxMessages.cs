@@ -57,14 +57,15 @@ public class PublishOutboxMessages : BackgroundService
 
                 var domainEvent = (IDomainEvent?)JsonConvert.DeserializeObject(
                     message.Content,
-                    type
+                    type,
+                    new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }
                 );
                 if (domainEvent != null)
                 {
                     // TODO: make event handler Idempotent
                     try
                     {
-                        await publisher.Publish(domainEvent);
+                        await publisher.Publish(domainEvent, stoppingToken);
                         await rabbitMqEventBus.PublishAsync(domainEvent);
                     }
                     catch (Exception ex)

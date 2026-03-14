@@ -5,8 +5,9 @@ using System.Text;
 
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Domain.Common.Security;
+using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
-using ECommerce_Clean_Arch.Domain.Users.Constants;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -20,14 +21,14 @@ public sealed class TokenProvider : ITokenProvider
 {
     private readonly JwtConfig _jwtConfig;
     private readonly UserManager<User> _userManager;
-    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    private readonly RoleManager<Role> _roleManager;
     private readonly IDateTimeProvider _dateTimeProvider;
 
     public TokenProvider(
         IOptions<JwtConfig> jwtConfig,
         IDateTimeProvider dateTimeProvider,
         UserManager<User> userManager,
-        RoleManager<IdentityRole<Guid>> roleManager
+        RoleManager<Role> roleManager
     )
     {
         _dateTimeProvider = dateTimeProvider;

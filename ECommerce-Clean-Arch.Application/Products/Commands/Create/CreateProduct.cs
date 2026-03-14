@@ -60,6 +60,6 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, ProductId>
         await _productRepository.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return product.Id;
+        return (ProductId)product.Id;
     }
 }

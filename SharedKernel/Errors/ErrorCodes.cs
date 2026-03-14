@@ -12,5 +12,6 @@ public static class ErrorCodes
     public const string TokenReuseDetected = "TokenReuseDetected";
     public const string MissingTokenCookie = "MissingTokenCookie";
     public const string TokenNotFound = "TokenNotFound";
-    public const string TokenNotMatchingUserId = "TokenNotMatchingUserId";
+    public const string TokenUserIdNotFound = "TokenUserIdNotFound";
+    public const string UserUnauthenticated = "UserUnauthenticated";
 }
