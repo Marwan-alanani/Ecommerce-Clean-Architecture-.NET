@@ -32,4 +32,12 @@ public sealed class CategoryRepository : ICategoryRepository
     {
         await _context.Set<Category>().AddAsync(category, cancellationToken);
     }
+
+    public async Task<Category?> GetCategoryAsync(
+        CategoryId id,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await _context.Set<Category>().FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
 }

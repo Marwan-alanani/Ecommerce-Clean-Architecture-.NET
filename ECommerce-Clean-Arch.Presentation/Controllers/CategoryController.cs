@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Application.Categories.Create;
+using ECommerce_Clean_Arch.Application.Categories.Update;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Presentation.Attributes;
 
@@ -29,5 +30,19 @@ public sealed class CategoryController : ApiController
         }
 
         return Created("/categories/id", result.Value);
+    }
+
+    [HttpPatch]
+    [HasPermission(Permissions.Categories.Update)]
+    public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryCommand command)
+    {
+        var result = await _sender.Send(command);
+
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(new { message = "category updated successfully" });
     }
 }

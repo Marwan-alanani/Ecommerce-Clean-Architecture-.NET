@@ -18,6 +18,8 @@ public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
             );
         builder.HasKey(c => c.Id);
         builder.HasIndex(c => c.Name).IsUnique();
-        builder.Property(c => c.Name).HasMaxLength(50).IsRequired();
+        builder.Property(c => c.Name)
+            .HasMaxLength(50)
+            .IsRequired();
     }
 }
