@@ -6,11 +6,13 @@ public static partial class Permissions
     {
         public const string Create = "category:create";
         public const string Update = "category:update";
+        public const string Delete = "category:delete";
 
         public static IEnumerable<string> All()
         {
             yield return Create;
             yield return Update;
+            yield return Delete;
         }
     }
 }

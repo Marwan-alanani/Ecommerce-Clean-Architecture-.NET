@@ -7,10 +7,10 @@ using ECommerce_Clean_Arch.Domain.Errors.Categories;
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Categories.Update;
+namespace ECommerce_Clean_Arch.Application.Categories.Commands.Update;
 
 public sealed record UpdateCategoryCommand(
-    Guid Id,
+    CategoryId Id,
     string Name
 ) : ICommand;
 
@@ -27,11 +27,10 @@ public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategor
 
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var categoryId = CategoryId.FromValue(request.Id);
-        var category = await _categoryRepository.GetCategoryAsync(categoryId, cancellationToken);
+        var category = await _categoryRepository.GetCategoryAsync(request.Id, cancellationToken);
         if (category is null)
         {
-            return Error.NotFound(new CategoryNotFound(categoryId));
+            return Error.NotFound(new CategoryNotFound(request.Id));
         }
 
         if (category.Name == request.Name)

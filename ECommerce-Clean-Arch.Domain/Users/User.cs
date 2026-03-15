@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ECommerce_Clean_Arch.Domain.Users;
 
-public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEquatable<User>
+public sealed class User : IdentityUser<Guid>, IAuditable, IEquatable<User>,
+    IAggregateRoot<Guid>
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
@@ -23,7 +24,7 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
     public long Version { get; set; }
-    public bool IsEnabled { get; private set; }
+    public bool IsActive { get; private set; }
 
     public static User Create(
         string userName,
@@ -39,10 +40,10 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
             FirstName = firstName,
             LastName = lastName,
             Email = email,
-            IsEnabled = true
+            IsActive = true
         };
         user.AddDomainEvent(
-            new UserRegistered(
+            new UserRegisteredEvent(
                 email,
                 userName)
         );
@@ -73,7 +74,12 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
 
     public void Deactivate()
     {
-        AddDomainEvent(new UserDeactivated());
-        IsEnabled = false;
+        AddDomainEvent(new UserDeactivatedEvent());
+        IsActive = false;
+    }
+
+    public void Activate()
+    {
+        IsActive = false;
     }
 }

@@ -8,7 +8,7 @@ using ECommerce_Clean_Arch.Domain.Errors.Categories;
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Categories.Create;
+namespace ECommerce_Clean_Arch.Application.Categories.Commands.Create;
 
 public sealed record CreateCategoryCommand(string Name) : ICommand<CategoryId>;
 

@@ -1,5 +1,7 @@
-using ECommerce_Clean_Arch.Application.Categories.Create;
-using ECommerce_Clean_Arch.Application.Categories.Update;
+using ECommerce_Clean_Arch.Application.Categories.Commands.Create;
+using ECommerce_Clean_Arch.Application.Categories.Commands.Deactivate;
+using ECommerce_Clean_Arch.Application.Categories.Commands.Update;
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Presentation.Attributes;
 
@@ -32,10 +34,18 @@ public sealed class CategoryController : ApiController
         return Created("/categories/id", result.Value);
     }
 
-    [HttpPatch]
+    public sealed record UpdateCategoryRequest(string Name);
+
+    [HttpPatch("{id}")]
     [HasPermission(Permissions.Categories.Update)]
-    public async Task<IActionResult> UpdateCategory([FromBody] UpdateCategoryCommand command)
+    public async Task<IActionResult> UpdateCategory(
+        [FromRoute] Guid id,
+        [FromBody] UpdateCategoryRequest
+            request
+    )
     {
+        var categoryId = CategoryId.FromValue(id);
+        var command = new UpdateCategoryCommand(categoryId, request.Name);
         var result = await _sender.Send(command);
 
         if (result.IsFailure)
@@ -44,5 +54,19 @@ public sealed class CategoryController : ApiController
         }
 
         return Ok(new { message = "category updated successfully" });
+    }
+
+    [HttpDelete("deactivate/{id}")]
+    [HasPermission(Permissions.Categories.Delete)]
+    public async Task<IActionResult> DeactivateCategory([FromRoute] Guid id)
+    {
+        var command = new DeactivateCategoryCommand(CategoryId.FromValue(id));
+        var result = await _sender.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(new { message = "category deactivated successfully" });
     }
 }

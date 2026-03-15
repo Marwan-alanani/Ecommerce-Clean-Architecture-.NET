@@ -2,7 +2,7 @@ using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
 namespace ECommerce_Clean_Arch.Domain.Common.Models;
 
-public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IHasDomainEvents
+public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IAggregateRoot<TId>
     where TId : struct, IEquatable<TId>, IAggregateRootId<TId>
 {
     protected AggregateRoot()
@@ -34,12 +34,13 @@ public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IHasDomainEvents
         Version++;
     }
 
-    public void Deactivate()
+
+    public virtual void Deactivate()
     {
         IsActive = false;
     }
 
-    public void Activate()
+    public virtual void Activate()
     {
         IsActive = true;
     }

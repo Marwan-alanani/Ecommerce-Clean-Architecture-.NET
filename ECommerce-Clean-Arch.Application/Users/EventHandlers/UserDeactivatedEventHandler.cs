@@ -1,13 +1,12 @@
+using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
 using ECommerce_Clean_Arch.Domain.Users.Events;
 
-using MediatR;
-
 namespace ECommerce_Clean_Arch.Application.Users.EventHandlers;
 
-public class UserDeactivatedEventHandler : INotificationHandler<UserDeactivated>
+public class UserDeactivatedEventHandler : IDomainEventHandler<UserDeactivatedEvent>
 {
     private readonly IRefreshTokenRepository _tokenRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +17,7 @@ public class UserDeactivatedEventHandler : INotificationHandler<UserDeactivated>
         _unitOfWork = unitOfWork;
     }
 
-    public async Task Handle(UserDeactivated notification, CancellationToken cancellationToken)
+    public async Task Handle(UserDeactivatedEvent notification, CancellationToken cancellationToken)
     {
         await _tokenRepository.RevokeAllByUserIdAsync(
             notification.AggregateId,

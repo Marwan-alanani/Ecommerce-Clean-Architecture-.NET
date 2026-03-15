@@ -32,7 +32,7 @@ public class IdentityService : IIdentityService
             ||
             !(await _userManager.CheckPasswordAsync(user, password))
             ||
-            !user.IsEnabled)
+            !user.IsActive)
         {
             return Error.Validation(new InvalidCredentials());
         }
@@ -51,7 +51,7 @@ public class IdentityService : IIdentityService
             user,
             currentPassword,
             newPassword);
-        user.AddDomainEvent(new UserChangedPassword(user.Email!));
+        user.AddDomainEvent(new UserChangedPasswordEvent(user.Email!));
         return identityResult.ToResult();
     }
 }

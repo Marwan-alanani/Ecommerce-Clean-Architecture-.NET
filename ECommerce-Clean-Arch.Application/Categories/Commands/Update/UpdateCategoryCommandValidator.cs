@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace ECommerce_Clean_Arch.Application.Categories.Update;
+namespace ECommerce_Clean_Arch.Application.Categories.Commands.Update;
 
 public sealed class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategoryCommand>
 {
