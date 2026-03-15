@@ -1,5 +1,6 @@
 using ECommerce_Clean_Arch.Domain.RefreshTokens;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.ValueObjects;
+using ECommerce_Clean_Arch.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -27,5 +28,10 @@ public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<Refresh
 
         builder.Property(r => r.UserAgent).HasMaxLength(300);
         builder.Property(r => r.IpAddress).HasMaxLength(200);
+
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

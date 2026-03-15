@@ -13,7 +13,8 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).ValueGeneratedNever();
         builder.Property(m => m.Type).HasMaxLength(150);
-        builder.Property(m => m.Content);
+        builder.Property(m => m.Content).HasMaxLength(600);
+        builder.Property(m => m.Error).HasMaxLength(500);
         builder.Property(m => m.OccuredOn);
         builder.Property(m => m.ProcessedOn);
         builder.Property(m => m.AggregateVersion);

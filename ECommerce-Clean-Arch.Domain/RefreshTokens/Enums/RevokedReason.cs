@@ -4,7 +4,7 @@ public enum RevokedReason
 {
     SessionLimitExceeded,
     TokenRotated,
-    UserDeleted,
+    UserDeactivated,
     SecurityBreach,
     LoggedOut,
     LoggedOutAll,

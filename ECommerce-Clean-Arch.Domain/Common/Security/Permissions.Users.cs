@@ -7,12 +7,14 @@ public static partial class Permissions
         public const string Write = "user:write";
         public const string Read = "user:read";
         public const string ViewInActive = "user:viewInActive";
+        public const string Deactivate = "user:deactivate";
 
         public static IEnumerable<string> All()
         {
             yield return Write;
             yield return Read;
             yield return ViewInActive;
+            yield return Deactivate;
         }
     }
 }

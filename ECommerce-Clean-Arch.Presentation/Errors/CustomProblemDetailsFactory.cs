@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,8 +17,8 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
         IOptions<ProblemDetailsOptions>? problemDetailsOptions = null
     )
     {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _configure = problemDetailsOptions?.Value?.CustomizeProblemDetails;
+        _options = options.Value;
+        _configure = problemDetailsOptions?.Value.CustomizeProblemDetails;
     }
 
     public override ProblemDetails CreateProblemDetails(
@@ -99,18 +97,15 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
             problemDetails.Type ??= clientErrorData.Link;
         }
 
-        var traceId = Activity.Current?.Id ?? httpContext?.TraceIdentifier;
-        if (traceId != null) problemDetails.Extensions["traceId"] = traceId;
 
-        if (httpContext?.Items["code"] is not null)
-            problemDetails.Extensions.Add("code", httpContext?.Items["code"]);
+        if (httpContext.Items["code"] is not null)
+            problemDetails.Extensions.Add("code", httpContext.Items["code"]);
 
-        if (httpContext?.Items["error"] is Error error)
+        if (httpContext.Items["error"] is Error error)
             problemDetails.Extensions.Add("reasons", error.Reasons);
 
 
         _configure?.Invoke(
-            new ProblemDetailsContext
-            { HttpContext = httpContext!, ProblemDetails = problemDetails });
+            new ProblemDetailsContext { HttpContext = httpContext, ProblemDetails = problemDetails });
     }
 }

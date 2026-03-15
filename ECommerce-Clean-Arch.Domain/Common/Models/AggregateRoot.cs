@@ -19,6 +19,8 @@ public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IHasDomainEvents
     public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.ToList(); // return a copy
     public long Version { get; private set; }
 
+    public bool IsActive { get; private set; } = true;
+
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();
@@ -30,5 +32,15 @@ public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IHasDomainEvents
         @event.AggregateVersion = Version;
         _domainEvents.Add(@event);
         Version++;
+    }
+
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
     }
 }

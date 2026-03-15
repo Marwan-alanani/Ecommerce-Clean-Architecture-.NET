@@ -2,12 +2,10 @@ using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Persistence;
 using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Errors.Token;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
 
 using Microsoft.Extensions.Logging;
 
-using SharedKernel.Errors;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.Logout;

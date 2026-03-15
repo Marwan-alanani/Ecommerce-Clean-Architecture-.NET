@@ -30,10 +30,13 @@ public class IdentityService : IIdentityService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null
             ||
-            !(await _userManager.CheckPasswordAsync(user, password)))
+            !(await _userManager.CheckPasswordAsync(user, password))
+            ||
+            !user.IsEnabled)
         {
             return Error.Validation(new InvalidCredentials());
         }
+
 
         return user;
     }

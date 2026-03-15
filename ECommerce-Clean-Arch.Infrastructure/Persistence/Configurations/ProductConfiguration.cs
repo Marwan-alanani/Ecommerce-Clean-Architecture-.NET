@@ -1,3 +1,5 @@
+using ECommerce_Clean_Arch.Domain.Categories;
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
@@ -24,6 +26,16 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(100)
             .IsRequired();
         builder.HasIndex(p => p.Name).IsUnique();
+
+        builder.Property(p => p.CategoryId)
+            .HasConversion(
+                id => id.HasValue ? id.Value.Value : (Guid?)null,
+                value => value.HasValue ? CategoryId.FromValue(value.Value) : null);
+
+        builder.HasOne<Category>()
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Property(p => p.Description)
             .HasMaxLength(500);

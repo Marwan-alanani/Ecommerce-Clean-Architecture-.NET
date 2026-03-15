@@ -1,3 +1,4 @@
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Common.Models;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
@@ -16,7 +17,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
     public Guid? LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
-    public bool IsActive { get; set; }
+    public CategoryId? CategoryId { get; set; }
 
 
     private Product()
@@ -29,14 +30,14 @@ public class Product : AggregateRoot<ProductId>, IAuditable
         string? description,
         Money price,
         string pictureUrl,
-        bool isActive
+        CategoryId? categoryId
     ) : base(id)
     {
         Name = name;
         Description = description;
         Price = price;
         PictureUrl = pictureUrl;
-        IsActive = isActive;
+        CategoryId = categoryId;
     }
 
 
@@ -53,8 +54,15 @@ public class Product : AggregateRoot<ProductId>, IAuditable
             description,
             price,
             pictureUrl,
-            true);
+            null);
     }
 
-    public void Deactivate() => IsActive = false;
+    public void SetCategoryId(CategoryId? categoryId)
+    {
+        if (categoryId.HasValue)
+        {
+            CategoryId = categoryId.Value;
+        }
+        else CategoryId = null;
+    }
 }

@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Application.Users.Commands.Deactivate;
+using ECommerce_Clean_Arch.Application.Categories.Create;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Presentation.Attributes;
 
@@ -8,27 +8,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
-[Route("/users")]
-public class UserController : ApiController
+[Route("categories")]
+public sealed class CategoryController : ApiController
 {
     private readonly ISender _sender;
 
-    public UserController(ISender sender)
+    public CategoryController(ISender sender)
     {
         _sender = sender;
     }
 
-    [HasPermission(Permissions.Users.Deactivate)]
-    [HttpDelete("deactivate/{userId}")]
-    public async Task<IActionResult> Deactivate([FromRoute] Guid userId)
+    [HttpPost]
+    [HasPermission(Permissions.Categories.Create)]
+    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand command)
     {
-        var command = new DeactivateUserCommand(userId);
         var result = await _sender.Send(command);
         if (result.IsFailure)
         {
             return Problem(result.Error);
         }
 
-        return NoContent();
+        return Created("/categories/id", result.Value);
     }
 }

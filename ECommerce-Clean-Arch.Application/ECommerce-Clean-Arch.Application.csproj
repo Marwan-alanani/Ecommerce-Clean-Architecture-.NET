@@ -14,7 +14,6 @@
     <ItemGroup>
         <Folder Include="Abstractions\" />
         <Folder Include="Products\Common\" />
-        <Folder Include="Users\" />
     </ItemGroup>
 
     <PropertyGroup>

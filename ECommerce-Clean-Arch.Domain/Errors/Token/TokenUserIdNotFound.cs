@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Domain.RefreshTokens;
 
 using SharedKernel.Errors;
 

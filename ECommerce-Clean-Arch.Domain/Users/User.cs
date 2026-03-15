@@ -23,6 +23,7 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
     public long Version { get; set; }
+    public bool IsEnabled { get; private set; }
 
     public static User Create(
         string userName,
@@ -37,7 +38,8 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
             UserName = userName,
             FirstName = firstName,
             LastName = lastName,
-            Email = email
+            Email = email,
+            IsEnabled = true
         };
         user.AddDomainEvent(
             new UserRegistered(
@@ -66,6 +68,12 @@ public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEq
     public bool Equals(User? other)
     {
         if (GetType() != other?.GetType()) return false;
-        return Id.Equals(other?.Id);
+        return Id.Equals(other.Id);
+    }
+
+    public void Deactivate()
+    {
+        AddDomainEvent(new UserDeactivated());
+        IsEnabled = false;
     }
 }

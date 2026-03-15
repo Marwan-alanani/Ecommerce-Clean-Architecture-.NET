@@ -78,7 +78,7 @@ public sealed class RotateTokensCommandHandler
         var user = await _userRepository.GetUserByIdAsync(oldToken.UserId, cancellationToken);
         if (user is null)
         {
-            oldToken.Revoke(RevokedReason.UserDeleted, _dateTime.UtcNow);
+            oldToken.Revoke(RevokedReason.UserDeactivated, _dateTime.UtcNow);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Error.NotFound(new UserNotFound(oldToken.UserId));
         }
