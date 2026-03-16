@@ -1,27 +1,26 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Deactivate;
 
-public record DeactivateProductCommand(Guid Id) : ICommand
-{
-}
+public record DeactivateProductCommand(ProductId Id) : ICommand;
 
 public class DeactivateProductHandler : ICommandHandler<DeactivateProductCommand>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
-    public DeactivateProductHandler(IProductRepository productRepository, IUnitOfWork unitOfWork)
+    public DeactivateProductHandler(
+        IApplicationDbContext context
+    )
     {
-        _productRepository = productRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result> Handle(
@@ -29,9 +28,9 @@ public class DeactivateProductHandler : ICommandHandler<DeactivateProductCommand
         CancellationToken cancellationToken
     )
     {
-        var product = await _productRepository.GetByIdAsync(
-            ProductId.FromValue(request.Id),
-            cancellationToken);
+        var product = await _context.Products
+            .Where(p => p.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
         if (product is null)
         {
             return Error.NotFound(new ProductNotFound(request.Id));
@@ -40,7 +39,7 @@ public class DeactivateProductHandler : ICommandHandler<DeactivateProductCommand
         product.Deactivate();
         try
         {
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {

@@ -1,12 +1,15 @@
 using AutoMapper;
 
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Common.Models;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
+using ECommerce_Clean_Arch.Domain.Errors.Categories;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -14,10 +17,11 @@ using SharedKernel.Results;
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Update;
 
 public record UpdateProductCommand(
-    Guid Id,
+    ProductId Id,
     string? Name,
     string? Description,
-    MoneyDto? Price
+    MoneyDto? Price,
+    CategoryId? CategoryId
 ) : ICommand
 {
     private class Mapper : Profile
@@ -36,44 +40,40 @@ public record UpdateProductCommand(
 
 public class UpdateProduct : ICommandHandler<UpdateProductCommand>
 {
-    private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
     public UpdateProduct(
-        IProductRepository productRepository,
         IMapper mapper,
-        IUnitOfWork unitOfWork
+        IApplicationDbContext context
     )
     {
-        _productRepository = productRepository;
         _mapper = mapper;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetByIdAsync(
-            ProductId.FromValue(request.Id),
-            cancellationToken);
+        var product = await _context.Products
+            .Where(p => p.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
         if (product is null)
             return Error.NotFound(new ProductNotFound(request.Id));
-        if (request.Name is not null &&
-            await _productRepository.NameExists(request.Name, cancellationToken)
-           )
+        var productNameExists = await _context.Products
+            .AnyAsync(p => p.Name == request.Name, cancellationToken);
+        if (request.Name is not null && product.Name != request.Name && productNameExists)
         {
             return Error.Validation(new ProductNameExists(request.Name));
         }
 
+        if (request.CategoryId is not null && await _context.Categories
+                .AllAsync(c => c.Id != request.CategoryId, cancellationToken))
+        {
+            return Error.Validation(new CategoryNotFound(request.CategoryId.Value));
+        }
+
         _mapper.Map(request, product);
-        try
-        {
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            return Error.InternalServerError(e);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

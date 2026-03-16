@@ -1,9 +1,10 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Categories;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Categories;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -14,13 +15,13 @@ public sealed record CreateCategoryCommand(string Name) : ICommand<CategoryId>;
 
 public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategoryCommand, CategoryId>
 {
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
-    public CreateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public CreateCategoryCommandHandler(
+        IApplicationDbContext context
+    )
     {
-        this._categoryRepository = categoryRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result<CategoryId>> Handle(
@@ -28,14 +29,16 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
         CancellationToken cancellationToken
     )
     {
-        if ((await _categoryRepository.CategoryExists(request.Name, cancellationToken)))
+        var categoryNameExists = await _context.Categories
+            .AnyAsync(c => c.Name == request.Name, cancellationToken);
+        if (categoryNameExists)
         {
             return Error.Conflict(new CategoryNameAlreadyExists(request.Name));
         }
 
         var category = Category.Create(request.Name);
-        await _categoryRepository.AddAsync(category, cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.Categories.AddAsync(category, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return category.Id;
     }
 }

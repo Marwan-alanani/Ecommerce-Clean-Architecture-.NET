@@ -1,8 +1,8 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Errors.Security;
 using ECommerce_Clean_Arch.Domain.Errors.Users;
 
@@ -21,8 +21,9 @@ public sealed class ChangePasswordCommandHandler :
     ICommandHandler<ChangePasswordCommand>
 {
     private readonly IIdentityService _identityService;
+    private readonly ICookieService _cookieService;
     private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _unitOfWork;
     private readonly IUser _user;
 
     public ChangePasswordCommandHandler(
@@ -30,13 +31,15 @@ public sealed class ChangePasswordCommandHandler :
         IUser user,
         IUserRepository userRepository,
         IRefreshTokenRepository tokenRepository,
-        IUnitOfWork unitOfWork
+        IApplicationDbContext unitOfWork,
+        ICookieService cookieService
     )
     {
         _identityService = identityService;
         _user = user;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _cookieService = cookieService;
     }
 
     public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
@@ -68,6 +71,7 @@ public sealed class ChangePasswordCommandHandler :
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+        _cookieService.ClearRefreshToken();
         return Result.Success();
     }
 }

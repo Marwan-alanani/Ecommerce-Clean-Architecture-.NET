@@ -15,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
+namespace ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 
 public sealed class TokenProvider : ITokenProvider
 {

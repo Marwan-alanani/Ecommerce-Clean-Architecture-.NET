@@ -3,9 +3,8 @@ using DotNetEnv;
 using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
 using ECommerce_Clean_Arch.Infrastructure;
-using ECommerce_Clean_Arch.Infrastructure.Persistence;
+using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 using ECommerce_Clean_Arch.Presentation.Errors;
-using ECommerce_Clean_Arch.Presentation.Services;
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
@@ -15,6 +14,7 @@ internal class Program
 {
     public static async Task Main(string[] args)
     {
+        await Task.CompletedTask;
         Env.Load();
         var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +25,6 @@ internal class Program
         builder.Services.AddControllers();
 
         builder.Services.AddSingleton<ProblemDetailsFactory, CustomProblemDetailsFactory>();
-        builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IUser, CurrentUser>();
         {
             builder.Services
@@ -38,7 +37,7 @@ internal class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            await app.InitialiseDatabaseAsync();
+            // await app.InitialiseDatabaseAsync();
             app.UseSwagger();
             app.UseSwaggerUI();
         }

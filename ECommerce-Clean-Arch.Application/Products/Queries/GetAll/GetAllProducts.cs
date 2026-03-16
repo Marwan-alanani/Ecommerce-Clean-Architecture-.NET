@@ -1,11 +1,8 @@
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Common.Models;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Products.Common;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
-using ECommerce_Clean_Arch.Domain.Products;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -22,18 +19,15 @@ public record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
     public string? Direction { get; init; } = "desc";
 }
 
-public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
+public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
+    private readonly IApplicationDbContext _context;
 
-    public GetAllProducts(
-        IMapper mapper,
-        IProductRepository productRepository
+    public GetAllProductsQueryHandler(
+        IApplicationDbContext context
     )
     {
-        _mapper = mapper;
-        _productRepository = productRepository;
+        _context = context;
     }
 
     public async Task<Result<PaginatedList<ProductDto>>> Handle(
@@ -41,7 +35,7 @@ public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<P
         CancellationToken cancellationToken
     )
     {
-        IQueryable<Product> products = _productRepository.Products.Where(p => p.IsActive);
+        var products = _context.Products.AsNoTracking().Where(p => p.IsActive);
         if (request.Search is not null)
         {
             var s = request.Search.Trim();
@@ -72,7 +66,7 @@ public class GetAllProducts : IQueryHandler<GetAllProductsQuery, PaginatedList<P
         };
 
         var productDtoPage = await products
-            .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
+            .ToProductDto(_context)
             .PaginatedListAsync(
                 request.PageNo,
                 request.PageSize,

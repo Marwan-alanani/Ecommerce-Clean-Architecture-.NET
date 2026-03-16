@@ -45,7 +45,8 @@ public class Product : AggregateRoot<ProductId>, IAuditable
         string name,
         string description,
         Money price,
-        string pictureUrl
+        string pictureUrl,
+        CategoryId? categoryId
     )
     {
         return new(
@@ -54,7 +55,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
             description,
             price,
             pictureUrl,
-            null);
+            categoryId);
     }
 
     public void SetCategoryId(CategoryId? categoryId)

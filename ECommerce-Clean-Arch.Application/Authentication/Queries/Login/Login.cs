@@ -1,8 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Authentication.Common;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.RefreshTokens;
 
@@ -17,15 +16,16 @@ public record LoginQuery(
     string Password,
     string UserAgent,
     string? IpAddress
-) : IQuery<AuthenticationResult>;
+) : IQuery<string>;
 
-public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
+public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
 {
     private readonly ITokenProvider _tokenProvider;
     private readonly IIdentityService _identityService;
     private readonly IRefreshTokenRepository _tokenRepository;
     private readonly IDateTimeProvider _dateTime;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _unitOfWork;
+    private readonly ICookieService _cookieService;
 
     public LoginQueryHandler(
         ITokenProvider tokenProvider,
@@ -33,7 +33,8 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
         IDateTimeProvider dateTime,
         IConfiguration configuration,
         IRefreshTokenRepository tokenRepository,
-        IUnitOfWork unitOfWork
+        IApplicationDbContext unitOfWork,
+        ICookieService cookieService
     )
     {
         _tokenProvider = tokenProvider;
@@ -41,9 +42,10 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
         _dateTime = dateTime;
         _tokenRepository = tokenRepository;
         _unitOfWork = unitOfWork;
+        _cookieService = cookieService;
     }
 
-    public async Task<Result<AuthenticationResult>> Handle(
+    public async Task<Result<string>> Handle(
         LoginQuery request,
         CancellationToken cancellationToken
     )
@@ -61,21 +63,17 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, AuthenticationResult>
         var accessToken = await _tokenProvider.GenerateAccessToken(user);
 
         var opaqueToken = _tokenProvider.GenerateOpaqueToken();
-        var hash = _tokenProvider.HashOpaqueToken(opaqueToken);
+        var opaqueTokenHash = _tokenProvider.HashOpaqueToken(opaqueToken);
         var refreshToken = RefreshToken.Create(
             user.Id,
-            hash,
+            opaqueTokenHash,
             _dateTime.UtcNow,
             request.UserAgent,
             request.IpAddress
         );
         await _tokenRepository.AddAsync(refreshToken, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-
-        return new AuthenticationResult(
-            accessToken,
-            new RefreshTokenDto(opaqueToken, refreshToken.ExpiresOnUtc)
-        );
+        _cookieService.SetRefreshToken(opaqueToken, refreshToken.ExpiresOnUtc);
+        return accessToken;
     }
 }

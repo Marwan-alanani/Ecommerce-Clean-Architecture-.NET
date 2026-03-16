@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Categories.Events;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Common.Models;
 
@@ -17,11 +16,5 @@ public sealed class Category : AggregateRoot<CategoryId>
     public static Category Create(string name)
     {
         return new() { Id = CategoryId.CreateUnique(), Name = name };
-    }
-
-    public override void Deactivate()
-    {
-        base.Deactivate();
-        AddDomainEvent(new CategoryDeactivatedEvent());
     }
 }

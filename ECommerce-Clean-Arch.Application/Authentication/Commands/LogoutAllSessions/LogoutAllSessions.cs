@@ -1,7 +1,8 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Errors.Token;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
 
@@ -15,18 +16,21 @@ public sealed record LogoutAllSessionsCommand : ICommand;
 public class LogoutAllSessionsCommandHandler : ICommandHandler<LogoutAllSessionsCommand>
 {
     private readonly IRefreshTokenRepository _tokenRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
     private readonly IUser _user;
+    private readonly ICookieService _cookieService;
 
     public LogoutAllSessionsCommandHandler(
         IRefreshTokenRepository tokenRepository,
-        IUnitOfWork unitOfWork,
-        IUser user
+        IUser user,
+        IApplicationDbContext context,
+        ICookieService cookieService
     )
     {
         _tokenRepository = tokenRepository;
-        _unitOfWork = unitOfWork;
         _user = user;
+        _context = context;
+        _cookieService = cookieService;
     }
 
     public async Task<Result> Handle(
@@ -44,7 +48,8 @@ public class LogoutAllSessionsCommandHandler : ICommandHandler<LogoutAllSessions
             _user.Id.Value,
             RevokedReason.LoggedOutAll,
             cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        _cookieService.ClearRefreshToken();
         return Result.Success();
     }
 }

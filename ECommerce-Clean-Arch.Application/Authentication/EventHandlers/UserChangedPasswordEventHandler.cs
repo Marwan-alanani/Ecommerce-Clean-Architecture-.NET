@@ -1,6 +1,6 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
 using ECommerce_Clean_Arch.Domain.Users.Events;
 
@@ -11,11 +11,11 @@ public sealed class UserChangedPasswordEventHandler
     : IDomainEventHandler<UserChangedPasswordEvent>
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _unitOfWork;
 
     public UserChangedPasswordEventHandler(
         IRefreshTokenRepository refreshTokenRepository,
-        IUnitOfWork unitOfWork
+        IApplicationDbContext unitOfWork
     )
     {
         _refreshTokenRepository = refreshTokenRepository;

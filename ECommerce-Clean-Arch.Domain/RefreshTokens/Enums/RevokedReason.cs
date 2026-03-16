@@ -9,4 +9,5 @@ public enum RevokedReason
     LoggedOut,
     LoggedOutAll,
     ChangedPassword,
+    UserDeleted
 }

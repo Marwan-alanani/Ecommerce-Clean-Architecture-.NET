@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Domain.Users;
 
 using Microsoft.EntityFrameworkCore;

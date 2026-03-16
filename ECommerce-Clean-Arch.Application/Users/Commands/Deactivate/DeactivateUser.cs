@@ -1,7 +1,8 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Errors.Users;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -12,25 +13,28 @@ public record DeactivateUserCommand(Guid UserId) : ICommand;
 
 public class DeactivateUserCommandHandler : ICommandHandler<DeactivateUserCommand>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
-    public DeactivateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    public DeactivateUserCommandHandler(
+        IApplicationDbContext context
+    )
     {
-        _userRepository = userRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserByIdAsync(request.UserId, cancellationToken);
+        var user = await _context.Users
+            .Where(u => u.Id == request.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
         if (user is null)
         {
             return Error.NotFound(new UserNotFound(request.UserId));
         }
+
         user.Deactivate();
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

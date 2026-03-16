@@ -1,8 +1,9 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Categories;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -16,18 +17,18 @@ public sealed record UpdateCategoryCommand(
 
 public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategoryCommand>
 {
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
-    public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public UpdateCategoryCommandHandler(IApplicationDbContext context)
     {
-        _categoryRepository = categoryRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetCategoryAsync(request.Id, cancellationToken);
+        var category = await _context.Categories
+            .Where(c => c.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
         if (category is null)
         {
             return Error.NotFound(new CategoryNotFound(request.Id));
@@ -38,14 +39,15 @@ public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategor
             return Result.Success();
         }
 
-        var nameExists = await _categoryRepository.CategoryExists(request.Name, cancellationToken);
+        var nameExists = await _context.Categories
+            .AnyAsync(c => c.Name == request.Name, cancellationToken);
         if (nameExists)
         {
             return Error.Conflict(new CategoryNameAlreadyExists(request.Name));
         }
 
         category.Name = request.Name;
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

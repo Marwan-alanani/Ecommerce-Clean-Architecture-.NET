@@ -4,15 +4,12 @@ using ECommerce_Clean_Arch.Application.Authentication.Commands.LogoutAllSessions
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RotateTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
-using ECommerce_Clean_Arch.Domain.Errors.Token;
-using ECommerce_Clean_Arch.Domain.RefreshTokens;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using SharedKernel.Errors;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
@@ -59,24 +56,13 @@ public class AuthController : ApiController
             return Problem(result.Error);
         }
 
-        var tokens = result.Value;
-        // Send token in HttpOnly cookie
-        SendRefreshTokenInCookies(tokens.RefreshToken.Token, tokens.RefreshToken.Expiration);
-        return Ok(new { token = tokens.AccessToken });
+        return Ok(new { token = result.Value });
     }
 
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
-        var token = Request.Cookies[RefreshToken.CookieName];
-        if (token is null)
-        {
-            var error = Error.NotFound(new MissingTokenCookie());
-            return Problem(error);
-        }
-
         var command = new RotateTokensCommand(
-            token,
             HttpContext.Request.Headers.UserAgent.ToString(),
             Request.HttpContext.Connection.RemoteIpAddress?.ToString()
         );
@@ -86,30 +72,19 @@ public class AuthController : ApiController
             return Problem(result.Error);
         }
 
-        var tokens = result.Value;
-        // Send token in HttpOnly cookie
-        SendRefreshTokenInCookies(tokens.RefreshToken.Token, tokens.RefreshToken.Expiration);
-        return Ok(new { token = tokens.AccessToken });
+        return Ok(new { token = result.Value });
     }
 
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
     {
-        var token = Request.Cookies[RefreshToken.CookieName];
-        if (token is null) // token doesn't exists in browser
-        {
-            return Ok(new { message = "Logged out successfully" });
-        }
-
-        var command = new LogoutCommand(token);
+        var command = new LogoutCommand();
         var result = await _sender.Send(command);
         if (result.IsFailure)
         {
             return Problem(result.Error);
         }
-
-        Response.Cookies.Delete(RefreshToken.CookieName);
 
         return Ok(new { message = "Logged out successfully" });
     }
@@ -125,7 +100,6 @@ public class AuthController : ApiController
             return Problem(result.Error);
         }
 
-        Response.Cookies.Delete(RefreshToken.CookieName);
         return Ok(new { message = "Logged out of all sessions successfully" });
     }
 
@@ -139,21 +113,6 @@ public class AuthController : ApiController
             return Problem(result.Error);
         }
 
-        Response.Cookies.Delete(RefreshToken.CookieName);
         return Ok(new { message = "Password changed successfully" });
-    }
-
-    private void SendRefreshTokenInCookies(string token, DateTime expiration)
-    {
-        Response.Cookies.Append(
-            RefreshToken.CookieName,
-            token,
-            new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = expiration
-            });
     }
 }

@@ -1,8 +1,9 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Categories;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -13,16 +14,13 @@ public sealed record DeactivateCategoryCommand(CategoryId Id) : ICommand;
 
 public sealed class DeactivateCategoryCommandHandler : ICommandHandler<DeactivateCategoryCommand>
 {
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IApplicationDbContext _context;
 
     public DeactivateCategoryCommandHandler(
-        ICategoryRepository categoryRepository,
-        IUnitOfWork unitOfWork
+        IApplicationDbContext context
     )
     {
-        _categoryRepository = categoryRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
     }
 
     public async Task<Result> Handle(
@@ -30,14 +28,16 @@ public sealed class DeactivateCategoryCommandHandler : ICommandHandler<Deactivat
         CancellationToken cancellationToken
     )
     {
-        var category = await _categoryRepository.GetCategoryAsync(request.Id, cancellationToken);
+        var category = await _context.Categories
+            .Where(c => c.Id == request.Id)
+            .FirstOrDefaultAsync(cancellationToken);
         if (category is null)
         {
             return Error.NotFound(new CategoryNotFound(request.Id));
         }
 
         category.Deactivate();
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

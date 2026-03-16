@@ -1,5 +1,6 @@
 namespace SharedKernel.Errors;
 
+// make this a class
 public record ErrorReason(
     string Code,
     string Description,

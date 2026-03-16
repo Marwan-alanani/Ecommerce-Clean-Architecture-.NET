@@ -1,26 +1,27 @@
-using AutoMapper;
-
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Products.Common;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
+
+using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 
-public record GetProductById(Guid Id) : IQuery<ProductDto>;
+public record GetProductById(ProductId Id) : IQuery<ProductDto>;
 
 public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductDto>
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
+    private readonly IApplicationDbContext _context;
 
-    public GetProductByIdQueryHandler(IProductRepository productRepository, IMapper mapper)
+    public GetProductByIdQueryHandler(
+        IApplicationDbContext context
+    )
     {
-        _productRepository = productRepository;
-        _mapper = mapper;
+        _context = context;
     }
 
     public async Task<Result<ProductDto>> Handle(
@@ -28,15 +29,14 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductD
         CancellationToken cancellationToken
     )
     {
-        var product = await _productRepository.GetByIdAsync(
-            ProductId.FromValue(request.Id),
-            cancellationToken);
-        if (product is null)
+        var productDto = await _context.Products.AsNoTracking()
+            .Where(p => p.Id == request.Id)
+            .ToProductDto(_context)
+            .FirstOrDefaultAsync(cancellationToken);
+        if (productDto is null)
         {
             return Error.NotFound(new ProductNotFound(request.Id));
         }
-
-        var productDto = _mapper.Map<ProductDto>(product);
 
         return productDto;
     }

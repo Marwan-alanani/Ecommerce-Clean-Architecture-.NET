@@ -2,9 +2,11 @@ using System.Security.Claims;
 
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
 
+using Microsoft.AspNetCore.Http;
+
 using Perms = ECommerce_Clean_Arch.Domain.Common.Security.Permissions;
 
-namespace ECommerce_Clean_Arch.Presentation.Services;
+namespace ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 
 public class CurrentUser : IUser
 {

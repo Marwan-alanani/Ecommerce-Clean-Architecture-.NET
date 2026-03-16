@@ -1,8 +1,8 @@
 using System.Text;
 
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Persistence;
-using ECommerce_Clean_Arch.Application.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
@@ -84,12 +84,10 @@ public static class DependencyInjection
             })
             .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<ApplicationDbContextInitialiser>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-        services.AddScoped<ICategoryRepository, CategoryRepository>();
         return services;
     }
 
@@ -98,7 +96,9 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
+        services.AddHttpContextAccessor();
         services.AddScoped<ITokenProvider, TokenProvider>();
+        services.AddScoped<ICookieService, CookieService>();
         var jwtConfig = new JwtConfig();
         config.Bind(JwtConfig.SectionName, jwtConfig);
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

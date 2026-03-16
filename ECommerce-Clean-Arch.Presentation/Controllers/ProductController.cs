@@ -1,9 +1,12 @@
+using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Commands.Create;
 using ECommerce_Clean_Arch.Application.Products.Commands.Deactivate;
 using ECommerce_Clean_Arch.Application.Products.Commands.Update;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Common.Security;
+using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 using ECommerce_Clean_Arch.Presentation.Attributes;
 
 using MediatR;
@@ -37,7 +40,7 @@ public class ProductController : ApiController
     [HttpGet("{id}")]
     public async Task<IActionResult> Get([FromRoute] Guid id)
     {
-        var query = new GetProductById(id);
+        var query = new GetProductById(ProductId.FromValue(id));
         var result = await _sender.Send(query);
         if (result.IsSuccess)
         {
@@ -59,10 +62,25 @@ public class ProductController : ApiController
         return Problem(result.Error);
     }
 
+    public sealed record UpdateProductRequest(
+        Guid Id,
+        string? Name,
+        string? Description,
+        MoneyDto? Price,
+        Guid? CategoryId
+    );
+
     [HttpPatch]
     [HasPermission(Permissions.Products.Edit)]
-    public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductCommand command)
+    public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest request)
     {
+        var command = new UpdateProductCommand(
+            ProductId.FromValue(request.Id),
+            request.Name,
+            request.Description,
+            request.Price,
+            request.CategoryId == null ? null : CategoryId.FromValue(request.CategoryId.Value)
+        );
         var result = await _sender.Send(command);
 
         if (result.IsSuccess)
@@ -77,7 +95,7 @@ public class ProductController : ApiController
     [HasPermission(Permissions.Products.Delete)]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id)
     {
-        var command = new DeactivateProductCommand(id);
+        var command = new DeactivateProductCommand(ProductId.FromValue(id));
         var result = await _sender.Send(command);
         if (result.IsSuccess)
         {
