@@ -13,4 +13,11 @@ public sealed record CategoryNotFound : ErrorReason
         nameof(Category.Id))
     {
     }
+
+    public CategoryNotFound(string name) : base(
+        nameof(CategoryNotFound),
+        $"No category with the given name {name} was found.",
+        nameof(Category.Name))
+    {
+    }
 }
