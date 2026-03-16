@@ -35,7 +35,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne<Category>()
             .WithMany()
             .HasForeignKey(p => p.CategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(p => p.Description)
             .HasMaxLength(500);

@@ -29,6 +29,7 @@ public sealed class GetCategoryByNameQueryHandler
     {
         var category = await _context.Categories.AsNoTracking()
             .Where(c => c.Name == request.Name)
+            .Where(c => c.IsActive)
             .FirstOrDefaultAsync(cancellationToken);
         if (category is null)
         {

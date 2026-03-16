@@ -30,6 +30,7 @@ public sealed class GetCategoryByIdQueryHandler
     {
         var category = await _context.Categories.AsNoTracking()
             .Where(c => c.Id == request.Id)
+            .Where(c => c.IsActive)
             .FirstOrDefaultAsync(cancellationToken);
         if (category is null)
         {

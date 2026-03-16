@@ -1,6 +1,9 @@
 using ECommerce_Clean_Arch.Application.Categories.Commands.Create;
 using ECommerce_Clean_Arch.Application.Categories.Commands.Deactivate;
 using ECommerce_Clean_Arch.Application.Categories.Commands.Update;
+using ECommerce_Clean_Arch.Application.Categories.Queries.GetById;
+using ECommerce_Clean_Arch.Application.Categories.Queries.GetByName;
+using ECommerce_Clean_Arch.Application.Categories.Queries.GetPage;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Presentation.Attributes;
@@ -33,6 +36,7 @@ public sealed class CategoryController : ApiController
 
         return Created("/categories/id", result.Value);
     }
+
 
     public sealed record UpdateCategoryRequest(string Name);
 
@@ -68,5 +72,43 @@ public sealed class CategoryController : ApiController
         }
 
         return Ok(new { message = "category deactivated successfully" });
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetCategoryById([FromRoute] Guid id)
+    {
+        var query = new GetCategoryByIdQuery(CategoryId.FromValue(id));
+        var result = await _sender.Send(query);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("name/{name}")]
+    public async Task<IActionResult> GetCategoryByName(string name)
+    {
+        var query = new GetCategoryByNameQuery(name);
+        var result = await _sender.Send(query);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCategoryPage([FromQuery] GetCategoryPageQuery query)
+    {
+        var result = await _sender.Send(query);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }

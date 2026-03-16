@@ -4,13 +4,14 @@ using ECommerce_Clean_Arch.Application;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
 using ECommerce_Clean_Arch.Infrastructure;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
+using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Presentation.Errors;
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ECommerce_Clean_Arch.Presentation;
 
-internal class Program
+internal static class Program
 {
     public static async Task Main(string[] args)
     {
@@ -37,7 +38,7 @@ internal class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            // await app.InitialiseDatabaseAsync();
+            await app.InitialiseDatabaseAsync();
             app.UseSwagger();
             app.UseSwaggerUI();
         }

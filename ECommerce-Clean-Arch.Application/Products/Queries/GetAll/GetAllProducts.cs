@@ -10,7 +10,7 @@ using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
-public record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
+public sealed record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
 {
     public int PageNo { get; init; } = 1;
     public int PageSize { get; init; } = 5;
