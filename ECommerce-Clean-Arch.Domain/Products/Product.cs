@@ -17,7 +17,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
     public Guid? LastModifiedBy { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime LastModifiedAt { get; set; }
-    public CategoryId? CategoryId { get; set; }
+    public CategoryId CategoryId { get; set; }
 
 
     private Product()
@@ -30,7 +30,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
         string? description,
         Money price,
         string pictureUrl,
-        CategoryId? categoryId
+        CategoryId categoryId
     ) : base(id)
     {
         Name = name;
@@ -46,7 +46,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
         string description,
         Money price,
         string pictureUrl,
-        CategoryId? categoryId
+        CategoryId categoryId
     )
     {
         return new(
@@ -56,14 +56,5 @@ public class Product : AggregateRoot<ProductId>, IAuditable
             price,
             pictureUrl,
             categoryId);
-    }
-
-    public void SetCategoryId(CategoryId? categoryId)
-    {
-        if (categoryId.HasValue)
-        {
-            CategoryId = categoryId.Value;
-        }
-        else CategoryId = null;
     }
 }

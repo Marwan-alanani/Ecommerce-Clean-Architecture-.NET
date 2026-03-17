@@ -38,12 +38,12 @@ public record UpdateProductCommand(
     }
 }
 
-public class UpdateProduct : ICommandHandler<UpdateProductCommand>
+public class UpdateProductCommandHandler : ICommandHandler<UpdateProductCommand>
 {
     private readonly IMapper _mapper;
     private readonly IApplicationDbContext _context;
 
-    public UpdateProduct(
+    public UpdateProductCommandHandler(
         IMapper mapper,
         IApplicationDbContext context
     )
@@ -66,8 +66,12 @@ public class UpdateProduct : ICommandHandler<UpdateProductCommand>
             return Error.Validation(new ProductNameExists(request.Name));
         }
 
-        if (request.CategoryId is not null && await _context.Categories
-                .AllAsync(c => c.Id != request.CategoryId, cancellationToken))
+        var categoryExistsAndActive = await _context.Categories
+            .Where(c => c.Id == request.CategoryId)
+            .Where(c => c.IsActive)
+            .AnyAsync(cancellationToken);
+
+        if (request.CategoryId is not null && !categoryExistsAndActive)
         {
             return Error.Validation(new CategoryNotFound(request.CategoryId.Value));
         }

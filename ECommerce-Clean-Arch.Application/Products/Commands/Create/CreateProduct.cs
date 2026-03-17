@@ -22,15 +22,15 @@ public record CreateProductCommand(
     string Description,
     MoneyDto Price,
     string PictureUrl,
-    CategoryId? CategoryId
+    CategoryId CategoryId
 ) : ICommand<ProductId>;
 
-public class CreateProduct : ICommandHandler<CreateProductCommand, ProductId>
+public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand, ProductId>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
 
-    public CreateProduct(IMapper mapper, IApplicationDbContext context)
+    public CreateProductCommandHandler(IMapper mapper, IApplicationDbContext context)
     {
         _mapper = mapper;
         _context = context;
@@ -47,13 +47,13 @@ public class CreateProduct : ICommandHandler<CreateProductCommand, ProductId>
         }
 
 
-        if (request.CategoryId is not null &&
-            !(await _context.Categories.AnyAsync(
-                c => c.Id == request.CategoryId.Value,
-                cancellationToken))
+        if (!(await _context.Categories
+                .Where(c => c.Id == request.CategoryId)
+                .Where(c => c.IsActive)
+                .AnyAsync(cancellationToken))
            )
         {
-            return Error.NotFound(new CategoryNotFound(request.CategoryId.Value));
+            return Error.NotFound(new CategoryNotFound(request.CategoryId));
         }
 
         var price = _mapper.Map<Money>(request.Price);

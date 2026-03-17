@@ -25,10 +25,25 @@ public class ProductController : ApiController
         _sender = sender;
     }
 
+    public sealed record CreateProductRequest(
+        string Name,
+        string Description,
+        MoneyDto Price,
+        string PictureUrl,
+        Guid CategoryId
+    );
+
     [HttpPost]
     [HasPermission(Permissions.Products.Write)]
-    public async Task<IActionResult> Create([FromBody] CreateProductCommand command)
+    public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
     {
+        var command = new CreateProductCommand(
+            request.Name,
+            request.Description,
+            request.Price,
+            request.PictureUrl,
+            CategoryId.FromValue(request.CategoryId)
+        );
         var result = await _sender.Send(command);
 
         if (result.IsSuccess)

@@ -29,8 +29,9 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.CategoryId)
             .HasConversion(
-                id => id.HasValue ? id.Value.Value : (Guid?)null,
-                value => value.HasValue ? CategoryId.FromValue(value.Value) : null);
+                id => id.Value,
+                value => CategoryId.FromValue(value)
+            );
 
         builder.HasOne<Category>()
             .WithMany()

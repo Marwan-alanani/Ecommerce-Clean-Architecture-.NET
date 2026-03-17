@@ -19,6 +19,7 @@ public static class ProductQueryExtensions
                 p.Price.Amount,
                 context.Categories
                     .Where(c => c.Id == p.CategoryId)
+                    .Where(c => c.IsActive)
                     .Select(c => c.Name)
                     .FirstOrDefault(),
                 p.CreatedAt,
