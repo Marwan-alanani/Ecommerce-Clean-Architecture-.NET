@@ -4,9 +4,17 @@ namespace ECommerce_Clean_Arch.Application.Carts.Models;
 
 public sealed class Cart
 {
-    private readonly Dictionary<Guid, CartItem> _items = new();
+    private Dictionary<Guid, CartItem> _items = new();
 
-    public IReadOnlyDictionary<Guid, CartItem> Items => _items.ToDictionary();
+
+    public IReadOnlyDictionary<Guid, CartItem> Items
+    {
+        get => _items;
+        set
+        {
+            _items = value.ToDictionary();
+        }
+    }
 
     private Cart()
     {

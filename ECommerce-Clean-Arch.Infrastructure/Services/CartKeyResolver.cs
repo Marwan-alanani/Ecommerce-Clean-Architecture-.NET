@@ -29,6 +29,6 @@ public sealed class CartKeyResolver
             throw new Exception("user not found");
         }
 
-        return "cart:" + _user.Id;
+        return "cart:user:" + _user.Id;
     }
 }

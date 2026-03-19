@@ -34,6 +34,7 @@ public sealed class CategoryController : ApiController
             return Problem(result.Error);
         }
 
+        // TODO: Improve uri given
         return Created("/categories/id", result.Value);
     }
 

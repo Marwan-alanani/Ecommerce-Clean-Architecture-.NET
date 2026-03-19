@@ -54,4 +54,9 @@ public sealed class CartRepository : ICartRepository
             jsonData,
             _ttl);
     }
+
+    public async Task RemoveCartAsync()
+    {
+        await _database.KeyDeleteAsync(_keyResolver.GetCartKey());
+    }
 }

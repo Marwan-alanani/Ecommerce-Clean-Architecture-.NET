@@ -11,7 +11,7 @@ public sealed class CartItem
     public string Name { get; init; }
     public Guid ProductId { get; init; }
     public MoneyDto UnitPrice { get; init; }
-    public int Quantity { get; private set; }
+    public int Quantity { get; set; }
     public string PictureUrl { get; init; }
 
     private CartItem()
