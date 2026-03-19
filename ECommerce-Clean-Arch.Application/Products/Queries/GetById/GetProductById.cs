@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Products.Common;
+using ECommerce_Clean_Arch.Application.Products.Queries.Common;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
@@ -11,9 +12,9 @@ using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetById;
 
-public record GetProductById(ProductId Id) : IQuery<ProductDto>;
+public record GetProductByIdQuery(ProductId Id) : IQuery<ProductDto>;
 
-public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductDto>
+public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, ProductDto>
 {
     private readonly IApplicationDbContext _context;
 
@@ -25,7 +26,7 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductById, ProductD
     }
 
     public async Task<Result<ProductDto>> Handle(
-        GetProductById request,
+        GetProductByIdQuery request,
         CancellationToken cancellationToken
     )
     {

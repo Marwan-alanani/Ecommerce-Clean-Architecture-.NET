@@ -12,6 +12,8 @@ public record MoneyDto(string Currency, decimal Amount)
         {
             CreateMap<MoneyDto, Money>()
                 .ConvertUsing(src => new Money(Enum.Parse<Currency>(src.Currency, true), src.Amount));
+            CreateMap<Money, MoneyDto>()
+                .ConvertUsing(src => new MoneyDto(src.Currency.ToString(), src.Amount));
         }
     }
 }

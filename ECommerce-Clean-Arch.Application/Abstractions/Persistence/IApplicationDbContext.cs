@@ -1,3 +1,4 @@
+using ECommerce_Clean_Arch.Domain.Carts;
 using ECommerce_Clean_Arch.Domain.Categories;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Users;
@@ -11,5 +12,6 @@ public interface IApplicationDbContext
     DbSet<Category> Categories { get; }
     DbSet<Product> Products { get; }
     DbSet<User> Users { get; }
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken=default);
+    DbSet<Cart> Carts { get; }
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

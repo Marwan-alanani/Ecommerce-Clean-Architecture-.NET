@@ -30,7 +30,7 @@ public sealed class ChangePasswordCommandHandler :
         IIdentityService identityService,
         IUser user,
         IUserRepository userRepository,
-        IRefreshTokenRepository tokenRepository,
+        ISessionRepository tokenRepository,
         IApplicationDbContext unitOfWork,
         ICookieService cookieService
     )

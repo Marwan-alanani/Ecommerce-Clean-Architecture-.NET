@@ -4,7 +4,6 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
@@ -24,6 +23,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
 using RabbitMQ.Client;
+
+using StackExchange.Redis;
+
+using Role = ECommerce_Clean_Arch.Domain.Roles.Role;
 
 
 namespace ECommerce_Clean_Arch.Infrastructure;
@@ -87,7 +90,10 @@ public static class DependencyInjection
         services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<ApplicationDbContextInitialiser>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddSingleton<IConnectionMultiplexer>(
+            ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")!)
+        );
         return services;
     }
 

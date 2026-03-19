@@ -6,7 +6,7 @@ public abstract class Entity<TId, TValue> : IEquatable<Entity<TId, TValue>>
     where TId : struct, IStronglyTypedId<TId, TValue>
     where TValue : IEquatable<TValue>
 {
-    public TId Id { get; protected set; }
+    public TId Id { get; init; }
 
     protected Entity()
     {

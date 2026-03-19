@@ -1,8 +1,8 @@
 using ECommerce_Clean_Arch.Application.Authentication.Commands.ChangePassword;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.Logout;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.LogoutAllSessions;
+using ECommerce_Clean_Arch.Application.Authentication.Commands.RefreshTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
-using ECommerce_Clean_Arch.Application.Authentication.Commands.RotateTokens;
 using ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
 using MediatR;
@@ -62,10 +62,7 @@ public class AuthController : ApiController
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
-        var command = new RotateTokensCommand(
-            HttpContext.Request.Headers.UserAgent.ToString(),
-            Request.HttpContext.Connection.RemoteIpAddress?.ToString()
-        );
+        var command = new RefreshTokensCommand();
         var result = await _sender.Send(command);
         if (result.IsFailure)
         {

@@ -1,5 +1,5 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using ECommerce_Clean_Arch.Application.Products.Queries.Common;
 using ECommerce_Clean_Arch.Domain.Products;
 
 namespace ECommerce_Clean_Arch.Application.Products.Common;
@@ -15,8 +15,6 @@ public static class ProductQueryExtensions
                 p.Id.Value,
                 p.Name,
                 p.Description,
-                p.Price.Currency.ToString(),
-                p.Price.Amount,
                 context.Categories
                     .Where(c => c.Id == p.CategoryId)
                     .Where(c => c.IsActive)

@@ -1,7 +1,12 @@
 namespace SharedKernel.Models;
 
-public record struct Money
+public record Money
 {
+    // ReSharper disable once UnusedMember.Local
+    private Money()
+    {
+    }
+
     public Money(Currency currency, decimal amount)
     {
         Currency = currency;

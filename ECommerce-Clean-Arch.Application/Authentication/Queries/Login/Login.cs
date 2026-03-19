@@ -3,7 +3,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.RefreshTokens;
+using ECommerce_Clean_Arch.Domain.UserSessions;
 
 using Microsoft.Extensions.Configuration;
 
@@ -22,8 +22,8 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
 {
     private readonly ITokenProvider _tokenProvider;
     private readonly IIdentityService _identityService;
-    private readonly IRefreshTokenRepository _tokenRepository;
-    private readonly IDateTimeProvider _dateTime;
+    private readonly ISessionRepository _sessionRepository;
+    private readonly DateTime _utcNow;
     private readonly IApplicationDbContext _unitOfWork;
     private readonly ICookieService _cookieService;
 
@@ -32,15 +32,15 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
         IIdentityService identityService,
         IDateTimeProvider dateTime,
         IConfiguration configuration,
-        IRefreshTokenRepository tokenRepository,
+        ISessionRepository sessionRepository,
         IApplicationDbContext unitOfWork,
         ICookieService cookieService
     )
     {
         _tokenProvider = tokenProvider;
         _identityService = identityService;
-        _dateTime = dateTime;
-        _tokenRepository = tokenRepository;
+        _utcNow = dateTime.UtcNow;
+        _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
         _cookieService = cookieService;
     }
@@ -60,20 +60,21 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
 
         var user = authenticationResult.Value;
 
-        var accessToken = await _tokenProvider.GenerateAccessToken(user);
+        var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
 
         var opaqueToken = _tokenProvider.GenerateOpaqueToken();
-        var opaqueTokenHash = _tokenProvider.HashOpaqueToken(opaqueToken);
-        var refreshToken = RefreshToken.Create(
+        var userSession = UserSession.Create(
             user.Id,
-            opaqueTokenHash,
-            _dateTime.UtcNow,
             request.UserAgent,
-            request.IpAddress
+            request.IpAddress,
+            _utcNow
         );
-        await _tokenRepository.AddAsync(refreshToken, cancellationToken);
+        await _sessionRepository.AddAsync(
+            userSession,
+            opaqueToken,
+            cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        _cookieService.SetRefreshToken(opaqueToken, refreshToken.ExpiresOnUtc);
+        _cookieService.SetRefreshToken(opaqueToken);
         return accessToken;
     }
 }

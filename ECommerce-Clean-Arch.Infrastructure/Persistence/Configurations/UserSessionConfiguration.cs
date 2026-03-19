@@ -1,27 +1,24 @@
-using ECommerce_Clean_Arch.Domain.RefreshTokens;
-using ECommerce_Clean_Arch.Domain.RefreshTokens.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Users;
+using ECommerce_Clean_Arch.Domain.UserSessions;
+using ECommerce_Clean_Arch.Domain.UserSessions.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
 
-public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+public sealed class UserSessionConfiguration : IEntityTypeConfiguration<UserSession>
 {
-    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    public void Configure(EntityTypeBuilder<UserSession> builder)
     {
-        builder.ToTable("RefreshTokens");
+        builder.ToTable("UserSessions");
         builder.Property(r => r.Id)
             .HasConversion(
                 id => id.Value,
-                value => RefreshTokenId.FromValue(value)
+                value => UserSessionId.FromValue(value)
             );
         builder.HasKey(r => r.Id);
         builder.HasIndex(r => r.UserId);
-        builder.HasIndex(r => r.TokenHash);
-
-        builder.Property(r => r.TokenHash).HasMaxLength(64).IsRequired();
         builder.Property(r => r.RevokedReason)
             .HasConversion<string>()
             .HasMaxLength(64);

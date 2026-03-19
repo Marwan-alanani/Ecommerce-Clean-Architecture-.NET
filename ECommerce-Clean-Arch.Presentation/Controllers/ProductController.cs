@@ -55,7 +55,7 @@ public class ProductController : ApiController
     [HttpGet("{id}")]
     public async Task<IActionResult> Get([FromRoute] Guid id)
     {
-        var query = new GetProductById(ProductId.FromValue(id));
+        var query = new GetProductByIdQuery(ProductId.FromValue(id));
         var result = await _sender.Send(query);
         if (result.IsSuccess)
         {

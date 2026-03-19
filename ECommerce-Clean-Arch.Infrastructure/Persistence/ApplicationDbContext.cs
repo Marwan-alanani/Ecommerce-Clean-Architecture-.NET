@@ -1,10 +1,11 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Domain.Carts;
 using ECommerce_Clean_Arch.Domain.Categories;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Products;
-using ECommerce_Clean_Arch.Domain.RefreshTokens;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
+using ECommerce_Clean_Arch.Domain.UserSessions;
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<UserSession> UserSessions => Set<UserSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

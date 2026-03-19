@@ -2,7 +2,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Common;
-using ECommerce_Clean_Arch.Application.Products.Queries.GetById;
+using ECommerce_Clean_Arch.Application.Products.Queries.Common;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -53,11 +53,6 @@ public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, Pag
 
         products = (sortBy, direction) switch
         {
-            (ProductSortingOptions.Price, SortDirection.Asc) => products.OrderBy(p => p.Price.Amount),
-
-            (ProductSortingOptions.Price, SortDirection.Desc) => products
-                .OrderByDescending(p => p.Price.Amount),
-
             (ProductSortingOptions.Name, SortDirection.Asc) => products.OrderBy(p => p.Name),
 
             (ProductSortingOptions.Name, SortDirection.Desc) => products.OrderByDescending(p => p.Name),

@@ -6,7 +6,6 @@ using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Persistence.Configurations;
 
@@ -42,22 +41,19 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(500);
 
 
-        builder.ComplexProperty(
+        builder.OwnsOne(
             p => p.Price,
             money =>
             {
                 money.Property(p => p.Amount)
                     .HasColumnType("decimal(18,2)")
-                    .HasColumnName("Price_Amount")
+                    .HasColumnName("Amount")
                     .IsRequired();
 
                 money.Property(p => p.Currency)
-                    .HasConversion(
-                        currency => currency.ToString(),
-                        value => Enum.Parse<Currency>(value, true)
-                    )
+                    .HasConversion<string>()
                     .HasMaxLength(5)
-                    .HasColumnName("Price_Currency")
+                    .HasColumnName("Currency")
                     .IsRequired();
             });
 

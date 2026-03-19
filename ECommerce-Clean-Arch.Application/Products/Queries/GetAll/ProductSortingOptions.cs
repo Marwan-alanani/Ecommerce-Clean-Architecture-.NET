@@ -4,5 +4,4 @@ public enum ProductSortingOptions
 {
     CreatedAt,
     Name,
-    Price,
 }

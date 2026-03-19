@@ -37,7 +37,7 @@ public sealed class TokenProvider : ITokenProvider
         _jwtConfig = jwtConfig.Value;
     }
 
-    public async Task<string> GenerateAccessToken(User user)
+    public async Task<string> GenerateAccessTokenAsync(User user)
     {
         List<Claim> claims =
         [

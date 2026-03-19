@@ -9,7 +9,7 @@ public sealed record CategoryNotFound : ErrorReason
 {
     public CategoryNotFound(CategoryId id) : base(
         nameof(CategoryNotFound),
-        $"No category with the given {id} was found.",
+        $"No category with the given id: {id.Value} was found.",
         nameof(Category.Id))
     {
     }

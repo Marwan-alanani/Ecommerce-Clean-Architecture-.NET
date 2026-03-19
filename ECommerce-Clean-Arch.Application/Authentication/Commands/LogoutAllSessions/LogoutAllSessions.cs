@@ -4,7 +4,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
 using ECommerce_Clean_Arch.Domain.Errors.Token;
-using ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
+using ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -15,13 +15,13 @@ public sealed record LogoutAllSessionsCommand : ICommand;
 
 public class LogoutAllSessionsCommandHandler : ICommandHandler<LogoutAllSessionsCommand>
 {
-    private readonly IRefreshTokenRepository _tokenRepository;
+    private readonly ISessionRepository _tokenRepository;
     private readonly IApplicationDbContext _context;
     private readonly IUser _user;
     private readonly ICookieService _cookieService;
 
     public LogoutAllSessionsCommandHandler(
-        IRefreshTokenRepository tokenRepository,
+        ISessionRepository tokenRepository,
         IUser user,
         IApplicationDbContext context,
         ICookieService cookieService

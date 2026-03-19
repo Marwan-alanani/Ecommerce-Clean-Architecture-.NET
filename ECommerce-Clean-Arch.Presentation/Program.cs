@@ -15,7 +15,6 @@ internal static class Program
 {
     public static async Task Main(string[] args)
     {
-        await Task.CompletedTask;
         Env.Load();
         var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +37,7 @@ internal static class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            // await app.InitialiseDatabaseAsync();
+            await app.InitialiseDatabaseAsync();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -49,6 +48,6 @@ internal static class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.Run();
+        await app.RunAsync();
     }
 }

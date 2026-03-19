@@ -3,15 +3,14 @@ using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 namespace ECommerce_Clean_Arch.Domain.Common.Models;
 
 public abstract class AggregateRoot<TId> : Entity<TId, Guid>, IAggregateRoot<TId>
-    where TId : struct, IEquatable<TId>, IAggregateRootId<TId>
+    where TId : struct, IAggregateRootId<TId>
 {
     protected AggregateRoot()
     {
     }
 
-    protected AggregateRoot(TId id)
+    protected AggregateRoot(TId id) : base(id)
     {
-        Id = id;
     }
 
 

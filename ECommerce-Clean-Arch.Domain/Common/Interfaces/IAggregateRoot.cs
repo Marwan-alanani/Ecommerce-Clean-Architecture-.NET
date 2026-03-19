@@ -1,8 +1,9 @@
 namespace ECommerce_Clean_Arch.Domain.Common.Interfaces;
 
-internal interface IAggregateRoot<T> : IHasDomainEvents
-    where T : struct, IEquatable<T>
+public interface IAggregateRoot<out T> : IHasDomainEvents
+    where T : struct, IAggregateRootId<T>
 {
+    T Id { get; }
     bool IsActive { get; }
     void Deactivate();
     void Activate();

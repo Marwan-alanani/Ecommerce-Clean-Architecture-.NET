@@ -1,13 +1,11 @@
-namespace ECommerce_Clean_Arch.Domain.RefreshTokens.Enums;
+namespace ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 
 public enum RevokedReason
 {
     SessionLimitExceeded,
-    TokenRotated,
-    UserDeactivated,
     SecurityBreach,
     LoggedOut,
     LoggedOutAll,
     ChangedPassword,
-    UserDeleted
+    UserDeactivated
 }

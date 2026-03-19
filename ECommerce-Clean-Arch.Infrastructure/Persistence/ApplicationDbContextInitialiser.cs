@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+using ECommerce_Clean_Arch.Domain.Categories;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
@@ -73,13 +74,14 @@ public class ApplicationDbContextInitialiser
         }
     }
 
-    public async Task TrySeedAsync()
+    private async Task TrySeedAsync()
     {
         await TrySeedIdentity();
         // seed other data here
+        await TrySeedCategory();
     }
 
-    public async Task TrySeedIdentity()
+    private async Task TrySeedIdentity()
     {
         // Default roles
         foreach (var role in Roles.GetAll())
@@ -115,5 +117,14 @@ public class ApplicationDbContextInitialiser
 
         await _userManager.CreateAsync(user, "P@ssw0rd");
         await _userManager.AddToRolesAsync(user, [Roles.User]);
+    }
+
+    private async Task TrySeedCategory()
+    {
+        var category = Category.Create(
+            "Unlisted"
+        );
+        await _context.Categories.AddAsync(category);
+        await _context.SaveChangesAsync();
     }
 }
