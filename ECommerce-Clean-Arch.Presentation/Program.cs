@@ -6,6 +6,7 @@ using ECommerce_Clean_Arch.Infrastructure;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Presentation.Errors;
+using ECommerce_Clean_Arch.Presentation.Middlewares;
 
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
@@ -37,7 +38,7 @@ internal static class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            await app.InitialiseDatabaseAsync();
+            // await app.InitialiseDatabaseAsync();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -47,6 +48,7 @@ internal static class Program
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<GuestSessionMiddleware>();
 
         await app.RunAsync();
     }

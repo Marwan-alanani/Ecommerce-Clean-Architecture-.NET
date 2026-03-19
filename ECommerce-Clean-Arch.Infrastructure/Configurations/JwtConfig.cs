@@ -1,4 +1,4 @@
-namespace ECommerce_Clean_Arch.Infrastructure.Authentication;
+namespace ECommerce_Clean_Arch.Infrastructure.Configurations;
 
 public sealed class JwtConfig
 {

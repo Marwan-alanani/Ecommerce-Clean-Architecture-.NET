@@ -8,6 +8,7 @@ using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 using ECommerce_Clean_Arch.Infrastructure.BackgroundServices;
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
 using ECommerce_Clean_Arch.Infrastructure.EventBus;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
@@ -41,6 +42,7 @@ public static class DependencyInjection
         services
             .AddPersistence(config)
             .AddAuth(config)
+            .AddConf(config)
             .AddServices();
         return services;
     }
@@ -57,6 +59,7 @@ public static class DependencyInjection
         services.AddSingleton(connectionFactory);
         services.AddScoped(_ => rabbitMqEventBus);
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<CartKeyResolver>();
         services.AddHostedService<PublishOutboxMessages>();
         return services;
     }
@@ -91,9 +94,19 @@ public static class DependencyInjection
         services.AddScoped<ApplicationDbContextInitialiser>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISessionRepository, SessionRepository>();
+        services.AddScoped<ICartRepository, CartRepository>();
         services.AddSingleton<IConnectionMultiplexer>(
             ConnectionMultiplexer.Connect(config.GetConnectionString("Redis")!)
         );
+        return services;
+    }
+
+    private static IServiceCollection AddConf(
+        this IServiceCollection services,
+        IConfigurationManager config
+    )
+    {
+        services.Configure<CartTtlConfig>(config.GetSection(CartTtlConfig.SectionName));
         return services;
     }
 

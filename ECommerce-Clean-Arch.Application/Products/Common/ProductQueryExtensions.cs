@@ -1,4 +1,6 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
+using ECommerce_Clean_Arch.Application.Carts.Models;
+using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Queries.Common;
 using ECommerce_Clean_Arch.Domain.Products;
 
@@ -24,5 +26,18 @@ public static class ProductQueryExtensions
                 p.LastModifiedAt
             )
         );
+    }
+
+    public static IQueryable<ProductData> ToProductData(
+        this IQueryable<Product> products
+    )
+    {
+        return products.Select(p => new ProductData
+        {
+            Id = p.Id.Value,
+            Name = p.Name,
+            PictureUrl = p.PictureUrl,
+            Price = new MoneyDto(p.Price.Currency.ToString(), p.Price.Amount)
+        });
     }
 }

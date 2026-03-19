@@ -1,5 +1,7 @@
 using System.Text;
 
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

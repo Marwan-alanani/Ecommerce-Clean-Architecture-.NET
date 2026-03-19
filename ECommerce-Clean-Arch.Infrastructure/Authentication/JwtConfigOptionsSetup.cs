@@ -1,3 +1,5 @@
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 

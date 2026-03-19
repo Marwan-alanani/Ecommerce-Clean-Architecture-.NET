@@ -8,6 +8,7 @@ using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

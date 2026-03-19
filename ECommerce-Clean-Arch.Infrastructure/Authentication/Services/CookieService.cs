@@ -1,5 +1,7 @@
 using ECommerce_Clean_Arch.Application.Authentication.Services;
+using ECommerce_Clean_Arch.Application.Common.Constants;
 using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -11,7 +13,6 @@ public class CookieService : ICookieService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly JwtConfig _jwtConfig;
     private readonly DateTime _utcNow;
-    private const string RefreshTokenCookieName = "refreshToken";
 
     public CookieService(
         IHttpContextAccessor httpContextAccessor,
@@ -26,13 +27,13 @@ public class CookieService : ICookieService
 
     public string? GetRefreshToken()
     {
-        return _httpContextAccessor.HttpContext?.Request.Cookies[RefreshTokenCookieName];
+        return _httpContextAccessor.HttpContext?.Request.Cookies[CookieNames.RefreshToken];
     }
 
     public void SetRefreshToken(string refreshToken)
     {
         _httpContextAccessor.HttpContext?.Response.Cookies.Append(
-            RefreshTokenCookieName,
+            CookieNames.RefreshToken,
             refreshToken,
             new CookieOptions
             {
@@ -47,6 +48,6 @@ public class CookieService : ICookieService
 
     public void ClearRefreshToken()
     {
-        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(RefreshTokenCookieName);
+        _httpContextAccessor.HttpContext?.Response.Cookies.Delete(CookieNames.RefreshToken);
     }
 }

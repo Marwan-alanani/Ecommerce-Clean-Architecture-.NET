@@ -7,6 +7,7 @@ using ECommerce_Clean_Arch.Domain.UserSessions;
 using ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 using ECommerce_Clean_Arch.Domain.UserSessions.ValueObjects;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
+using ECommerce_Clean_Arch.Infrastructure.Configurations;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
