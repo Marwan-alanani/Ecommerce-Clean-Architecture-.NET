@@ -1,34 +1,49 @@
-using ECommerce_Clean_Arch.Application.Common.Constants;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
+using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Domain.Errors.Common.Exceptions;
+using ECommerce_Clean_Arch.Infrastructure.Authentication.Cookies;
 
 using Microsoft.AspNetCore.Http;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Services;
 
-public sealed class CartKeyResolver
+public sealed class CartKeyResolver : ICartKeyResolver
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    private IUser _user;
+    private readonly IUser _user;
+    private readonly IHttpContextAccessor _accessor;
 
-    public CartKeyResolver(IHttpContextAccessor httpContextAccessor, IUser user)
+    public CartKeyResolver(
+        IUser user,
+        IHttpContextAccessor accessor
+    )
     {
-        _httpContextAccessor = httpContextAccessor;
         _user = user;
+        _accessor = accessor;
     }
 
     public string GetCartKey()
     {
-        if (_httpContextAccessor.HttpContext!.Request.Cookies.ContainsKey(CookieNames.GuestSession))
+        var guestSessionId = _accessor.HttpContext?.Items[GuestSessionCookie.CookieName] as string;
+        if (_user.Id.HasValue)
         {
-            return "cart:guest:" + (_httpContextAccessor.HttpContext.Request
-                .Cookies[CookieNames.GuestSession])!;
+            return GetUserKey(_user.Id.Value);
         }
 
-        if (_user.Id is null)
+        if (!string.IsNullOrEmpty(guestSessionId))
         {
-            throw new Exception("user not found");
+            return GetGuestKey(guestSessionId);
         }
 
-        return "cart:user:" + _user.Id;
+        throw new CannotComposeCartKey();
+    }
+
+    public string GetUserKey(Guid userId)
+    {
+        return "cart:user:" + userId;
+    }
+
+    public string GetGuestKey(string guestId)
+    {
+        return "cart:guest:" + guestId;
     }
 }

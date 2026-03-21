@@ -30,14 +30,14 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
                 eventData,
                 result,
                 cancellationToken);
-        await GenerateOutbox(dbContext);
+        await GenerateOutbox(dbContext, cancellationToken);
         return await base.SavingChangesAsync(
             eventData,
             result,
             cancellationToken);
     }
 
-    public async Task GenerateOutbox(DbContext dbContext, CancellationToken cancellationToken = default)
+    private async Task GenerateOutbox(DbContext dbContext, CancellationToken cancellationToken = default)
     {
         var entities = dbContext.ChangeTracker
             .Entries<IHasDomainEvents>()

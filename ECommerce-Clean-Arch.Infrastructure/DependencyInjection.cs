@@ -59,7 +59,7 @@ public static class DependencyInjection
         services.AddSingleton(connectionFactory);
         services.AddScoped(_ => rabbitMqEventBus);
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddScoped<CartKeyResolver>();
+        services.AddScoped<ICartKeyResolver, CartKeyResolver>();
         services.AddHostedService<PublishOutboxMessages>();
         return services;
     }

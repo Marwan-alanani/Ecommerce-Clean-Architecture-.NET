@@ -47,4 +47,9 @@ public sealed class Cart
     {
         _items.Remove(productId);
     }
+
+    public void SetCartItem(Guid productId, CartItem cartItem)
+    {
+        _items[productId] = cartItem;
+    }
 }

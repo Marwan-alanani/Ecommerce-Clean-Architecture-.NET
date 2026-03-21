@@ -4,7 +4,8 @@ namespace ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories
 
 public interface ICartRepository
 {
-    Task<Cart?> GetCartAsync();
-    Task SetCartAsync(Cart cart);
-    Task RemoveCartAsync();
+    Task<Cart?> GetCartAsync(string key);
+    Task SetCartAsync(string key, Cart cart);
+    Task RemoveCartAsync(string key);
+    Task MergeCartAsync(string guestKey, string userKey);
 }

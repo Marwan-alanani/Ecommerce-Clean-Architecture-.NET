@@ -3,6 +3,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Carts.Models;
 using ECommerce_Clean_Arch.Application.Products.Common;
+using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
 using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 
@@ -19,19 +20,23 @@ public sealed class SetItemInCartCommandHandler : ICommandHandler<SetItemInCartC
 {
     private readonly ICartRepository _cartRepository;
     private readonly IApplicationDbContext _context;
+    private readonly ICartKeyResolver _keyResolver;
 
     public SetItemInCartCommandHandler(
         ICartRepository cartRepository,
-        IApplicationDbContext context
+        IApplicationDbContext context,
+        ICartKeyResolver keyResolver
     )
     {
         _cartRepository = cartRepository;
         _context = context;
+        _keyResolver = keyResolver;
     }
 
     public async Task<Result> Handle(SetItemInCartCommand request, CancellationToken cancellationToken)
     {
-        var cart = await _cartRepository.GetCartAsync() ?? Cart.Create();
+        var cartKey = _keyResolver.GetCartKey();
+        var cart = await _cartRepository.GetCartAsync(cartKey) ?? Cart.Create();
 
         var productData = await _context.Products.AsNoTracking()
             .Where(p => p.Id == request.ProductId && p.IsActive)
@@ -44,7 +49,7 @@ public sealed class SetItemInCartCommandHandler : ICommandHandler<SetItemInCartC
 
         var result = cart.SetCartItem(productData, request.Quantity);
         if (result.IsFailure) return result.Error;
-        await _cartRepository.SetCartAsync(cart);
+        await _cartRepository.SetCartAsync(cartKey, cart);
         return Result.Success();
     }
 }

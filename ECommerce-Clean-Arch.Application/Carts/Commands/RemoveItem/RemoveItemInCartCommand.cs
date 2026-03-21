@@ -1,5 +1,6 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Services;
 
 using SharedKernel.Results;
 
@@ -10,10 +11,16 @@ public sealed record RemoveItemInCartCommand(Guid ProductId) : ICommand;
 public sealed class RemoveItemInCartCommandCommandHandler : ICommandHandler<RemoveItemInCartCommand>
 {
     private readonly ICartRepository _cartRepository;
+    private readonly ICartKeyResolver _cartKeyResolver;
 
-    public RemoveItemInCartCommandCommandHandler(ICartRepository cartRepository)
+
+    public RemoveItemInCartCommandCommandHandler(
+        ICartRepository cartRepository,
+        ICartKeyResolver cartKeyResolver
+    )
     {
         _cartRepository = cartRepository;
+        _cartKeyResolver = cartKeyResolver;
     }
 
     public async Task<Result> Handle(
@@ -21,14 +28,15 @@ public sealed class RemoveItemInCartCommandCommandHandler : ICommandHandler<Remo
         CancellationToken cancellationToken
     )
     {
-        var cart = await _cartRepository.GetCartAsync();
+        var cartKey = _cartKeyResolver.GetCartKey();
+        var cart = await _cartRepository.GetCartAsync(cartKey);
         if (cart is null)
         {
             return Result.Success();
         }
 
         cart.RemoveItem(request.ProductId);
-        await _cartRepository.SetCartAsync(cart);
+        await _cartRepository.SetCartAsync(cartKey, cart);
         return Result.Success();
     }
 }

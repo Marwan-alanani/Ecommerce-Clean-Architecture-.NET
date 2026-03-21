@@ -8,10 +8,20 @@ namespace ECommerce_Clean_Arch.Application.Carts.Models;
 
 public sealed class CartItem
 {
+    private int _quantity;
     public string Name { get; init; }
     public Guid ProductId { get; init; }
     public MoneyDto UnitPrice { get; init; }
-    public int Quantity { get; set; }
+
+    public int Quantity
+    {
+        get => _quantity;
+        init
+        {
+            _quantity = value;
+        }
+    }
+
     public string PictureUrl { get; init; }
 
     private CartItem()
@@ -28,7 +38,7 @@ public sealed class CartItem
     {
         Name = name;
         UnitPrice = unitPrice;
-        Quantity = quantity;
+        _quantity = quantity;
         PictureUrl = pictureUrl;
         ProductId = productId;
     }
@@ -57,7 +67,7 @@ public sealed class CartItem
             return Error.Validation(new InvalidItemQuantity(quantity));
         }
 
-        Quantity = quantity;
+        _quantity = quantity;
         return Result.Success();
     }
 }

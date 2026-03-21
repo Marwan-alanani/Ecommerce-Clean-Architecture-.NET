@@ -4,6 +4,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.UserSessions;
+using ECommerce_Clean_Arch.Domain.UserSessions.Events;
 
 using Microsoft.Extensions.Configuration;
 
@@ -24,7 +25,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
     private readonly IIdentityService _identityService;
     private readonly ISessionRepository _sessionRepository;
     private readonly DateTime _utcNow;
-    private readonly IApplicationDbContext _unitOfWork;
+    private readonly IApplicationDbContext _context;
     private readonly ICookieService _cookieService;
 
     public LoginQueryHandler(
@@ -33,7 +34,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
         IDateTimeProvider dateTime,
         IConfiguration configuration,
         ISessionRepository sessionRepository,
-        IApplicationDbContext unitOfWork,
+        IApplicationDbContext context,
         ICookieService cookieService
     )
     {
@@ -41,7 +42,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
         _identityService = identityService;
         _utcNow = dateTime.UtcNow;
         _sessionRepository = sessionRepository;
-        _unitOfWork = unitOfWork;
+        _context = context;
         _cookieService = cookieService;
     }
 
@@ -63,17 +64,26 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
         var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
 
         var opaqueToken = _tokenProvider.GenerateOpaqueToken();
+
         var userSession = UserSession.Create(
             user.Id,
             request.UserAgent,
             request.IpAddress,
             _utcNow
         );
+
+        var guestId = _cookieService.GetGuestSessionId();
+        if (guestId is not null)
+        {
+            user.AddDomainEvent(new UserLoggedInEvent(guestId));
+        }
+
         await _sessionRepository.AddAsync(
             userSession,
             opaqueToken,
             cancellationToken);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        _cookieService.ClearGuestSession();
         _cookieService.SetRefreshToken(opaqueToken);
         return accessToken;
     }

@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 using ECommerce_Clean_Arch.Application.Carts.Models;
+using ECommerce_Clean_Arch.Application.Services;
 
 using SharedKernel.Results;
 
@@ -11,15 +12,17 @@ public sealed record GetCartQuery : IQuery<Cart>;
 public sealed class GetCartQueryHandler : IQueryHandler<GetCartQuery, Cart>
 {
     private readonly ICartRepository _cartRepository;
+    private readonly ICartKeyResolver _keyResolver;
 
-    public GetCartQueryHandler(ICartRepository cartRepository)
+    public GetCartQueryHandler(ICartRepository cartRepository, ICartKeyResolver keyResolver)
     {
         _cartRepository = cartRepository;
+        _keyResolver = keyResolver;
     }
 
     public async Task<Result<Cart>> Handle(GetCartQuery request, CancellationToken cancellationToken)
     {
-        var cart = await _cartRepository.GetCartAsync() ?? Cart.Create();
+        var cart = await _cartRepository.GetCartAsync(_keyResolver.GetCartKey()) ?? Cart.Create();
         return cart;
     }
 }

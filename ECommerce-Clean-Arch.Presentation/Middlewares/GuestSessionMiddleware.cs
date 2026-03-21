@@ -1,42 +1,29 @@
-using ECommerce_Clean_Arch.Application.Common.Constants;
+using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Infrastructure.Authentication.Cookies;
 
 namespace ECommerce_Clean_Arch.Presentation.Middlewares;
 
 public class GuestSessionMiddleware(RequestDelegate next)
 {
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ICookieService cookieService)
     {
-        // If user is authenticated, kill the guest cookie if it exists
+        // authenticated do nothing
         if (context.User.Identity?.IsAuthenticated == true)
         {
-            if (context.Request.Cookies.ContainsKey(CookieNames.GuestSession))
-            {
-                context.Response.Cookies.Delete(CookieNames.GuestSession);
-            }
-
             await next(context);
             return;
         }
 
         // User is not authenticated — ensure guest cookie exists
-        if (!context.Request.Cookies.ContainsKey(CookieNames.GuestSession))
+        var guestSessionId = context.Request.Cookies[GuestSessionCookie.CookieName];
+        if (string.IsNullOrEmpty(guestSessionId))
         {
-            var guestId = Guid.NewGuid().ToString();
-            context.Response.Cookies.Append(
-                CookieNames.GuestSession,
-                guestId,
-                new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7)
-                });
-            context.Items[CookieNames.GuestSession] = guestId;
+            var guestId = cookieService.SetGuestSessionCookie();
+            context.Items[GuestSessionCookie.CookieName] = guestId;
         }
         else
         {
-            context.Items[CookieNames.GuestSession] = context.Request.Cookies[CookieNames.GuestSession];
+            context.Items[GuestSessionCookie.CookieName] = guestSessionId;
         }
 
         await next(context);
