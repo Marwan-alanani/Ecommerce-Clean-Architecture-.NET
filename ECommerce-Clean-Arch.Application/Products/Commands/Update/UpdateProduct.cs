@@ -2,7 +2,6 @@ using AutoMapper;
 
 using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Categories;
 using ECommerce_Clean_Arch.Domain.Errors.Products;
@@ -12,6 +11,7 @@ using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 using SharedKernel.Errors;
+using SharedKernel.Models;
 using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Update;
@@ -20,7 +20,7 @@ public record UpdateProductCommand(
     ProductId Id,
     string? Name,
     string? Description,
-    MoneyDto? Price,
+    MoneyFlat? Price,
     CategoryId? CategoryId
 ) : ICommand
 {

@@ -1,6 +1,6 @@
 namespace ECommerce_Clean_Arch.Application.Common.Models;
 
-public static class MappingExtensions
+public static partial class MappingExtensions
 {
     public static Task<PaginatedList<TDestination>> PaginatedListAsync<TDestination>(
         this IQueryable<TDestination> queryable,

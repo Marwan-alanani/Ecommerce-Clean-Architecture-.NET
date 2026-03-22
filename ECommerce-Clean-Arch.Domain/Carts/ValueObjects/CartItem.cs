@@ -1,17 +1,17 @@
-using ECommerce_Clean_Arch.Application.Carts.Errors;
-using ECommerce_Clean_Arch.Application.Common.Models;
+using ECommerce_Clean_Arch.Domain.Errors.Carts;
 
 using SharedKernel.Errors;
+using SharedKernel.Models;
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Carts.Models;
+namespace ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
 
 public sealed class CartItem
 {
     private int _quantity;
     public string Name { get; init; }
     public Guid ProductId { get; init; }
-    public MoneyDto UnitPrice { get; init; }
+    public MoneyFlat UnitPrice { get; init; }
 
     public int Quantity
     {
@@ -30,7 +30,7 @@ public sealed class CartItem
 
     private CartItem(
         string name,
-        MoneyDto unitPrice,
+        MoneyFlat unitPrice,
         int quantity,
         string pictureUrl,
         Guid productId

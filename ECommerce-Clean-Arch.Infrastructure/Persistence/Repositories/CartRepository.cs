@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Carts.Models;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
+using ECommerce_Clean_Arch.Domain.Carts;
+using ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Common.Exceptions;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
 

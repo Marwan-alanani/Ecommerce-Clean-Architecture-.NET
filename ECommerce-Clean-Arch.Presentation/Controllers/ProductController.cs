@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Commands.Create;
 using ECommerce_Clean_Arch.Application.Products.Commands.Deactivate;
 using ECommerce_Clean_Arch.Application.Products.Commands.Update;
@@ -12,6 +11,8 @@ using ECommerce_Clean_Arch.Presentation.Attributes;
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;
+
+using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Presentation.Controllers;
 
@@ -28,7 +29,7 @@ public class ProductController : ApiController
     public sealed record CreateProductRequest(
         string Name,
         string Description,
-        MoneyDto Price,
+        MoneyFlat Price,
         string PictureUrl,
         Guid CategoryId
     );
@@ -81,7 +82,7 @@ public class ProductController : ApiController
         Guid Id,
         string? Name,
         string? Description,
-        MoneyDto? Price,
+        MoneyFlat? Price,
         Guid? CategoryId
     );
 

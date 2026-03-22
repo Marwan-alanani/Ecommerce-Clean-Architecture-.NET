@@ -1,8 +1,9 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Carts.Models;
-using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Queries.Common;
+using ECommerce_Clean_Arch.Domain.Carts;
 using ECommerce_Clean_Arch.Domain.Products;
+
+using SharedKernel.Models;
 
 namespace ECommerce_Clean_Arch.Application.Products.Common;
 
@@ -37,7 +38,7 @@ public static class ProductQueryExtensions
             Id = p.Id.Value,
             Name = p.Name,
             PictureUrl = p.PictureUrl,
-            Price = new MoneyDto(p.Price.Currency.ToString(), p.Price.Amount)
+            Price = new MoneyFlat(p.Price.Currency.ToString(), p.Price.Amount)
         });
     }
 }

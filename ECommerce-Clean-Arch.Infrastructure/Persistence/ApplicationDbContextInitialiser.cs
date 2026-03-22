@@ -21,7 +21,7 @@ public static class InitialiserExtensions
 
         var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
 
-        await initialiser.InitialiseAsync();
+        // await initialiser.InitialiseAsync();
         await initialiser.SeedAsync();
     }
 }
@@ -83,20 +83,27 @@ public class ApplicationDbContextInitialiser
 
     private async Task TrySeedIdentity()
     {
+        var roles = await _roleManager.Roles.ToListAsync();
         // Default roles
-        foreach (var role in Roles.GetAll())
+        foreach (var roleName in Roles.GetAll())
         {
-            await _roleManager.CreateAsync(new Role { Name = role });
+            var role = new Role() { Name = roleName };
+            if (!roles.Contains(role))
+            {
+                await _roleManager.CreateAsync(new Role { Name = roleName });
+            }
         }
 
         var adminRole = await _roleManager.Roles
             .Where(role => role.Name == Roles.Admin)
             .FirstOrDefaultAsync();
+        var adminClaims = await _roleManager.GetClaimsAsync(adminRole!);
         // inject Permissions for admin Role
         foreach (var policy in Permissions.GetAll())
         {
             var claim = new Claim(Permissions.ClaimType, policy);
-            await _roleManager.AddClaimAsync(adminRole!, claim);
+            if (!adminClaims.Contains(claim))
+                await _roleManager.AddClaimAsync(adminRole!, claim);
         }
 
 
@@ -107,16 +114,23 @@ public class ApplicationDbContextInitialiser
             "admin",
             "admin@mail.com");
 
-        await _userManager.CreateAsync(administrator, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(administrator, [Roles.Admin]);
+        if ((await _userManager.FindByEmailAsync("admin@mail.com") == null))
+        {
+            await _userManager.CreateAsync(administrator, "P@ssw0rd");
+            await _userManager.AddToRolesAsync(administrator, [Roles.Admin]);
+        }
+
         var user = User.Create(
             "user",
             "user",
             "user",
             "user@mail.com");
 
-        await _userManager.CreateAsync(user, "P@ssw0rd");
-        await _userManager.AddToRolesAsync(user, [Roles.User]);
+        if ((await _userManager.FindByEmailAsync("user@mail.com") == null))
+        {
+            await _userManager.CreateAsync(user, "P@ssw0rd");
+            await _userManager.AddToRolesAsync(user, [Roles.User]);
+        }
     }
 
     private async Task TrySeedCategory()
@@ -124,7 +138,12 @@ public class ApplicationDbContextInitialiser
         var category = Category.Create(
             "Unlisted"
         );
-        await _context.Categories.AddAsync(category);
+        var categoryNames = await _context.Categories.Select(c => c.Name).ToListAsync();
+        if (!categoryNames.Contains(category.Name))
+        {
+            await _context.Categories.AddAsync(category);
+        }
+
         await _context.SaveChangesAsync();
     }
 }

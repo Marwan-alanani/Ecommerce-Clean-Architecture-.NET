@@ -24,7 +24,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
     private readonly ITokenProvider _tokenProvider;
     private readonly IIdentityService _identityService;
     private readonly ISessionRepository _sessionRepository;
-    private readonly DateTime _utcNow;
+    private readonly IDateTimeProvider _dateTime;
     private readonly IApplicationDbContext _context;
     private readonly ICookieService _cookieService;
 
@@ -40,7 +40,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
     {
         _tokenProvider = tokenProvider;
         _identityService = identityService;
-        _utcNow = dateTime.UtcNow;
+        _dateTime = dateTime;
         _sessionRepository = sessionRepository;
         _context = context;
         _cookieService = cookieService;
@@ -69,7 +69,7 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
             user.Id,
             request.UserAgent,
             request.IpAddress,
-            _utcNow
+            _dateTime.UtcNow
         );
 
         var guestId = _cookieService.GetGuestSessionId();

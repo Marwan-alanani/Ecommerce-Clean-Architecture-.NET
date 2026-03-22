@@ -3,6 +3,7 @@ using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Common.Models;
 using ECommerce_Clean_Arch.Application.Products.Common;
 using ECommerce_Clean_Arch.Application.Products.Queries.Common;
+using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,7 @@ public sealed record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>
     public string? Search { get; init; }
     public string? SortBy { get; init; } = "createdAt";
     public string? Direction { get; init; } = "desc";
+    public Guid? CategoryId { get; init; }
 }
 
 public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, PaginatedList<ProductDto>>
@@ -40,6 +42,12 @@ public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, Pag
         {
             var s = request.Search.Trim();
             products = products.Where(p => EF.Functions.Like(p.Name, $"%{s}%"));
+        }
+
+        if (request.CategoryId is not null)
+        {
+            products = products
+                .Where(p => p.CategoryId == CategoryId.FromValue(request.CategoryId.Value));
         }
 
         ProductSortingOptions? sortBy = null;

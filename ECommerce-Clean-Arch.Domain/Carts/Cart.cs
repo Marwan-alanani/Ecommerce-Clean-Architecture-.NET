@@ -1,6 +1,8 @@
+using ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
+
 using SharedKernel.Results;
 
-namespace ECommerce_Clean_Arch.Application.Carts.Models;
+namespace ECommerce_Clean_Arch.Domain.Carts;
 
 public sealed class Cart
 {

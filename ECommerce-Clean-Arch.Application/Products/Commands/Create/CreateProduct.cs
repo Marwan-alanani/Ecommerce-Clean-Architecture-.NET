@@ -20,7 +20,7 @@ namespace ECommerce_Clean_Arch.Application.Products.Commands.Create;
 public record CreateProductCommand(
     string Name,
     string Description,
-    MoneyDto Price,
+    MoneyFlat Price,
     string PictureUrl,
     CategoryId CategoryId
 ) : ICommand<ProductId>;

@@ -1,8 +1,8 @@
-using ECommerce_Clean_Arch.Application.Carts.Models;
+using ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
 
 using SharedKernel.Errors;
 
-namespace ECommerce_Clean_Arch.Application.Carts.Errors;
+namespace ECommerce_Clean_Arch.Domain.Errors.Carts;
 
 public sealed record InvalidItemQuantity : ErrorReason
 {
