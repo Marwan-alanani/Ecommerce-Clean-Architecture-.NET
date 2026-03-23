@@ -10,6 +10,7 @@ using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
 using ECommerce_Clean_Arch.Infrastructure.BackgroundServices;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
 using ECommerce_Clean_Arch.Infrastructure.EventBus;
+using ECommerce_Clean_Arch.Infrastructure.PaymentGateways.Stripe;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Interceptors;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Repositories;
@@ -27,6 +28,10 @@ using RabbitMQ.Client;
 
 using StackExchange.Redis;
 
+using Stripe;
+using Stripe.Checkout;
+
+using IdentityService = ECommerce_Clean_Arch.Infrastructure.Authentication.Services.IdentityService;
 using Role = ECommerce_Clean_Arch.Domain.Roles.Role;
 
 
@@ -61,6 +66,9 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<ICartKeyResolver, CartKeyResolver>();
         services.AddHostedService<PublishOutboxMessages>();
+        services.AddScoped<SessionService>();
+        services.AddScoped<IPaymentGateway, StripePaymentGateway>();
+
         return services;
     }
 
@@ -106,7 +114,9 @@ public static class DependencyInjection
         IConfigurationManager config
     )
     {
+        StripeConfiguration.ApiKey = config.GetSection("Stripe")["SecretKey"];
         services.Configure<CartTtlConfig>(config.GetSection(CartTtlConfig.SectionName));
+        services.Configure<StripeConfig>(config.GetSection(StripeConfig.SectionName));
         return services;
     }
 

@@ -5,10 +5,12 @@ namespace ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
 
 public sealed record ShippingAddress
 {
-    public string Street { get; }
-    public string City { get; }
-    public string Country { get; }
-    public string PostalCode { get; }
+    public string Street { get; init; } = null!;
+    public string City { get; init; } = null!;
+    public string Country { get; init; } = null!;
+    public string PostalCode { get; init; } = null!;
+
+    public ShippingAddress() { }
 
     private ShippingAddress(
         string street,

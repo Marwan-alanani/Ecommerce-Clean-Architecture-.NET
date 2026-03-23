@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Domain.Categories;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+using ECommerce_Clean_Arch.Domain.Orders;
 using ECommerce_Clean_Arch.Domain.Products;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
@@ -18,6 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<Order> Orders => Set<Order>();
     public DbSet<UserSession> UserSessions => Set<UserSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

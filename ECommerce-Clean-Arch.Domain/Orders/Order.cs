@@ -53,7 +53,7 @@ public class Order : AggregateRoot<OrderId>
         return order;
     }
 
-    public void AssignStripeSession(string sessionId)
+    public void SetSessionId(string sessionId)
     {
         SessionId = sessionId;
     }
