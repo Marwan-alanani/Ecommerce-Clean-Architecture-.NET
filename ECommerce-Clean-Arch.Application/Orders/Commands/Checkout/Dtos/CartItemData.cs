@@ -1,6 +1,6 @@
 using SharedKernel.Models;
 
-namespace ECommerce_Clean_Arch.Application.Orders;
+namespace ECommerce_Clean_Arch.Application.Orders.Commands.Checkout.Dtos;
 
 public class CartItemData
 {

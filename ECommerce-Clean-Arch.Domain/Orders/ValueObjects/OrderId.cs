@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
+using ECommerce_Clean_Arch.Domain.Errors.Orders;
 
 using SharedKernel.Errors;
 using SharedKernel.Results;
@@ -21,7 +22,7 @@ public readonly record struct OrderId : IAggregateRootId<OrderId>
     {
         if (!Guid.TryParse(value, out _))
         {
-            return Error.Validation();
+            return Error.Validation(new InvalidOrderId(value));
         }
 
         return new OrderId(Guid.Parse(value));

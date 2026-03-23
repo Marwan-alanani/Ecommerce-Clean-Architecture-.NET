@@ -26,10 +26,10 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
             o => o.ShippingAddress,
             addressBuilder =>
             {
-                addressBuilder.Property(a => a.City).HasMaxLength(100);
-                addressBuilder.Property(a => a.Country).HasMaxLength(100);
-                addressBuilder.Property(a => a.Street).HasMaxLength(100);
-                addressBuilder.Property(a => a.PostalCode).HasMaxLength(10);
+                addressBuilder.Property(a => a.Street).HasMaxLength(200).IsRequired();
+                addressBuilder.Property(a => a.City).HasMaxLength(100).IsRequired();
+                addressBuilder.Property(a => a.Country).HasMaxLength(100).IsRequired();
+                addressBuilder.Property(a => a.PostalCode).HasMaxLength(20).IsRequired();
             });
         builder.OwnsMany(o => o.Items, ConfigureOrderItems);
         builder.Property(o => o.Status)

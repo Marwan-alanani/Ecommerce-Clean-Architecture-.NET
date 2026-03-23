@@ -6,4 +6,5 @@ public class StripeConfig
     public string SuccessUrl { get; init; } = null!;
     public string CancelUrl { get; init; } = null!;
     public string SecretKey { get; init; } = null!;
+    public string WebhookKey { get; init; } = null!;
 }

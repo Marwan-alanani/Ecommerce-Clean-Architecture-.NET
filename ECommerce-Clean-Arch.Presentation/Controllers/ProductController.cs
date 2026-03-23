@@ -36,7 +36,10 @@ public class ProductController : ApiController
 
     [HttpPost]
     [HasPermission(Permissions.Products.Write)]
-    public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateProductRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var command = new CreateProductCommand(
             request.Name,
@@ -45,7 +48,7 @@ public class ProductController : ApiController
             request.PictureUrl,
             CategoryId.FromValue(request.CategoryId)
         );
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
         if (result.IsSuccess)
             return Created($"/products/{result.Value}", result.Value);
@@ -54,10 +57,10 @@ public class ProductController : ApiController
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var query = new GetProductByIdQuery(ProductId.FromValue(id));
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(query, cancellationToken);
         if (result.IsSuccess)
         {
             return Ok(result.Value);
@@ -67,9 +70,12 @@ public class ProductController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQuery query)
+    public async Task<IActionResult> GetAll(
+        [FromQuery] GetAllProductsQuery query,
+        CancellationToken cancellationToken
+    )
     {
-        var result = await _sender.Send(query);
+        var result = await _sender.Send(query, cancellationToken);
         if (result.IsSuccess)
         {
             return Ok(result.Value);
@@ -88,7 +94,10 @@ public class ProductController : ApiController
 
     [HttpPatch]
     [HasPermission(Permissions.Products.Edit)]
-    public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest request)
+    public async Task<IActionResult> UpdateProduct(
+        [FromBody] UpdateProductRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var command = new UpdateProductCommand(
             ProductId.FromValue(request.Id),
@@ -97,7 +106,7 @@ public class ProductController : ApiController
             request.Price,
             request.CategoryId == null ? null : CategoryId.FromValue(request.CategoryId.Value)
         );
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
         if (result.IsSuccess)
         {
@@ -109,10 +118,10 @@ public class ProductController : ApiController
 
     [HttpDelete("deactivate/{id}")]
     [HasPermission(Permissions.Products.Delete)]
-    public async Task<IActionResult> Deactivate([FromRoute] Guid id)
+    public async Task<IActionResult> Deactivate([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var command = new DeactivateProductCommand(ProductId.FromValue(id));
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
         if (result.IsSuccess)
         {
             return NoContent();

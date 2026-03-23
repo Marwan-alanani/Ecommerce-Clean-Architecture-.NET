@@ -75,6 +75,7 @@ public sealed class RefreshTokensCommandHandler
                 _user.Id.Value,
                 RevokedReason.SecurityBreach,
                 cancellationToken);
+            _cookieService.ClearRefreshToken();
             await _context.SaveChangesAsync(cancellationToken);
             return Error.Security(new SecurityBreach());
         }

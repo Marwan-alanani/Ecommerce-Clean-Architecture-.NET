@@ -1,4 +1,6 @@
 using ECommerce_Clean_Arch.Application.Orders;
+using ECommerce_Clean_Arch.Application.Orders.Commands.Checkout;
+using ECommerce_Clean_Arch.Application.Orders.Commands.Checkout.Dtos;
 using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
@@ -56,6 +58,11 @@ public class StripePaymentGateway : IPaymentGateway
                 })
                 .ToList(),
             Metadata = new Dictionary<string, string> { { "orderId", orderId.Value.ToString() } },
+            PaymentIntentData = new SessionPaymentIntentDataOptions
+            {
+                // ← copy metadata down to the PaymentIntent
+                Metadata = new Dictionary<string, string> { { "orderId", orderId.Value.ToString() } }
+            },
             SuccessUrl = _config.SuccessUrl,
             CancelUrl = _config.CancelUrl,
         };
