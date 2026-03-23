@@ -1,4 +1,5 @@
 using ECommerce_Clean_Arch.Application.Orders.Queries.GetById;
+using ECommerce_Clean_Arch.Application.Orders.Queries.GetPage;
 using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
 
 using MediatR;
@@ -33,4 +34,19 @@ public class OrderController : ApiController
         return Ok(result.Value);
     }
 
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetByPage(
+        [FromQuery] GetOrdersPageQuery query,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await _sender.Send(query, cancellationToken);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
 }
