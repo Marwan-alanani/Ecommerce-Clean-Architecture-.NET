@@ -70,6 +70,7 @@ public class ProductController : ApiController
     }
 
     [HttpGet]
+    [RedisCache]
     public async Task<IActionResult> GetAll(
         [FromQuery] GetAllProductsQuery query,
         CancellationToken cancellationToken
