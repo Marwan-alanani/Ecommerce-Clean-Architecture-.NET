@@ -1,17 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Application.Orders.Commands.Checkout.Dtos;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Errors.Orders;
-using ECommerce_Clean_Arch.Domain.Errors.Security;
-using ECommerce_Clean_Arch.Domain.Orders;
-using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Orders.Commands.Checkout;
 
 // from the user ... I need the shipping address

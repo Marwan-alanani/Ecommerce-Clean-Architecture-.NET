@@ -3,8 +3,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Domain.Roles;
 using ECommerce_Clean_Arch.Domain.Users;
@@ -88,9 +88,9 @@ public sealed class TokenProvider : ITokenProvider
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateOpaqueToken()
+    public string GenerateOpaqueToken(int count)
     {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(count));
     }
 
     public string HashOpaqueToken(string token)

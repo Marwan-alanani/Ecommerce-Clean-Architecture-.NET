@@ -56,7 +56,7 @@ public class ProductController : ApiController
         return Problem(result.Error);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var query = new GetProductByIdQuery(ProductId.FromValue(id));
@@ -117,7 +117,7 @@ public class ProductController : ApiController
         return Problem(result.Error);
     }
 
-    [HttpDelete("deactivate/{id}")]
+    [HttpDelete("deactivate/{id:guid}")]
     [HasPermission(Permissions.Products.Delete)]
     public async Task<IActionResult> Deactivate([FromRoute] Guid id, CancellationToken cancellationToken)
     {

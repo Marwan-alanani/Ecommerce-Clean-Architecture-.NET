@@ -1,16 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Products.Common;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Carts;
-using ECommerce_Clean_Arch.Domain.Errors.Products;
-using ECommerce_Clean_Arch.Domain.Products.ValueObjects;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Carts.Commands.SetItem;
 

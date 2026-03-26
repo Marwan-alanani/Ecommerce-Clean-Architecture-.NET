@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 
 namespace ECommerce_Clean_Arch.Infrastructure.Services;
 

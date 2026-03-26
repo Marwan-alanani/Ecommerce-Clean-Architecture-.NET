@@ -1,13 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Categories.Queries.Common;
-using ECommerce_Clean_Arch.Domain.Errors.Categories;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Categories.Queries.GetByName;
 
 public sealed record GetCategoryByNameQuery(string Name) : IQuery<CategoryDto>;

@@ -11,7 +11,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
 {
     public string Name { get; set; } = null!;
     public string? Description { get; set; }
-    public Money Price { get; set; }
+    public Money Price { get; set; } = null!;
     public string PictureUrl { get; set; } = null!;
     public Guid? CreatedBy { get; set; }
     public Guid? LastModifiedBy { get; set; }
@@ -20,6 +20,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
     public CategoryId CategoryId { get; set; }
 
 
+    // ReSharper disable once UnusedMember.Local
     private Product()
     {
     }
@@ -43,7 +44,7 @@ public class Product : AggregateRoot<ProductId>, IAuditable
 
     public static Product Create(
         string name,
-        string description,
+        string? description,
         Money price,
         string pictureUrl,
         CategoryId categoryId

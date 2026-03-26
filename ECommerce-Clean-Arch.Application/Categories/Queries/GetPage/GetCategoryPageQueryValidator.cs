@@ -1,7 +1,3 @@
-using ECommerce_Clean_Arch.Application.Common.Models;
-
-using FluentValidation;
-
 namespace ECommerce_Clean_Arch.Application.Categories.Queries.GetPage;
 
 public sealed class GetCategoryPageQueryValidator : AbstractValidator<GetCategoryPageQuery>

@@ -1,8 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Orders.Events;
-
 namespace ECommerce_Clean_Arch.Application.Orders.EventHandlers;
 
 public sealed class OrderConfirmedEventHandler : IDomainEventHandler<OrderConfirmedEvent>

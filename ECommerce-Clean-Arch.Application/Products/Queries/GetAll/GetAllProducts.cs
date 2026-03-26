@@ -1,14 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Common.Models;
-using ECommerce_Clean_Arch.Application.Products.Common;
-using ECommerce_Clean_Arch.Application.Products.Queries.Common;
-using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
 public sealed record GetAllProductsQuery : IQuery<PaginatedList<ProductDto>>

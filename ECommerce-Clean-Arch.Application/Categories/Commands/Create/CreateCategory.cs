@@ -1,14 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Domain.Categories;
-using ECommerce_Clean_Arch.Domain.Categories.ValueObjects;
-using ECommerce_Clean_Arch.Domain.Errors.Categories;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Categories.Commands.Create;
 
 public sealed record CreateCategoryCommand(string Name) : ICommand<CategoryId>;

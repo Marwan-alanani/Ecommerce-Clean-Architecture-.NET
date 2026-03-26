@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace ECommerce_Clean_Arch.Application;
 
 public static class AssemblyReference

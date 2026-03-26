@@ -1,8 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.UserSessions.Events;
-
 namespace ECommerce_Clean_Arch.Application.Users.EventHandlers;
 
 public sealed class UserLoggedInEventHandler : IDomainEventHandler<UserLoggedInEvent>

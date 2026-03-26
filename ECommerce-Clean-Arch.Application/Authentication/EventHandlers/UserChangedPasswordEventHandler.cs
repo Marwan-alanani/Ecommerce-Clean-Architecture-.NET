@@ -1,8 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Domain.Users.Events;
-using ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 
 
 namespace ECommerce_Clean_Arch.Application.Authentication.EventHandlers;

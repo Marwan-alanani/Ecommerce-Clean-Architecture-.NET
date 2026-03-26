@@ -1,5 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
-
 namespace ECommerce_Clean_Arch.Application.Orders.Queries.GetById;
 
 public sealed record OrderDto(

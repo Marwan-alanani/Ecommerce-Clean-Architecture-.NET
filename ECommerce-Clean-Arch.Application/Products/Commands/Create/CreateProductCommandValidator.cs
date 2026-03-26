@@ -1,7 +1,3 @@
-using FluentValidation;
-
-using SharedKernel.Models;
-
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Create;
 
 public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>

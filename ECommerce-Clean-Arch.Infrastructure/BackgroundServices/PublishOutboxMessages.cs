@@ -1,6 +1,7 @@
-using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Infrastructure.EventBus;
+using ECommerce_Clean_Arch.Infrastructure.Extensions;
 using ECommerce_Clean_Arch.Infrastructure.Persistence;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
 
@@ -58,7 +59,12 @@ public class PublishOutboxMessages : BackgroundService
                 var domainEvent = (IDomainEvent?)JsonConvert.DeserializeObject(
                     message.Content,
                     type,
-                    new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All }
+                    new JsonSerializerSettings()
+                    {
+                        TypeNameHandling = TypeNameHandling.All,
+                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                        ContractResolver = new JsonPrivateResolver()
+                    }
                 );
                 if (domainEvent != null)
                 {

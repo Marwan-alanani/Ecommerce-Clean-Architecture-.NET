@@ -1,7 +1,3 @@
-using ECommerce_Clean_Arch.Application.Common.Models;
-
-using FluentValidation;
-
 namespace ECommerce_Clean_Arch.Application.Products.Queries.GetAll;
 
 public class GetAllProductsQueryValidator : AbstractValidator<GetAllProductsQuery>

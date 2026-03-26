@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Carts;
 
 namespace ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
 

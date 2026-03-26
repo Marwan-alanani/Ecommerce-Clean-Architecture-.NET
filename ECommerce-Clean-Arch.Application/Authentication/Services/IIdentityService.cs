@@ -1,6 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Users;
-
-using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Services;
 

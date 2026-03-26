@@ -2,8 +2,8 @@ using System.Text;
 
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Users;
 using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Services;
@@ -52,7 +52,9 @@ public static class DependencyInjection
         return services;
     }
 
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    private static IServiceCollection AddServices(
+        this IServiceCollection services
+    )
     {
         var connectionFactory = new ConnectionFactory()
         {
@@ -66,8 +68,10 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<ICartKeyResolver, CartKeyResolver>();
         services.AddHostedService<PublishOutboxMessages>();
-        services.AddScoped<SessionService>();
+        services.AddSingleton<SessionService>();
         services.AddScoped<IPaymentGateway, StripePaymentGateway>();
+        services.AddOptions();
+        services.AddScoped<ICacheService, CacheService>();
 
         return services;
     }

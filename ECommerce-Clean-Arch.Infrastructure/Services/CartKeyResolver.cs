@@ -1,5 +1,5 @@
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Errors.Common.Exceptions;
 using ECommerce_Clean_Arch.Infrastructure.Authentication.Cookies;
 

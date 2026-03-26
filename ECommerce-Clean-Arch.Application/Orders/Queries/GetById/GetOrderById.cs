@@ -1,15 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Domain.Errors.Orders;
-using ECommerce_Clean_Arch.Domain.Errors.Security;
-using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Orders.Queries.GetById;
 
 public sealed record GetOrderByIdQuery(OrderId OrderId) : IQuery<OrderDto>;

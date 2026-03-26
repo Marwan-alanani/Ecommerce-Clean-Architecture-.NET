@@ -1,10 +1,3 @@
-using ECommerce_Clean_Arch.Domain.Categories;
-using ECommerce_Clean_Arch.Domain.Orders;
-using ECommerce_Clean_Arch.Domain.Products;
-using ECommerce_Clean_Arch.Domain.Users;
-
-using Microsoft.EntityFrameworkCore;
-
 namespace ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 
 public interface IApplicationDbContext

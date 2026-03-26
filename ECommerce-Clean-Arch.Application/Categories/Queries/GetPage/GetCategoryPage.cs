@@ -1,12 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Categories.Queries.Common;
-using ECommerce_Clean_Arch.Application.Common.Models;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Categories.Queries.GetPage;
 
 public sealed record GetCategoryPageQuery(string? Name) : DefaultPageQuery<CategoryDto>;

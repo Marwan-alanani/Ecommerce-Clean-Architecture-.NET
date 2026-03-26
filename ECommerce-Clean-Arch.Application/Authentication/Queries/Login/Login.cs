@@ -1,14 +1,4 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.UserSessions;
-using ECommerce_Clean_Arch.Domain.UserSessions.Events;
 
-using Microsoft.Extensions.Configuration;
-
-using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Queries.Login;
 
@@ -60,10 +50,9 @@ public class LoginQueryHandler : IQueryHandler<LoginQuery, string>
         }
 
         var user = authenticationResult.Value;
-
         var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
 
-        var opaqueToken = _tokenProvider.GenerateOpaqueToken();
+        var opaqueToken = _tokenProvider.GenerateOpaqueToken(64);
 
         var userSession = UserSession.Create(
             user.Id,

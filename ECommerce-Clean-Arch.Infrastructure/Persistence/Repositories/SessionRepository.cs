@@ -1,13 +1,13 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Application.Authentication.Common;
 using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Errors.Common.Exceptions;
 using ECommerce_Clean_Arch.Domain.UserSessions;
 using ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 using ECommerce_Clean_Arch.Domain.UserSessions.ValueObjects;
-using ECommerce_Clean_Arch.Infrastructure.Authentication;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
+using ECommerce_Clean_Arch.Infrastructure.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -71,8 +71,9 @@ public sealed class SessionRepository : ISessionRepository
                 var jsonSessionData =
                     await _database.StringGetAsync(GetRefreshTokenKey(hash.ToString()));
 
-                var sessionDataToRemove = JsonConvert
-                    .DeserializeObject<SessionData>(jsonSessionData.ToString());
+                var sessionDataToRemove = JsonConvertExtensions
+                    .Deserialize<SessionData>(jsonSessionData.ToString());
+
                 if (sessionDataToRemove == null)
                     throw new RedisDeserializationException(nameof(SessionData));
                 var sessionToRevoke = await _context.UserSessions
@@ -133,7 +134,7 @@ public sealed class SessionRepository : ISessionRepository
         {
             var jsonData = await _database.StringGetDeleteAsync(GetRefreshTokenKey(hash.ToString()));
             if (jsonData.IsNullOrEmpty) continue;
-            var sessionData = JsonConvert.DeserializeObject<SessionData>(jsonData.ToString());
+            var sessionData = JsonConvertExtensions.Deserialize<SessionData>(jsonData.ToString());
             if (sessionData == null)
                 throw new RedisDeserializationException(nameof(SessionData));
             var userSession = await _context.UserSessions
@@ -157,7 +158,7 @@ public sealed class SessionRepository : ISessionRepository
             return null;
         }
 
-        var sessionData = JsonConvert.DeserializeObject<SessionData>(jsonData.ToString());
+        var sessionData = JsonConvertExtensions.Deserialize<SessionData>(jsonData.ToString());
         if (sessionData == null)
         {
             throw new RedisDeserializationException(nameof(SessionData));
@@ -206,8 +207,9 @@ public sealed class SessionRepository : ISessionRepository
             return;
         }
 
-        var sessionData = JsonConvert.DeserializeObject<SessionData>(jsonData.ToString());
+        var sessionData = JsonConvertExtensions.Deserialize<SessionData>(jsonData.ToString());
         if (sessionData == null) throw new RedisDeserializationException(nameof(SessionData));
+
         var userSession = await _context.UserSessions
             .Where(s => s.Id == UserSessionId.FromValue(sessionData.SessionId))
             .FirstOrDefaultAsync(cancellationToken);

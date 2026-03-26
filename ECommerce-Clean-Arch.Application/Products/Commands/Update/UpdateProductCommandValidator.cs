@@ -1,7 +1,3 @@
-using FluentValidation;
-
-using SharedKernel.Models;
-
 namespace ECommerce_Clean_Arch.Application.Products.Commands.Update;
 
 public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>

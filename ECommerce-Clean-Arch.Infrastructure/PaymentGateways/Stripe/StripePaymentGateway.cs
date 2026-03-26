@@ -1,7 +1,5 @@
-using ECommerce_Clean_Arch.Application.Orders;
-using ECommerce_Clean_Arch.Application.Orders.Commands.Checkout;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Application.Orders.Commands.Checkout.Dtos;
-using ECommerce_Clean_Arch.Application.Services;
 using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
 

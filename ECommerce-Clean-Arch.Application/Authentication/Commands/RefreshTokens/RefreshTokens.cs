@@ -1,18 +1,4 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Authentication.Services;
-using ECommerce_Clean_Arch.Application.Common.Interfaces;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Errors.Security;
-using ECommerce_Clean_Arch.Domain.Errors.Token;
-using ECommerce_Clean_Arch.Domain.Errors.Users;
-using ECommerce_Clean_Arch.Domain.UserSessions.Enums;
 
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RefreshTokens;
 
@@ -90,7 +76,7 @@ public sealed class RefreshTokensCommandHandler
         }
 
         var accessToken = await _tokenProvider.GenerateAccessTokenAsync(user);
-        var newToken = _tokenProvider.GenerateOpaqueToken();
+        var newToken = _tokenProvider.GenerateOpaqueToken(64);
 
         await _sessionRepository.RefreshTokenAsync(
             oldToken,

@@ -1,15 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
-using ECommerce_Clean_Arch.Application.Services;
-using ECommerce_Clean_Arch.Domain.Errors.Orders;
-using ECommerce_Clean_Arch.Domain.Orders.Enums;
-using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
-
-using Microsoft.EntityFrameworkCore;
-
-using SharedKernel.Errors;
-using SharedKernel.Results;
-
 namespace ECommerce_Clean_Arch.Application.Orders.Commands.Confirm;
 
 public sealed record ConfirmOrderCommand(OrderId OrderId) : ICommand;

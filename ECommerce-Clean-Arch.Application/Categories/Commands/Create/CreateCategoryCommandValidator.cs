@@ -1,5 +1,3 @@
-using FluentValidation;
-
 namespace ECommerce_Clean_Arch.Application.Categories.Commands.Create;
 
 public sealed class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>

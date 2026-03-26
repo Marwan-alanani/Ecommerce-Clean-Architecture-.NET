@@ -1,5 +1,3 @@
-using FluentValidation;
-
 namespace ECommerce_Clean_Arch.Application.Orders.Commands.Checkout;
 
 public sealed class CheckoutCommandValidator : AbstractValidator<CheckoutCommand>

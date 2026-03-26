@@ -1,7 +1,3 @@
-using ECommerce_Clean_Arch.Application.Orders.Queries.GetById;
-using ECommerce_Clean_Arch.Domain.Orders;
-using ECommerce_Clean_Arch.Domain.Orders.Entities;
-
 namespace ECommerce_Clean_Arch.Application.Orders;
 
 public static class MappingExtensions

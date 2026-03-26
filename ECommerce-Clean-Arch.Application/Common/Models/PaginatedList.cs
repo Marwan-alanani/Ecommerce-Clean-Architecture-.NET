@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace ECommerce_Clean_Arch.Application.Common.Models;
 
 public class PaginatedList<T>

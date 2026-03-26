@@ -4,6 +4,7 @@ using ECommerce_Clean_Arch.Domain.Carts;
 using ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
 using ECommerce_Clean_Arch.Domain.Errors.Common.Exceptions;
 using ECommerce_Clean_Arch.Infrastructure.Configurations;
+using ECommerce_Clean_Arch.Infrastructure.Extensions;
 
 using Microsoft.Extensions.Options;
 
@@ -38,7 +39,7 @@ public sealed class CartRepository : ICartRepository
             return null;
         }
 
-        var cart = JsonConvert.DeserializeObject<Cart>(jsonData.ToString());
+        var cart = JsonConvertExtensions.Deserialize<Cart>(jsonData.ToString());
         if (cart is null) throw new RedisDeserializationException(nameof(Cart));
         return cart;
     }
@@ -77,9 +78,9 @@ public sealed class CartRepository : ICartRepository
         {
             // merge both ... if item in guest only then add to user cart ... if item in both then
             // choose the item in guest cart (most recent)
-            var guestCart = JsonConvert.DeserializeObject<Cart>(guestCartJson.ToString());
+            var guestCart = JsonConvertExtensions.Deserialize<Cart>(guestCartJson.ToString());
             if (guestCart is null) throw new RedisDeserializationException(nameof(Cart));
-            var userCart = JsonConvert.DeserializeObject<Cart>(userCartJson.ToString());
+            var userCart = JsonConvertExtensions.Deserialize<Cart>(userCartJson.ToString());
             if (userCart is null) throw new RedisDeserializationException(nameof(Cart));
             foreach ((Guid key, CartItem value) in guestCart.Items)
             {

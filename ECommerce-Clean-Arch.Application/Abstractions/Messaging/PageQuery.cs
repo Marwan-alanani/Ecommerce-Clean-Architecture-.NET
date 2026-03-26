@@ -1,4 +1,3 @@
-using ECommerce_Clean_Arch.Application.Common.Models;
 
 namespace ECommerce_Clean_Arch.Application.Abstractions.Messaging;
 

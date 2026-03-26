@@ -2,7 +2,7 @@ namespace ECommerce_Clean_Arch.Application.Authentication.Common;
 
 public sealed class SessionData
 {
-    public SessionData()
+    private SessionData()
     {
     }
 

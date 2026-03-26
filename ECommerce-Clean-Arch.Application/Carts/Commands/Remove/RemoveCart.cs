@@ -1,8 +1,3 @@
-using ECommerce_Clean_Arch.Application.Abstractions.Messaging;
-using ECommerce_Clean_Arch.Application.Abstractions.Persistence.Repositories;
-using ECommerce_Clean_Arch.Application.Services;
-
-using SharedKernel.Results;
 
 namespace ECommerce_Clean_Arch.Application.Carts.Commands.Remove;
 

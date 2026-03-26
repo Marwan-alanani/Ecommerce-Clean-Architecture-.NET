@@ -1,4 +1,4 @@
-using ECommerce_Clean_Arch.Application.Services;
+using ECommerce_Clean_Arch.Application.Abstractions.Services;
 using ECommerce_Clean_Arch.Domain.Common.Interfaces;
 using ECommerce_Clean_Arch.Infrastructure.Persistence.Models;
 

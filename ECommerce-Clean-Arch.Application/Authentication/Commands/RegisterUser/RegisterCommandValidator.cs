@@ -1,4 +1,3 @@
-using FluentValidation;
 
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.RegisterUser;
 
