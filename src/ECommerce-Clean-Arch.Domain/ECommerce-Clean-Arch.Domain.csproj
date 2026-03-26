@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>ECommerce_Clean_Arch.Domain</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MediatR.Contracts" Version="2.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.25" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.25"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel\SharedKernel.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="ECommerce-Clean-Arch.Domain">
+            <HintPath>..\ECommerce-Clean-Arch.Presentation\bin\Debug\net8.0\ECommerce-Clean-Arch.Domain.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Extensions.Identity.Stores">
+            <HintPath>..\..\..\..\..\.nuget\packages\microsoft.extensions.identity.stores\8.0.25\lib\net8.0\Microsoft.Extensions.Identity.Stores.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+</Project>

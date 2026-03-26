@@ -3,6 +3,7 @@ using ECommerce_Clean_Arch.Domain.Users.Events;
 
 using Microsoft.AspNetCore.Identity;
 
+
 namespace ECommerce_Clean_Arch.Domain.Users;
 
 public sealed class User : IdentityUser<Guid>, IAuditable, IHasDomainEvents, IEquatable<User>

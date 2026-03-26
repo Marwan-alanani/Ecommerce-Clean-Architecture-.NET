@@ -1,4 +1,3 @@
-
 namespace ECommerce_Clean_Arch.Application.Authentication.Commands.ConfirmEmail;
 
 public sealed record ConfirmUserEmailCommand(string Token) : ICommand;
