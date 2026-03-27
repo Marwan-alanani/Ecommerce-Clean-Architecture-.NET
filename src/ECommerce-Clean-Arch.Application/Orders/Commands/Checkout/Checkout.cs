@@ -3,7 +3,7 @@ namespace ECommerce_Clean_Arch.Application.Orders.Commands.Checkout;
 // from the user ... I need the shipping address
 public sealed record CheckoutCommand : ICommand<CheckoutResponse>
 {
-    public ShippingAddress ShippingAddress { get; init; } = null!;
+    public required ShippingAddress ShippingAddress { get; init; } = null!;
 }
 
 public sealed class CheckoutCommandHandler : ICommandHandler<CheckoutCommand, CheckoutResponse>
@@ -44,7 +44,7 @@ public sealed class CheckoutCommandHandler : ICommandHandler<CheckoutCommand, Ch
 
         var userId = _user.Id.Value;
         var cart = await _cartRepository.GetCartAsync(_cartKeyResolver.GetUserKey(userId));
-        if (cart is null || !cart.Items.Any())
+        if (cart is null)
         {
             return Error.Validation(new EmptyCart());
         }

@@ -1,6 +1,7 @@
 using ECommerce_Clean_Arch.Application.Abstractions.Persistence;
 using ECommerce_Clean_Arch.Application.Categories.Commands.Create;
 using ECommerce_Clean_Arch.Domain.Categories;
+using ECommerce_Clean_Arch.Domain.Errors.Categories;
 
 using FluentAssertions;
 
@@ -26,11 +27,9 @@ public class CreateCategoryCommandHandlerTests
     public async Task Handle_Should_ReturnCategoryId_WhenNameIsUnique()
     {
         // Arrange
-        var categories = new List<Category>();
-
         _context
             .Setup(c => c.Categories)
-            .ReturnsDbSet(categories); // ← wire it up to your context mock
+            .ReturnsDbSet(new List<Category>());
 
         var command = new CreateCategoryCommand("Category");
 
@@ -52,7 +51,7 @@ public class CreateCategoryCommandHandlerTests
 
         _context
             .Setup(c => c.Categories)
-            .ReturnsDbSet(categories); // ← wire it up to your context mock
+            .ReturnsDbSet(categories);
 
         var command = new CreateCategoryCommand("Category");
 
@@ -64,5 +63,6 @@ public class CreateCategoryCommandHandlerTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Error.Type.Should().Be(ErrorType.Conflict);
+        result.Error.Reasons.Should().Contain(new CategoryNameAlreadyExists(command.Name));
     }
 }

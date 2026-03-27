@@ -11,11 +11,8 @@ public sealed class Cart
 
     public IReadOnlyDictionary<Guid, CartItem> Items
     {
-        get => _items;
-        set
-        {
-            _items = value.ToDictionary();
-        }
+        get => _items.ToDictionary();
+        private set { _items = value.ToDictionary(); }
     }
 
     private Cart()

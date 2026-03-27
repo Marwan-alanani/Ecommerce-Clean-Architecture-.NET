@@ -9,9 +9,9 @@ namespace ECommerce_Clean_Arch.Domain.Carts.ValueObjects;
 public sealed class CartItem
 {
     private int _quantity;
-    public string Name { get; init; }
+    public string Name { get; init; } = null!;
     public Guid ProductId { get; init; }
-    public MoneyFlat UnitPrice { get; init; }
+    public MoneyFlat UnitPrice { get; init; } = null!;
 
     public int Quantity
     {
@@ -22,8 +22,9 @@ public sealed class CartItem
         }
     }
 
-    public string PictureUrl { get; init; }
+    public string PictureUrl { get; init; } = null!;
 
+    // ReSharper disable once UnusedMember.Local
     private CartItem()
     {
     }
