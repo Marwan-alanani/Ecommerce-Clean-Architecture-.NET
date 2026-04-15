@@ -1,9 +1,9 @@
 
 namespace ECommerce_Clean_Arch.Application.Carts.Commands.SetItem;
 
-public sealed class SetItemInCardCommandValidator : AbstractValidator<SetItemInCartCommand>
+public sealed class SetItemInCartCommandValidator : AbstractValidator<SetItemInCartCommand>
 {
-    public SetItemInCardCommandValidator()
+    public SetItemInCartCommandValidator()
     {
         RuleFor(x => x.Quantity)
             .GreaterThan(0)

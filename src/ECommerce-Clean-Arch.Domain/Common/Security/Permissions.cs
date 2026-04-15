@@ -6,9 +6,10 @@ public static partial class Permissions
 
     public static IEnumerable<string> GetAll()
     {
-        return typeof(Permissions)
-            .GetNestedTypes()
-            .Where(t => t.IsClass)
-            .SelectMany(t => t.GetMethod("All")?.Invoke(null, null) as IEnumerable<string> ?? []);
+        var all = Categories.All();
+        all = all.Concat(Orders.All());
+        all = all.Concat(Products.All());
+        all = all.Concat(Users.All());
+        return all;
     }
 }

@@ -1,6 +1,9 @@
 using ECommerce_Clean_Arch.Application.Orders.Queries.GetById;
 using ECommerce_Clean_Arch.Application.Orders.Queries.GetPage;
+using ECommerce_Clean_Arch.Application.Orders.Queries.GetUserPage;
+using ECommerce_Clean_Arch.Domain.Common.Security;
 using ECommerce_Clean_Arch.Domain.Orders.ValueObjects;
+using ECommerce_Clean_Arch.Presentation.Attributes;
 
 using MediatR;
 
@@ -35,9 +38,25 @@ public class OrderController : ApiController
     }
 
     [HttpGet]
-    [Authorize]
+    [HasPermission(Permissions.Orders.ViewAll)]
     public async Task<IActionResult> GetByPage(
         [FromQuery] GetOrdersPageQuery query,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await _sender.Send(query, cancellationToken);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetUsersOrders(
+        [FromQuery] GetUserOrdersPageQuery query,
         CancellationToken cancellationToken
     )
     {

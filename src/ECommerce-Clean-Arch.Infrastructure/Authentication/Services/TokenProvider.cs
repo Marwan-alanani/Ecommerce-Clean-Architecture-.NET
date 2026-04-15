@@ -45,6 +45,7 @@ public sealed class TokenProvider : ITokenProvider
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
+            new(ClaimTypes.Name, user.UserName!)
         ];
 
         var roleNames = await _userManager.GetRolesAsync(user);

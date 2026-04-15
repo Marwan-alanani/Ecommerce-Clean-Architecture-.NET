@@ -6,7 +6,8 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
     public RegisterCommandValidator()
     {
         RuleFor(registerCommand => registerCommand.Username)
-            .NotEmpty();
+            .NotEmpty()
+            .Length(3,50);
 
         RuleFor(registerCommand => registerCommand.Email)
             .EmailAddress();

@@ -32,8 +32,8 @@ public sealed class GetOrderByIdQueryHandler : IQueryHandler<GetOrderByIdQuery, 
             return Error.NotFound(new OrderNotFound(request.OrderId));
         }
 
-
-        if (order.UserId != _user.Id.Value)
+        if ((!_user.Permissions?.Contains(Permissions.Orders.ViewAll) ?? true)
+            || order.UserId != _user.Id.Value)
         {
             return Error.Security(new UserUnauthorized());
         }

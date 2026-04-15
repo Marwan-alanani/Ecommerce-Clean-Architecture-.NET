@@ -1,23 +1,33 @@
-namespace ECommerce_Clean_Arch.Application.Orders.Queries.GetPage;
+namespace ECommerce_Clean_Arch.Application.Orders.Queries.GetUserPage;
 
-public sealed record GetOrdersPageQuery : DefaultPageQuery<OrderDto>;
+public sealed record GetUserOrdersPageQuery : DefaultPageQuery<OrderDto>;
 
-public sealed class GetOrdersPageQueryHandler :
-    IQueryHandler<GetOrdersPageQuery, PaginatedList<OrderDto>>
+public sealed class GetUserOrdersPageQueryHandler : IQueryHandler<GetUserOrdersPageQuery,
+    PaginatedList<OrderDto>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IUser _user;
 
-    public GetOrdersPageQueryHandler(IApplicationDbContext context)
+    public GetUserOrdersPageQueryHandler(IApplicationDbContext context, IUser user)
     {
         _context = context;
+        _user = user;
     }
 
+
     public async Task<Result<PaginatedList<OrderDto>>> Handle(
-        GetOrdersPageQuery request,
+        GetUserOrdersPageQuery request,
         CancellationToken cancellationToken
     )
     {
-        var orders = _context.Orders.AsNoTracking();
+        if (_user.Id is null)
+        {
+            return Error.Security(new UserUnauthenticated());
+        }
+
+        var userId = _user.Id.Value;
+        var orders = _context.Orders.AsNoTracking().Where(o => o.UserId == userId);
+
         var dir = request.Direction is null
             ? SortDirection.Desc
             : Enum.Parse<SortDirection>(request.Direction, true);

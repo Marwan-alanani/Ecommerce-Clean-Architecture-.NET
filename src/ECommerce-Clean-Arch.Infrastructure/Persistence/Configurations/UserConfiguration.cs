@@ -10,6 +10,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.HasKey(u => u.Id);
+        builder.Property(u => u.UserName).HasMaxLength(50);
         builder.Property(u => u.FirstName)
             .IsRequired()
             .HasMaxLength(50);

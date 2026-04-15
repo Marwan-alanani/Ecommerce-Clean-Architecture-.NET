@@ -39,6 +39,17 @@ public class CurrentUser : IUser
         }
     }
 
+    public string? UserName
+    {
+        get
+        {
+
+            var userName = _httpContextAccessor.HttpContext?.User.FindFirstValue
+                (ClaimTypes.Name);
+            return userName;
+        }
+    }
+
     public List<string>? Roles => _httpContextAccessor.HttpContext?.User.FindAll(ClaimTypes.Role)
         .Select(x => x.Value)
         .ToList();
